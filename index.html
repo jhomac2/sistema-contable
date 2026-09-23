@@ -45,6 +45,77 @@
       font-family: 'JetBrains Mono', monospace;
     }
 
+    /* Adaptación integral de Modo Oscuro */
+    html.dark body {
+      background-color: #020617 !important;
+      color: #f8fafc !important;
+    }
+    html.dark .bg-white {
+      background-color: #0f172a !important;
+      color: #f8fafc !important;
+    }
+    html.dark .bg-slate-50 {
+      background-color: #1e293b !important;
+      color: #f1f5f9 !important;
+    }
+    html.dark .bg-slate-100 {
+      background-color: #334155 !important;
+      color: #f8fafc !important;
+    }
+    html.dark .border-slate-200, 
+    html.dark .border-slate-100, 
+    html.dark .border-slate-300 {
+      border-color: #334155 !important;
+    }
+    html.dark .text-slate-800, 
+    html.dark .text-slate-900, 
+    html.dark .text-slate-700 {
+      color: #f8fafc !important;
+    }
+    html.dark .text-slate-600, 
+    html.dark .text-slate-500 {
+      color: #94a3b8 !important;
+    }
+    html.dark input, 
+    html.dark select, 
+    html.dark textarea {
+      background-color: #1e293b !important;
+      color: #f8fafc !important;
+      border-color: #475569 !important;
+    }
+    html.dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
+    html.dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+      border-color: #334155 !important;
+    }
+    html.dark .hover\:bg-slate-50:hover {
+      background-color: #1e293b/80 !important;
+    }
+    html.dark .hover\:bg-slate-100:hover {
+      background-color: #334155 !important;
+    }
+    
+    /* La factura se mantiene siempre con fondo blanco profesional para lectura y RIDE */
+    #printableInvoiceArea {
+      background-color: #ffffff !important;
+      color: #0f172a !important;
+    }
+    #printableInvoiceArea .bg-slate-50 {
+      background-color: #f8fafc !important;
+      color: #0f172a !important;
+    }
+    #printableInvoiceArea .border-slate-200,
+    #printableInvoiceArea .border-slate-300 {
+      border-color: #cbd5e1 !important;
+    }
+    #printableInvoiceArea .text-slate-900,
+    #printableInvoiceArea .text-slate-800 {
+      color: #0f172a !important;
+    }
+    #printableInvoiceArea .text-slate-600,
+    #printableInvoiceArea .text-slate-500 {
+      color: #475569 !important;
+    }
+
     /* Print optimization for formal invoices compliant with SRI Ecuador RIDE format */
     @media print {
       body * {
@@ -144,6 +215,12 @@
         <button onclick="openModalTransfer()" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 text-slate-950 font-bold p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl text-xs shadow transition active:scale-95 flex items-center gap-1" title="Transferir entre cuentas">
           <i data-lucide="arrow-left-right" class="w-3.5 h-3.5"></i>
           <span class="hidden sm:inline text-xs">Transferir</span>
+        </button>
+
+        <!-- Botón de Modo Claro / Oscuro -->
+        <button onclick="toggleTheme()" id="btnToggleTheme" class="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 transition active:scale-95" title="Alternar Modo Claro / Oscuro">
+          <i data-lucide="sun" id="iconThemeSun" class="w-3.5 h-3.5 hidden"></i>
+          <i data-lucide="moon" id="iconThemeMoon" class="w-3.5 h-3.5"></i>
         </button>
 
         <!-- Help Guide & Settings -->
@@ -1385,6 +1462,14 @@
         </div>
 
         <div>
+          <label class="font-bold text-slate-700 block mb-1">Tema de la Interfaz</label>
+          <select id="settingThemeSelect" onchange="applyTheme(this.value)" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold text-slate-800 bg-white">
+            <option value="light">☀️ Modo Claro</option>
+            <option value="dark">🌙 Modo Oscuro</option>
+          </select>
+        </div>
+
+        <div>
           <label class="font-bold text-slate-700 block mb-1">Tu Contraseña Personal de Seguridad</label>
           <input type="password" id="settingUserPassword" required class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold text-slate-800" placeholder="Clave para confirmar borrados">
         </div>
@@ -2193,6 +2278,7 @@
         ownerName: "Jhordy",
         userPassword: "admin",
         activeYear: "2026",
+        theme: "light",
         invoice: {
           ruc: "1726392339001",
           number: "001-001-000000105",
@@ -3242,6 +3328,7 @@
       document.getElementById('settingBusinessName').value = appState.settings.businessName;
       document.getElementById('settingOwnerName').value = appState.settings.ownerName;
       document.getElementById('settingUserPassword').value = appState.settings.userPassword;
+      document.getElementById('settingThemeSelect').value = appState.settings.theme || 'light';
       document.getElementById('modalSettings').classList.remove('hidden');
     }
 
@@ -3250,71 +3337,185 @@
       appState.settings.businessName = document.getElementById('settingBusinessName').value.trim();
       appState.settings.ownerName = document.getElementById('settingOwnerName').value.trim();
       appState.settings.userPassword = document.getElementById('settingUserPassword').value.trim();
+      appState.settings.theme = document.getElementById('settingThemeSelect').value;
+      applyTheme(appState.settings.theme);
       saveState();
       closeModal('modalSettings');
       showToast("Configuración guardada correctamente");
     }
 
-    function openModalSecurityReset() {
-      document.getElementById('inputResetPassword').value = '';
-      document.getElementById('modalSecurityReset').classList.remove('hidden');
+    // Funciones de Modo Claro y Oscuro
+    function initTheme() {
+      const savedTheme = appState.settings?.theme || localStorage.getItem('rosse_theme') || 'light';
+      applyTheme(savedTheme, false);
     }
 
-    function executeTotalReset() {
-      const entered = document.getElementById('inputResetPassword').value.trim();
-      const validUserPass = appState.settings.userPassword;
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.contains('dark');
+      const newTheme = isDark ? 'light' : 'dark';
+      applyTheme(newTheme, true);
+    }
 
-      if (entered === validUserPass || entered === MASTER_RESCUE_KEY) {
-        // Clear all state to initial empty structure
-        localStorage.removeItem('rosse_cabs_integral_v3');
-        appState.personalTransactions = [];
-        appState.rosseTransactions = [];
-        appState.transfers = [];
-        appState.harvests = [];
-        appState.shipments = [];
-        appState.settlements = [];
-        appState.labor = [];
-        appState.personalDebts = [];
-        appState.rosseDebts = [];
-        appState.debtPayments = [];
+    function applyTheme(theme, save = true) {
+      const sunIcon = document.getElementById('iconThemeSun');
+      const moonIcon = document.getElementById('iconThemeMoon');
 
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+        if (sunIcon && moonIcon) {
+          sunIcon.classList.remove('hidden');
+          moonIcon.classList.add('hidden');
+        }
+      } else {
+        document.documentElement.classList.remove('dark');
+        if (sunIcon && moonIcon) {
+          sunIcon.classList.add('hidden');
+          moonIcon.classList.remove('hidden');
+        }
+      }
+
+      appState.settings.theme = theme;
+      if (save) {
+        localStorage.setItem('rosse_theme', theme);
         saveState();
-        closeModal('modalSecurityReset');
-        closeModal('modalSettings');
-        showToast("Sistema reseteado correctamente. Racha y datos en 0.");
-      } else {
-        showToast("Contraseña incorrecta. Pide tu clave al 0963923399", "❌");
-      }
-    }
-
-    // Modal Transaction handlers
-    function openModalTransaction(defaultAccount) {
-      document.getElementById('txAccount').value = defaultAccount;
-      document.getElementById('txDate').value = new Date().toISOString().split('T')[0];
-      document.getElementById('txAmount').value = '';
-      document.getElementById('txDetail').value = '';
-      updateTransactionCategoryOptions();
-      document.getElementById('modalTransaction').classList.remove('hidden');
-    }
-
-    function updateTransactionCategoryOptions() {
-      const account = document.getElementById('txAccount').value;
-      const type = document.getElementById('txType').value;
-      const select = document.getElementById('txCategory');
-      select.innerHTML = '';
-
-      let list = [];
-      if (account === 'personal') {
-        list = type === 'ingreso' ? appState.catalogs.personalIncomeCategories : appState.catalogs.personalExpenseCategories;
-      } else {
-        list = type === 'ingreso' ? appState.catalogs.rosseIncomeCategories : appState.catalogs.rosseExpenseCategories;
+        showToast(theme === 'dark' ? "Modo oscuro activado 🌙" : "Modo claro activado ☀️");
       }
 
-      list.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c;
-        opt.textContent = c;
-        select.appendChild(opt);
+      if (window.Chart) {
+        updateCharts();
+      }
+    }
+    let chartPersonalInstance = null;
+    let chartPersonalCatInstance = null;
+    let chartRosseSalesInstance = null;
+    let chartRosseVarInstance = null;
+
+    function updateCharts() {
+      const isDark = document.documentElement.classList.contains('dark');
+      const textColor = isDark ? '#cbd5e1' : '#475569';
+      const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)';
+
+      const year = appState.settings.activeYear;
+      const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+
+      // 1. Personal Monthly Incomes vs Expenses
+      const incData = [];
+      const expData = [];
+      for (let m = 1; m <= 12; m++) {
+        const inc = appState.personalTransactions.filter(t => t.type === 'ingreso' && isDateInMonthYear(t.date, m, year)).reduce((s, t) => s + Number(t.amount), 0);
+        const exp = appState.personalTransactions.filter(t => t.type === 'egreso' && isDateInMonthYear(t.date, m, year)).reduce((s, t) => s + Number(t.amount), 0);
+        incData.push(inc);
+        expData.push(exp);
+      }
+
+      if (chartPersonalInstance) chartPersonalInstance.destroy();
+      const ctxP = document.getElementById('chartPersonalMonthly').getContext('2d');
+      chartPersonalInstance = new Chart(ctxP, {
+        type: 'bar',
+        data: {
+          labels: monthNames,
+          datasets: [
+            { label: 'Ingresos ($)', data: incData, backgroundColor: '#10b981', borderRadius: 6 },
+            { label: 'Gastos ($)', data: expData, backgroundColor: '#f43f5e', borderRadius: 6 }
+          ]
+        },
+        options: { 
+          responsive: true, 
+          maintainAspectRatio: false,
+          scales: {
+            x: { ticks: { color: textColor }, grid: { color: gridColor } },
+            y: { ticks: { color: textColor }, grid: { color: gridColor } }
+          },
+          plugins: {
+            legend: { labels: { color: textColor } }
+          }
+        }
+      });
+
+      // 2. Personal Expenses by Category
+      const catLabels = appState.catalogs.personalExpenseCategories;
+      const catAmounts = catLabels.map(cat => {
+        return appState.personalTransactions.filter(t => t.type === 'egreso' && t.category === cat && t.date.startsWith(year)).reduce((s, t) => s + Number(t.amount), 0);
+      });
+
+      if (chartPersonalCatInstance) chartPersonalCatInstance.destroy();
+      const ctxPCat = document.getElementById('chartPersonalCategories').getContext('2d');
+      chartPersonalCatInstance = new Chart(ctxPCat, {
+        type: 'doughnut',
+        data: {
+          labels: catLabels,
+          datasets: [{ data: catAmounts, backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#64748b', '#ef4444', '#14b8a6'] }]
+        },
+        options: { 
+          responsive: true, 
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: textColor } }
+          }
+        }
+      });
+
+      // 3. Rosse Monthly Sales (Export vs National stems)
+      const expStemsByMonth = [];
+      const natStemsByMonth = [];
+      for (let m = 1; m <= 12; m++) {
+        let eStems = 0;
+        let nStems = 0;
+        appState.shipments.forEach(s => {
+          if (isDateInMonthYear(s.date, m, year)) {
+            if (s.type === 'exportacion') eStems += (Number(s.totalStems) - Number(s.returnedStems || 0));
+            if (s.type === 'nacional') nStems += (Number(s.totalStems) - Number(s.returnedStems || 0));
+          }
+        });
+        expStemsByMonth.push(eStems);
+        natStemsByMonth.push(nStems);
+      }
+
+      if (chartRosseSalesInstance) chartRosseSalesInstance.destroy();
+      const ctxRSales = document.getElementById('chartRosseMonthlySales').getContext('2d');
+      chartRosseSalesInstance = new Chart(ctxRSales, {
+        type: 'bar',
+        data: {
+          labels: monthNames,
+          datasets: [
+            { label: 'Tallos Exportación', data: expStemsByMonth, backgroundColor: '#2563eb', borderRadius: 6 },
+            { label: 'Tallos Nacional', data: natStemsByMonth, backgroundColor: '#059669', borderRadius: 6 }
+          ]
+        },
+        options: { 
+          responsive: true, 
+          maintainAspectRatio: false,
+          scales: {
+            x: { ticks: { color: textColor }, grid: { color: gridColor } },
+            y: { ticks: { color: textColor }, grid: { color: gridColor } }
+          },
+          plugins: {
+            legend: { labels: { color: textColor } }
+          }
+        }
+      });
+
+      // 4. Rosse Production by Rose Variety
+      const varieties = appState.catalogs.varieties;
+      const varCounts = varieties.map(v => {
+        return appState.harvests.filter(h => h.variety === v && h.date.startsWith(year)).reduce((s, h) => s + Number(h.exportStems || 0) + Number(h.nationalStems || 0), 0);
+      });
+
+      if (chartRosseVarInstance) chartRosseVarInstance.destroy();
+      const ctxRVar = document.getElementById('chartRosseVarieties').getContext('2d');
+      chartRosseVarInstance = new Chart(ctxRVar, {
+        type: 'pie',
+        data: {
+          labels: varieties,
+          datasets: [{ data: varCounts, backgroundColor: ['#ef4444', '#dc2626', '#f1f5f9', '#fbcfe8', '#8b5cf6', '#fed7aa'] }]
+        },
+        options: { 
+          responsive: true, 
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: textColor } }
+          }
+        }
       });
     }
 
@@ -4125,6 +4326,7 @@
 
     window.onload = function() {
       loadStateFromStorage();
+      initTheme();
       refreshAllUI();
       lucide.createIcons();
 
