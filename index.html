@@ -2264,10 +2264,9 @@
   </div>
 
   <!-- ============================================================== -->
-  <!-- JAVASCRIPT APPLICATION CORE ENGINE                             -->
+  <!-- JAVASCRIPT APPLICATION CORE ENGINE (CORREGIDO Y OPTIMIZADO)    -->
   <!-- ============================================================== -->
   <script>
-    // System Constants & Rescue Password
     const MASTER_RESCUE_KEY = "I´M_JHORDY";
     const CURRENT_YEAR = "2026";
 
@@ -2302,7 +2301,6 @@
           { id: "c2", name: "ROBERTO GUAMÁN (MERCADO MAYORISTA)", type: "Nacional", ruc: "1719283746001", phone: "0987654321", address: "Quito Sur, Pichincha" }
         ]
       },
-      // Transactions separated by account strictly
       personalTransactions: [
         { id: "pt1", date: "2026-09-01", type: "ingreso", category: "Sueldo / Salario", detail: "Honorarios profesionales", amount: 1200.00 },
         { id: "pt2", date: "2026-09-05", type: "egreso", category: "Alimentación", detail: "Compras de despensa", amount: 240.00 }
@@ -2314,7 +2312,6 @@
       transfers: [
         { id: "tr1", date: "2026-09-10", from: "rosse", to: "personal", amount: 500.00, note: "Retiro de utilidades para ahorro personal" }
       ],
-      // Debts separated strictly
       personalDebts: [
         { id: "pd1", name: "Préstamo Personal Banco Pichincha", creditor: "Banco Pichincha", initialAmount: 3000.00, monthlyPayment: 150.00, startDate: "2026-01-15", endDate: "2027-08-15" }
       ],
@@ -2325,7 +2322,6 @@
         { id: "dp1", debtId: "pd1", account: "personal", date: "2026-08-15", amount: 300.00, note: "Abono cuota 7 y 8" },
         { id: "dp2", debtId: "rd1", account: "rosse", date: "2026-08-10", amount: 640.00, note: "Pago cuotas maquinaria" }
       ],
-      // Flower Production & Supply Chain Data
       harvests: [
         { id: "h1", date: "2026-09-15", block: "Bloque 1", variety: "Freedom", size: "60cm", exportStems: 1200, nationalStems: 300, lossStems: 50, lossReason: "Tallo torcido" },
         { id: "h2", date: "2026-09-16", block: "Bloque 2", variety: "Explorer", size: "70cm", exportStems: 800, nationalStems: 150, lossStems: 30, lossReason: "Hongo leve" }
@@ -2379,7 +2375,6 @@
       }, 3000);
     }
 
-    // Calculation of atomic balances
     function calculateAccountBalances() {
       const personalInc = appState.personalTransactions.filter(t => t.type === 'ingreso').reduce((acc, t) => acc + Number(t.amount), 0);
       const personalExp = appState.personalTransactions.filter(t => t.type === 'egreso').reduce((acc, t) => acc + Number(t.amount), 0);
@@ -2387,7 +2382,6 @@
       const rosseInc = appState.rosseTransactions.filter(t => t.type === 'ingreso').reduce((acc, t) => acc + Number(t.amount), 0);
       const rosseExp = appState.rosseTransactions.filter(t => t.type === 'egreso').reduce((acc, t) => acc + Number(t.amount), 0);
 
-      // Transfers affect balances atomically
       const transferredToPersonal = appState.transfers.filter(t => t.to === 'personal').reduce((acc, t) => acc + Number(t.amount), 0);
       const transferredFromPersonal = appState.transfers.filter(t => t.from === 'personal').reduce((acc, t) => acc + Number(t.amount), 0);
 
@@ -2407,10 +2401,7 @@
       };
     }
 
-    // LIVE AVAILABILITY CALCULATION (Nunca guardado como saldo estático)
-    // disponible(variedad, medida, tipo) = total cosechado para ese tipo - total ya enviado + devoluciones a nacional
     function getLiveAvailability(variety, size, type) {
-      // Harvested for this category
       let harvested = 0;
       appState.harvests.forEach(h => {
         if (h.variety === variety && h.size === size) {
@@ -2419,7 +2410,6 @@
         }
       });
 
-      // Shipped for this category
       let shipped = 0;
       appState.shipments.forEach(s => {
         if (s.variety === variety && s.size === size && s.type === type) {
@@ -2427,7 +2417,6 @@
         }
       });
 
-      // Damaged/returned stems that were degraded to National
       let degradedToNational = 0;
       if (type === 'nacional') {
         appState.shipments.forEach(s => {
@@ -2441,7 +2430,6 @@
       return Math.max(0, available);
     }
 
-    // Overall Crop Yield (% Aprovechamiento)
     function calculateGlobalCropYield() {
       let totalExport = 0;
       let totalNational = 0;
@@ -2474,7 +2462,6 @@
     function refreshAllUI() {
       const balances = calculateAccountBalances();
       
-      // Update header elements
       document.getElementById('headerBusinessName').textContent = appState.settings.businessName;
       document.getElementById('headerOwnerName').textContent = appState.settings.ownerName;
       document.getElementById('homeWelcomeOwner').textContent = appState.settings.ownerName;
@@ -2488,18 +2475,15 @@
       document.getElementById('transferCardPersonalBalance').textContent = `$${balances.personalBalance.toFixed(2)}`;
       document.getElementById('transferCardRosseBalance').textContent = `$${balances.rosseBalance.toFixed(2)}`;
 
-      // Home KPIs
       document.getElementById('homePersonalIncome').textContent = `$${balances.personalIncome.toFixed(2)}`;
       document.getElementById('homePersonalExpense').textContent = `$${balances.personalExpense.toFixed(2)}`;
       document.getElementById('homeRosseBalance').textContent = `$${balances.rosseBalance.toFixed(2)}`;
 
-      // Total harvest and availability in home
       let totalHarvestStems = 0;
       appState.harvests.forEach(h => totalHarvestStems += (Number(h.exportStems || 0) + Number(h.nationalStems || 0)));
       document.getElementById('homeRosseHarvest').textContent = totalHarvestStems.toLocaleString();
       document.getElementById('kpiRosseHarvestTotal').textContent = totalHarvestStems.toLocaleString();
 
-      // Available total stems
       let totalAvailableNow = 0;
       appState.catalogs.varieties.forEach(v => {
         appState.catalogs.sizes.forEach(s => {
@@ -2509,13 +2493,10 @@
       document.getElementById('homeRosseAvailable').textContent = totalAvailableNow.toLocaleString();
       document.getElementById('kpiRosseAvailableTotal').textContent = totalAvailableNow.toLocaleString();
 
-      // Debt Totals
       const personalDebtRemaining = calculateTotalRemainingDebt('personal');
-      const rosseDebtRemaining = calculateTotalRemainingDebt('rosse');
       document.getElementById('homePersonalDebt').textContent = `$${personalDebtRemaining.toFixed(2)}`;
       document.getElementById('kpiPersonalTotalDebt').textContent = `$${personalDebtRemaining.toFixed(2)}`;
 
-      // Yield Progress Bar
       const yieldData = calculateGlobalCropYield();
       document.getElementById('yieldTotalStemsBadge').textContent = `${yieldData.totalCut.toLocaleString()} tallos cortados`;
       document.getElementById('yieldExportBar').style.width = `${yieldData.exportPct}%`;
@@ -2529,16 +2510,13 @@
       document.getElementById('yieldNationalPct').textContent = `${yieldData.nationalPct}%`;
       document.getElementById('yieldLossPct').textContent = `${yieldData.lossPct}%`;
 
-      // Rosse Financial KPIs
       document.getElementById('kpiRosseIncome').textContent = `$${balances.rosseIncome.toFixed(2)}`;
       document.getElementById('kpiRosseExpense').textContent = `$${balances.rosseExpense.toFixed(2)}`;
 
-      // Personal KPIs
       document.getElementById('kpiPersonalIncome').textContent = `$${balances.personalIncome.toFixed(2)}`;
       document.getElementById('kpiPersonalExpense').textContent = `$${balances.personalExpense.toFixed(2)}`;
       document.getElementById('kpiPersonalNet').textContent = `$${(balances.personalIncome - balances.personalExpense).toFixed(2)}`;
 
-      // Render Sub-tables
       renderRecentTransactionsHome();
       renderPersonalMonthlyTables();
       renderPersonalAnnualTable();
@@ -2557,7 +2535,6 @@
       updateCharts();
     }
 
-    // Helper for Debt calculation: Initial - Sum(Payments)
     function calculateTotalRemainingDebt(account) {
       const debts = account === 'personal' ? appState.personalDebts : appState.rosseDebts;
       let totalRem = 0;
@@ -2572,7 +2549,6 @@
       const tbody = document.getElementById('homeRecentTransactionsBody');
       tbody.innerHTML = '';
 
-      // Combine both with account tag
       const all = [
         ...appState.personalTransactions.map(t => ({ ...t, accountName: 'Personal', isPersonal: true })),
         ...appState.rosseTransactions.map(t => ({ ...t, accountName: appState.settings.businessName, isPersonal: false }))
@@ -2595,7 +2571,6 @@
       });
     }
 
-    // Personal Monthly Budget vs Real
     function renderPersonalMonthlyTables() {
       const month = document.getElementById('selectPersonalMonth').value;
       const year = appState.settings.activeYear;
@@ -2608,7 +2583,6 @@
       let totalRealInc = 0;
       let totalRealExp = 0;
 
-      // Group income by category for this month
       appState.catalogs.personalIncomeCategories.forEach(cat => {
         const real = appState.personalTransactions
           .filter(t => t.type === 'ingreso' && t.category === cat && isDateInMonthYear(t.date, month, year))
@@ -2625,7 +2599,6 @@
         incBody.appendChild(tr);
       });
 
-      // Group expenses by category for this month
       appState.catalogs.personalExpenseCategories.forEach(cat => {
         const real = appState.personalTransactions
           .filter(t => t.type === 'egreso' && t.category === cat && isDateInMonthYear(t.date, month, year))
@@ -2643,8 +2616,9 @@
       });
 
       const net = totalRealInc - totalRealExp;
-      document.getElementById('monthlyNetBalance').textContent = `$${net.toFixed(2)}`;
-      document.getElementById('monthlyNetBalance').className = `font-mono text-base font-extrabold ${net >= 0 ? 'text-emerald-600' : 'text-rose-600'}`;
+      const netEl = document.getElementById('monthlyNetBalance');
+      netEl.textContent = `$${net.toFixed(2)}`;
+      netEl.className = `font-mono text-base font-extrabold ${net >= 0 ? 'text-emerald-600' : 'text-rose-600'}`;
     }
 
     function isDateInMonthYear(dateStr, month, year) {
@@ -2694,7 +2668,6 @@
       `;
     }
 
-    // Render Debt Amortization Cards
     function renderDebtsCards(account) {
       const containerId = account === 'personal' ? 'personalDebtsCardsContainer' : 'rosseDebtsCardsContainer';
       const container = document.getElementById(containerId);
@@ -3042,7 +3015,6 @@
       renderTagGrid('listCatSizes', appState.catalogs.sizes, 'size');
       renderTagGrid('listCatBlocks', appState.catalogs.blocks, 'block');
 
-      // Clients List
       const clientsContainer = document.getElementById('listCatClients');
       clientsContainer.innerHTML = '';
       appState.catalogs.clients.forEach(c => {
@@ -3092,7 +3064,6 @@
       lucide.createIcons();
     }
 
-    // Invoice View Rendering (RIDE SRI Ecuador format)
     function renderInvoicePreview() {
       const inv = appState.settings.invoice;
       document.getElementById('invIssuerTradeName').textContent = inv.tradeName || appState.settings.businessName;
@@ -3103,7 +3074,6 @@
       document.getElementById('invIssuerRuc').textContent = inv.ruc;
       document.getElementById('invNumber').textContent = inv.number;
 
-      // Populate Items with recent settlement or last shipments
       const tbody = document.getElementById('invItemsTableBody');
       tbody.innerHTML = '';
 
@@ -3120,7 +3090,7 @@
         document.getElementById('invEmissionDate').textContent = lastSet.date;
 
         const totalPaid = Number(lastSet.totalPaid);
-        sub0 = totalPaid; // Flower in raw state is usually 0% in Ecuador agricultural exports
+        sub0 = totalPaid;
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -3148,10 +3118,15 @@
     let chartRosseVarInstance = null;
 
     function updateCharts() {
+      if (!window.Chart) return;
+      const isDark = document.documentElement.classList.contains('dark');
+      const textColor = isDark ? '#cbd5e1' : '#475569';
+      const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)';
+
       const year = appState.settings.activeYear;
       const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
 
-      // 1. Personal Monthly Incomes vs Expenses
+      // 1. Incomes vs Expenses
       const incData = [];
       const expData = [];
       for (let m = 1; m <= 12; m++) {
@@ -3162,37 +3137,53 @@
       }
 
       if (chartPersonalInstance) chartPersonalInstance.destroy();
-      const ctxP = document.getElementById('chartPersonalMonthly').getContext('2d');
-      chartPersonalInstance = new Chart(ctxP, {
-        type: 'bar',
-        data: {
-          labels: monthNames,
-          datasets: [
-            { label: 'Ingresos ($)', data: incData, backgroundColor: '#10b981', borderRadius: 6 },
-            { label: 'Gastos ($)', data: expData, backgroundColor: '#f43f5e', borderRadius: 6 }
-          ]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
-      });
+      const ctxP = document.getElementById('chartPersonalMonthly')?.getContext('2d');
+      if (ctxP) {
+        chartPersonalInstance = new Chart(ctxP, {
+          type: 'bar',
+          data: {
+            labels: monthNames,
+            datasets: [
+              { label: 'Ingresos ($)', data: incData, backgroundColor: '#10b981', borderRadius: 6 },
+              { label: 'Gastos ($)', data: expData, backgroundColor: '#f43f5e', borderRadius: 6 }
+            ]
+          },
+          options: { 
+            responsive: true, 
+            maintainAspectRatio: false,
+            scales: {
+              x: { ticks: { color: textColor }, grid: { color: gridColor } },
+              y: { ticks: { color: textColor }, grid: { color: gridColor } }
+            },
+            plugins: { legend: { labels: { color: textColor } } }
+          }
+        });
+      }
 
-      // 2. Personal Expenses by Category
+      // 2. Expenses by category
       const catLabels = appState.catalogs.personalExpenseCategories;
       const catAmounts = catLabels.map(cat => {
         return appState.personalTransactions.filter(t => t.type === 'egreso' && t.category === cat && t.date.startsWith(year)).reduce((s, t) => s + Number(t.amount), 0);
       });
 
       if (chartPersonalCatInstance) chartPersonalCatInstance.destroy();
-      const ctxPCat = document.getElementById('chartPersonalCategories').getContext('2d');
-      chartPersonalCatInstance = new Chart(ctxPCat, {
-        type: 'doughnut',
-        data: {
-          labels: catLabels,
-          datasets: [{ data: catAmounts, backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#64748b', '#ef4444', '#14b8a6'] }]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
-      });
+      const ctxPCat = document.getElementById('chartPersonalCategories')?.getContext('2d');
+      if (ctxPCat) {
+        chartPersonalCatInstance = new Chart(ctxPCat, {
+          type: 'doughnut',
+          data: {
+            labels: catLabels,
+            datasets: [{ data: catAmounts, backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#64748b', '#ef4444', '#14b8a6'] }]
+          },
+          options: { 
+            responsive: true, 
+            maintainAspectRatio: false,
+            plugins: { legend: { labels: { color: textColor } } }
+          }
+        });
+      }
 
-      // 3. Rosse Monthly Sales (Export vs National stems)
+      // 3. Rosse sales
       const expStemsByMonth = [];
       const natStemsByMonth = [];
       for (let m = 1; m <= 12; m++) {
@@ -3209,35 +3200,51 @@
       }
 
       if (chartRosseSalesInstance) chartRosseSalesInstance.destroy();
-      const ctxRSales = document.getElementById('chartRosseMonthlySales').getContext('2d');
-      chartRosseSalesInstance = new Chart(ctxRSales, {
-        type: 'bar',
-        data: {
-          labels: monthNames,
-          datasets: [
-            { label: 'Tallos Exportación', data: expStemsByMonth, backgroundColor: '#2563eb', borderRadius: 6 },
-            { label: 'Tallos Nacional', data: natStemsByMonth, backgroundColor: '#059669', borderRadius: 6 }
-          ]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
-      });
+      const ctxRSales = document.getElementById('chartRosseMonthlySales')?.getContext('2d');
+      if (ctxRSales) {
+        chartRosseSalesInstance = new Chart(ctxRSales, {
+          type: 'bar',
+          data: {
+            labels: monthNames,
+            datasets: [
+              { label: 'Tallos Exportación', data: expStemsByMonth, backgroundColor: '#2563eb', borderRadius: 6 },
+              { label: 'Tallos Nacional', data: natStemsByMonth, backgroundColor: '#059669', borderRadius: 6 }
+            ]
+          },
+          options: { 
+            responsive: true, 
+            maintainAspectRatio: false,
+            scales: {
+              x: { ticks: { color: textColor }, grid: { color: gridColor } },
+              y: { ticks: { color: textColor }, grid: { color: gridColor } }
+            },
+            plugins: { legend: { labels: { color: textColor } } }
+          }
+        });
+      }
 
-      // 4. Rosse Production by Rose Variety
+      // 4. Rosse varieties
       const varieties = appState.catalogs.varieties;
       const varCounts = varieties.map(v => {
         return appState.harvests.filter(h => h.variety === v && h.date.startsWith(year)).reduce((s, h) => s + Number(h.exportStems || 0) + Number(h.nationalStems || 0), 0);
       });
 
       if (chartRosseVarInstance) chartRosseVarInstance.destroy();
-      const ctxRVar = document.getElementById('chartRosseVarieties').getContext('2d');
-      chartRosseVarInstance = new Chart(ctxRVar, {
-        type: 'pie',
-        data: {
-          labels: varieties,
-          datasets: [{ data: varCounts, backgroundColor: ['#ef4444', '#dc2626', '#f1f5f9', '#fbcfe8', '#8b5cf6', '#fed7aa'] }]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
-      });
+      const ctxRVar = document.getElementById('chartRosseVarieties')?.getContext('2d');
+      if (ctxRVar) {
+        chartRosseVarInstance = new Chart(ctxRVar, {
+          type: 'pie',
+          data: {
+            labels: varieties,
+            datasets: [{ data: varCounts, backgroundColor: ['#ef4444', '#dc2626', '#f1f5f9', '#fbcfe8', '#8b5cf6', '#fed7aa'] }]
+          },
+          options: { 
+            responsive: true, 
+            maintainAspectRatio: false,
+            plugins: { legend: { labels: { color: textColor } } }
+          }
+        });
+      }
     }
 
     function switchMainTab(tabId) {
@@ -3247,7 +3254,6 @@
         b.classList.add('text-slate-400');
       });
 
-      // Update mobile bottom nav active indicators
       document.querySelectorAll('.mob-tab-btn').forEach(b => {
         b.classList.remove('text-emerald-400', 'bg-slate-800/80');
         b.classList.add('text-slate-400');
@@ -3344,7 +3350,6 @@
       showToast("Configuración guardada correctamente");
     }
 
-    // Funciones de Modo Claro y Oscuro
     function initTheme() {
       const savedTheme = appState.settings?.theme || localStorage.getItem('rosse_theme') || 'light';
       applyTheme(savedTheme, false);
@@ -3385,137 +3390,68 @@
         updateCharts();
       }
     }
-    let chartPersonalInstance = null;
-    let chartPersonalCatInstance = null;
-    let chartRosseSalesInstance = null;
-    let chartRosseVarInstance = null;
 
-    function updateCharts() {
-      const isDark = document.documentElement.classList.contains('dark');
-      const textColor = isDark ? '#cbd5e1' : '#475569';
-      const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)';
+    function openModalSecurityReset() {
+      document.getElementById('inputResetPassword').value = '';
+      document.getElementById('modalSecurityReset').classList.remove('hidden');
+    }
 
-      const year = appState.settings.activeYear;
-      const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+    function executeTotalReset() {
+      const inputPass = document.getElementById('inputResetPassword').value.trim();
+      const validPass = appState.settings.userPassword || 'admin';
 
-      // 1. Personal Monthly Incomes vs Expenses
-      const incData = [];
-      const expData = [];
-      for (let m = 1; m <= 12; m++) {
-        const inc = appState.personalTransactions.filter(t => t.type === 'ingreso' && isDateInMonthYear(t.date, m, year)).reduce((s, t) => s + Number(t.amount), 0);
-        const exp = appState.personalTransactions.filter(t => t.type === 'egreso' && isDateInMonthYear(t.date, m, year)).reduce((s, t) => s + Number(t.amount), 0);
-        incData.push(inc);
-        expData.push(exp);
+      if (inputPass !== validPass && inputPass !== MASTER_RESCUE_KEY) {
+        showToast("Contraseña incorrecta. Pide la clave a Jhordy al 0963923399", "❌");
+        return;
       }
 
-      if (chartPersonalInstance) chartPersonalInstance.destroy();
-      const ctxP = document.getElementById('chartPersonalMonthly').getContext('2d');
-      chartPersonalInstance = new Chart(ctxP, {
-        type: 'bar',
-        data: {
-          labels: monthNames,
-          datasets: [
-            { label: 'Ingresos ($)', data: incData, backgroundColor: '#10b981', borderRadius: 6 },
-            { label: 'Gastos ($)', data: expData, backgroundColor: '#f43f5e', borderRadius: 6 }
-          ]
-        },
-        options: { 
-          responsive: true, 
-          maintainAspectRatio: false,
-          scales: {
-            x: { ticks: { color: textColor }, grid: { color: gridColor } },
-            y: { ticks: { color: textColor }, grid: { color: gridColor } }
-          },
-          plugins: {
-            legend: { labels: { color: textColor } }
-          }
-        }
-      });
+      appState.personalTransactions = [];
+      appState.rosseTransactions = [];
+      appState.transfers = [];
+      appState.personalDebts = [];
+      appState.rosseDebts = [];
+      appState.debtPayments = [];
+      appState.harvests = [];
+      appState.shipments = [];
+      appState.settlements = [];
+      appState.labor = [];
+      appState.supplies = [];
 
-      // 2. Personal Expenses by Category
-      const catLabels = appState.catalogs.personalExpenseCategories;
-      const catAmounts = catLabels.map(cat => {
-        return appState.personalTransactions.filter(t => t.type === 'egreso' && t.category === cat && t.date.startsWith(year)).reduce((s, t) => s + Number(t.amount), 0);
-      });
+      saveState();
+      closeModal('modalSecurityReset');
+      closeModal('modalSettings');
+      showToast("Todos los datos fueron borrados exitosamente", "🚨");
+    }
 
-      if (chartPersonalCatInstance) chartPersonalCatInstance.destroy();
-      const ctxPCat = document.getElementById('chartPersonalCategories').getContext('2d');
-      chartPersonalCatInstance = new Chart(ctxPCat, {
-        type: 'doughnut',
-        data: {
-          labels: catLabels,
-          datasets: [{ data: catAmounts, backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#64748b', '#ef4444', '#14b8a6'] }]
-        },
-        options: { 
-          responsive: true, 
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { labels: { color: textColor } }
-          }
-        }
-      });
+    function openModalTransaction(account = 'personal') {
+      document.getElementById('txAccount').value = account;
+      document.getElementById('txDate').value = new Date().toISOString().split('T')[0];
+      document.getElementById('txType').value = 'ingreso';
+      document.getElementById('txDetail').value = '';
+      document.getElementById('txAmount').value = '';
+      document.getElementById('modalTransactionTitle').textContent = `Nuevo Movimiento (${account === 'personal' ? 'Personal' : appState.settings.businessName})`;
+      updateTransactionCategoryOptions();
+      document.getElementById('modalTransaction').classList.remove('hidden');
+    }
 
-      // 3. Rosse Monthly Sales (Export vs National stems)
-      const expStemsByMonth = [];
-      const natStemsByMonth = [];
-      for (let m = 1; m <= 12; m++) {
-        let eStems = 0;
-        let nStems = 0;
-        appState.shipments.forEach(s => {
-          if (isDateInMonthYear(s.date, m, year)) {
-            if (s.type === 'exportacion') eStems += (Number(s.totalStems) - Number(s.returnedStems || 0));
-            if (s.type === 'nacional') nStems += (Number(s.totalStems) - Number(s.returnedStems || 0));
-          }
-        });
-        expStemsByMonth.push(eStems);
-        natStemsByMonth.push(nStems);
+    function updateTransactionCategoryOptions() {
+      const account = document.getElementById('txAccount').value;
+      const type = document.getElementById('txType').value;
+      const select = document.getElementById('txCategory');
+      select.innerHTML = '';
+
+      let cats = [];
+      if (account === 'personal') {
+        cats = type === 'ingreso' ? appState.catalogs.personalIncomeCategories : appState.catalogs.personalExpenseCategories;
+      } else {
+        cats = type === 'ingreso' ? appState.catalogs.rosseIncomeCategories : appState.catalogs.rosseExpenseCategories;
       }
 
-      if (chartRosseSalesInstance) chartRosseSalesInstance.destroy();
-      const ctxRSales = document.getElementById('chartRosseMonthlySales').getContext('2d');
-      chartRosseSalesInstance = new Chart(ctxRSales, {
-        type: 'bar',
-        data: {
-          labels: monthNames,
-          datasets: [
-            { label: 'Tallos Exportación', data: expStemsByMonth, backgroundColor: '#2563eb', borderRadius: 6 },
-            { label: 'Tallos Nacional', data: natStemsByMonth, backgroundColor: '#059669', borderRadius: 6 }
-          ]
-        },
-        options: { 
-          responsive: true, 
-          maintainAspectRatio: false,
-          scales: {
-            x: { ticks: { color: textColor }, grid: { color: gridColor } },
-            y: { ticks: { color: textColor }, grid: { color: gridColor } }
-          },
-          plugins: {
-            legend: { labels: { color: textColor } }
-          }
-        }
-      });
-
-      // 4. Rosse Production by Rose Variety
-      const varieties = appState.catalogs.varieties;
-      const varCounts = varieties.map(v => {
-        return appState.harvests.filter(h => h.variety === v && h.date.startsWith(year)).reduce((s, h) => s + Number(h.exportStems || 0) + Number(h.nationalStems || 0), 0);
-      });
-
-      if (chartRosseVarInstance) chartRosseVarInstance.destroy();
-      const ctxRVar = document.getElementById('chartRosseVarieties').getContext('2d');
-      chartRosseVarInstance = new Chart(ctxRVar, {
-        type: 'pie',
-        data: {
-          labels: varieties,
-          datasets: [{ data: varCounts, backgroundColor: ['#ef4444', '#dc2626', '#f1f5f9', '#fbcfe8', '#8b5cf6', '#fed7aa'] }]
-        },
-        options: { 
-          responsive: true, 
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { labels: { color: textColor } }
-          }
-        }
+      cats.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        select.appendChild(opt);
       });
     }
 
@@ -3603,11 +3539,10 @@
       appState.transfers.push(transfer);
       saveState();
       closeModal('modalTransfer');
-      confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+      if (window.confetti) confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
       showToast("Transferencia completada atómicamente");
     }
 
-    // Debt & Payment Handlers
     function openModalDebt(account) {
       document.getElementById('debtAccountType').value = account;
       document.getElementById('debtModalTitle').textContent = `Nueva Deuda (${account === 'personal' ? 'Personal' : appState.settings.businessName})`;
@@ -3809,7 +3744,6 @@
       const avail = getLiveAvailability(variety, size, type);
       document.getElementById('shipLiveAvailabilityBadge').textContent = `${avail.toLocaleString()} tallos disponibles`;
 
-      // Show payment controls for national sales
       const payBox = document.getElementById('shipNationalPaymentModeBox');
       if (type === 'nacional') {
         payBox.classList.remove('hidden');
@@ -3833,7 +3767,6 @@
       }
     }
 
-    // Mesh Calculator Formula: (Meshes * StemsPerMesh) + LooseStems
     function calculateShipmentTotalStems() {
       const meshes = parseInt(document.getElementById('calcMeshes').value) || 0;
       const stemsPerMesh = parseInt(document.getElementById('calcStemsPerMesh').value) || 25;
@@ -3853,7 +3786,6 @@
       const looseStems = parseInt(document.getElementById('calcLooseStems').value) || 0;
       const totalStems = (meshes * stemsPerMesh) + looseStems;
 
-      // VALIDATE AGAINST LIVE AVAILABILITY
       const available = getLiveAvailability(variety, size, type);
       if (totalStems > available) {
         showToast(`Stock insuficiente. Solo hay ${available} tallos disponibles.`, "⚠️");
@@ -3879,7 +3811,6 @@
 
       appState.shipments.push(shipment);
 
-      // If immediate national cash payment was chosen, log income right away
       if (type === 'nacional' && paymentMethod === 'contado') {
         const natPrice = parseFloat(document.getElementById('shipNationalPrice').value) || 0;
         if (natPrice > 0) {
@@ -3930,7 +3861,6 @@
       e.preventDefault();
       const sId = document.getElementById('returnShipmentSelect').value;
       const returnedStems = parseInt(document.getElementById('returnStemsAmount').value) || 0;
-      const note = document.getElementById('returnNote').value.trim();
 
       const ship = appState.shipments.find(s => s.id === sId);
       if (!ship) return;
@@ -3946,7 +3876,6 @@
       showToast(`Se devolvieron ${returnedStems} tallos que pasaron a disponible Nacional.`);
     }
 
-    // Settlements / Cortes de Pago
     function openModalNewSettlement() {
       populateSelectClients('settleClient');
       document.getElementById('settleFromDate').value = '2026-09-01';
@@ -4020,7 +3949,6 @@
 
       appState.settlements.push(set);
 
-      // Log income in ROSSE CABS accounting automatically
       const client = appState.catalogs.clients.find(c => c.id === clientId) || { name: 'Cliente' };
       appState.rosseTransactions.push({
         id: 'tx_' + Date.now(),
@@ -4043,7 +3971,6 @@
       switchMainTab('tabInvoiceView');
     }
 
-    // Labor Actions
     function openModalLabor() {
       document.getElementById('laborDate').value = new Date().toISOString().split('T')[0];
       document.getElementById('formLabor').reset();
@@ -4092,7 +4019,6 @@
 
       if (l.status === 'Pendiente') {
         l.status = 'Pagado';
-        // Add expense to accounting
         appState.rosseTransactions.push({
           id: 'tx_' + Date.now(),
           date: new Date().toISOString().split('T')[0],
@@ -4148,7 +4074,6 @@
       showToast("Insumo eliminado");
     }
 
-    // Catalogs & Clients Management
     function openModalAddCatalogItem(type) {
       document.getElementById('catalogItemType').value = type;
       document.getElementById('catalogItemValue').value = '';
@@ -4213,7 +4138,6 @@
       showToast("Cliente eliminado");
     }
 
-    // Invoice Custom Editor
     function openModalInvoiceEditor() {
       const inv = appState.settings.invoice;
       document.getElementById('editInvRuc').value = inv.ruc;
@@ -4236,7 +4160,6 @@
       showToast("Factura actualizada");
     }
 
-    // Helper functions for Select population
     function populateSelect(selectId, array) {
       const sel = document.getElementById(selectId);
       sel.innerHTML = '';
@@ -4284,7 +4207,6 @@
         }
       }
 
-      // Download Fallback
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -4312,7 +4234,7 @@
             appState = imported;
             saveState();
             closeModal('modalSettings');
-            confetti({ particleCount: 80, spread: 70 });
+            if (window.confetti) confetti({ particleCount: 80, spread: 70 });
             showToast("¡Copia de seguridad restaurada con éxito!");
           } else {
             showToast("El archivo no contiene un formato de respaldo válido", "❌");
@@ -4328,9 +4250,8 @@
       loadStateFromStorage();
       initTheme();
       refreshAllUI();
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
 
-      // Show welcome guide if first time
       if (!localStorage.getItem('rosse_cabs_onboarded')) {
         openModalHelpTour();
         localStorage.setItem('rosse_cabs_onboarded', 'true');
