@@ -1831,6 +1831,7 @@
     let appState = {
       ownerName: "Jhordy",
       businessName: "ROSSE CABS",
+      businessLogo: "",
       userPassword: "123",
       theme: "dark",
       varieties: [
@@ -2619,7 +2620,49 @@
       document.getElementById('setBusinessName').value = appState.businessName;
       document.getElementById('setUserPassword').value = appState.userPassword || "123";
       document.getElementById('masterResetKeyInput').value = "";
+      renderLogos();
       openModal('modalSettings');
+    }
+
+    function triggerLogoInput() {
+      const input = document.getElementById('logoFileInput');
+      if (input) {
+        input.value = '';
+        input.click();
+      }
+    }
+
+    function handleLogoFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        showToast("Selecciona un archivo de imagen válido", "⚠️");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        appState.businessLogo = e.target.result;
+        saveState();
+        showToast("¡Logo actualizado correctamente!", "📸");
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeLogo() {
+      appState.businessLogo = "";
+      saveState();
+      showToast("Se restableció la rosa (🌹)", "ℹ️");
+    }
+
+    function renderLogos() {
+      const hasLogo = Boolean(appState.businessLogo);
+      const imgHtml = hasLogo ? `<img src="${appState.businessLogo}" alt="Logo" class="w-full h-full object-cover">` : '🌹';
+      
+      const elements = ['navHeaderLogo', 'dashRosseCardLogo', 'tabRosseHeaderLogo', 'invoiceLogo', 'settingsLogoPreview'];
+      elements.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = imgHtml;
+      });
     }
 
     function saveGeneralSettings() {
@@ -2815,8 +2858,7 @@
 
       document.getElementById('dashRosseHarvestTotal').textContent = totalStems.toLocaleString();
       document.getElementById('dashRosseAvailableShip').textContent = (dispExp + dispNac).toLocaleString();
-      const elRosseBal = document.getElementById('dashRosseBalanceTotal');
-      elRosseBal.textContent = `$${bal.rose.toFixed(2)}`;
+      document.getElementById('dashRosseBalanceTotal').textContent = `$${bal.rose.toFixed(2)}`;
       elRosseBal.className = `font-mono text-sm sm:text-base font-black ${bal.rose >= 0 ? 'text-emerald-600' : 'text-rose-600'} mt-1 block`;
 
       /* Mini-dashboards superiores en pestañas internas */
@@ -2830,6 +2872,7 @@
       document.getElementById('miniPersonalExpense').textContent = `$${personalExpenseYear.toFixed(2)}`;
       document.getElementById('miniPersonalDebt').textContent = `$${personalDebtPending.toFixed(2)}`;
 
+      renderLogos();
       renderRentabilityTable();
       renderHarvestTable();
       renderSalesTable();
