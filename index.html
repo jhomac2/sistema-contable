@@ -28,15 +28,11 @@
     }
   </script>
 
-  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <!-- Fuentes e Iconos -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
-
-  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-
-  <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
@@ -49,10 +45,10 @@
     }
     @media print {
       body * {
-        visibility: hidden;
+        visibility: hidden !important;
       }
       #printArea, #printArea * {
-        visibility: visible;
+        visibility: visible !important;
       }
       #printArea {
         position: absolute;
@@ -89,9 +85,6 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-full flex flex-col transition-colors duration-200 antialiased pb-24 md:pb-6">
 
-  <!-- ============================================================== -->
-  <!-- CABECERA SUPERIOR CON SALDOS EN VIVO                           -->
-  <!-- ============================================================== -->
   <header class="bg-slate-900/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-30 transition-colors">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between gap-3">
       
@@ -134,13 +127,10 @@
 
     </div>
 
-    <!-- ============================================================== -->
-    <!-- NAVEGACIÓN PRINCIPAL: 6 PESTAÑAS (RENOMBRADO A DASHBOARD)       -->
-    <!-- ============================================================== -->
     <nav class="bg-slate-900 border-t border-slate-800 px-3 sm:px-6 overflow-x-auto">
       <div class="max-w-7xl mx-auto flex items-center justify-start gap-1.5 sm:gap-2 py-2 min-w-max">
         
-        <!-- 1. Dashboard (Antes Inicio) -->
+        <!-- 1. Dashboard -->
         <button onclick="switchMainTab('tabDashboard')" id="mainNavDashboard" class="main-nav-btn px-3.5 sm:px-4 py-2 rounded-xl font-bold text-white bg-slate-800 border border-slate-700 flex items-center gap-2 transition active:scale-95 text-xs sm:text-sm shadow-sm">
           <i data-lucide="layout-grid" class="w-4 h-4 text-indigo-400"></i>
           <span>Dashboard</span>
@@ -182,9 +172,6 @@
   <!-- CONTENEDOR PRINCIPAL -->
   <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 space-y-6">
 
-    <!-- ============================================================== -->
-    <!-- PESTAÑA 1: DASHBOARD GENERAL (RESUMEN EJECUTIVO LIMPIO)         -->
-    <!-- ============================================================== -->
     <div id="tabDashboard" class="main-tab-view space-y-6">
       
       <!-- BANNER SUPERIOR CON SALUDO Y BOTONES -->
@@ -221,10 +208,10 @@
         </div>
       </div>
 
-      <!-- DOS TARJETAS PRINCIPALES DEL DASHBOARD (SIN DEUDA PENDIENTE AQUÍ) -->
+      <!-- DOS TARJETAS PRINCIPALES DEL DASHBOARD -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
         
-        <!-- TARJETA 1: FINANZAS PERSONALES (RESUMEN FINANCIERO LIMPIO) -->
+        <!-- TARJETA 1: FINANZAS PERSONALES -->
         <div class="bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-800 shadow-lg space-y-4 flex flex-col justify-between">
           <div class="flex items-start justify-between gap-3">
             <div class="flex items-center gap-3">
@@ -242,7 +229,7 @@
             </button>
           </div>
 
-          <!-- MÉTRICAS EN RECUADROS OSCUROS Y CAJA BLANCA (DINERO EN CAJA) -->
+          <!-- MÉTRICAS EN RECUADROS -->
           <div class="grid grid-cols-3 gap-2.5 text-center">
             <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-3">
               <span class="text-[9px] sm:text-[10px] uppercase font-bold text-slate-400 block tracking-wider">INGRESOS AÑO</span>
@@ -271,7 +258,7 @@
           </div>
         </div>
 
-        <!-- TARJETA 2: ROSSE CABS (RESUMEN COSECHA Y SALDO) -->
+        <!-- TARJETA 2: ROSSE CABS -->
         <div class="bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-800 shadow-lg space-y-4 flex flex-col justify-between">
           <div class="flex items-start justify-between gap-3">
             <div class="flex items-center gap-3">
@@ -289,7 +276,7 @@
             </button>
           </div>
 
-          <!-- MÉTRICAS EN RECUADROS OSCUROS Y CAJA BLANCA -->
+          <!-- MÉTRICAS EN RECUADROS -->
           <div class="grid grid-cols-3 gap-2.5 text-center">
             <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-3">
               <span class="text-[9px] sm:text-[10px] uppercase font-bold text-slate-400 block tracking-wider">COSECHA TOTAL</span>
@@ -342,9 +329,6 @@
 
     </div>
 
-    <!-- ============================================================== -->
-    <!-- PESTAÑA 2: ROSSE CABS (FINCA FLORÍCOLA COMPLETA)               -->
-    <!-- ============================================================== -->
     <div id="tabRosse" class="main-tab-view hidden space-y-6">
       
       <!-- MINI-DASHBOARD SUPERIOR DE ROSSE CABS -->
@@ -359,7 +343,6 @@
               <p class="text-xs text-rose-300">Gestión de campo, disponibilidad, liquidaciones y rentabilidad</p>
             </div>
           </div>
-          <!-- Botones de Acción Inmediata en el Mini-Dashboard -->
           <div class="flex items-center gap-2 flex-wrap">
             <button onclick="openModalHarvest()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md">
               <i data-lucide="scissors" class="w-3.5 h-3.5"></i>
@@ -380,7 +363,6 @@
           </div>
         </div>
 
-        <!-- Indicadores Rápidos del Mini-Dashboard de la Finca -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
           <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-3">
             <span class="text-[10px] uppercase font-bold text-rose-300 block">DISP. EXPORTACIÓN</span>
@@ -434,7 +416,7 @@
       <!-- SUB-TAB 2.0: DASHBOARD FINCA & ANÁLISIS DE RENTABILIDAD COMPLETO -->
       <div id="subRosseDashboard" class="sub-rosse-view space-y-6">
 
-        <!-- RENDIMIENTO GLOBAL DE COSECHA (% APROVECHAMIENTO) -->
+        <!-- RENDIMIENTO GLOBAL DE COSECHA -->
         <div class="bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-800 shadow-lg space-y-3">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
             <div>
@@ -504,7 +486,6 @@
                 </tr>
               </thead>
               <tbody id="varietyRentabilityTableBody" class="divide-y divide-slate-800 font-mono">
-                <!-- Renderizado dinámico -->
               </tbody>
             </table>
           </div>
@@ -567,7 +548,6 @@
           </div>
         </div>
 
-        <!-- Registro de Cosechas Realizadas -->
         <div class="bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-800 shadow-sm space-y-3">
           <div class="flex items-center justify-between">
             <h4 class="font-extrabold text-sm text-white flex items-center gap-1.5">
@@ -594,7 +574,6 @@
                 </tr>
               </thead>
               <tbody id="harvestTableBody" class="divide-y divide-slate-800">
-                <!-- Filas dinámicas -->
               </tbody>
             </table>
           </div>
@@ -647,7 +626,6 @@
                 </tr>
               </thead>
               <tbody id="salesTableBody" class="divide-y divide-slate-800">
-                <!-- Render dinámico -->
               </tbody>
             </table>
           </div>
@@ -673,7 +651,6 @@
                 </tr>
               </thead>
               <tbody id="settlementsTableBody" class="divide-y divide-slate-800 font-mono">
-                <!-- Render dinámico -->
               </tbody>
             </table>
           </div>
@@ -711,7 +688,6 @@
                 </tr>
               </thead>
               <tbody id="laborTableBody" class="divide-y divide-slate-800">
-                <!-- Render dinámico -->
               </tbody>
             </table>
           </div>
@@ -754,7 +730,6 @@
                 </tr>
               </thead>
               <tbody id="rosseTransactionsTableBody" class="divide-y divide-slate-800 font-mono">
-                <!-- Render dinámico -->
               </tbody>
             </table>
           </div>
@@ -779,19 +754,15 @@
           </div>
 
           <div id="rosseDebtsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Render dinámico -->
           </div>
         </div>
       </div>
 
     </div>
 
-    <!-- ============================================================== -->
-    <!-- PESTAÑA 3: CONTABILIDAD PERSONAL (CON DASHBOARD Y DEUDAS)      -->
-    <!-- ============================================================== -->
     <div id="tabPersonal" class="main-tab-view hidden space-y-6">
       
-      <!-- MINI-DASHBOARD SUPERIOR DE FINANZAS PERSONALES -->
+      <!-- MINI-DASHBOARD PERSONAL -->
       <div class="bg-gradient-to-r from-indigo-950 via-slate-900 to-slate-900 p-5 sm:p-6 rounded-3xl border border-indigo-900/60 shadow-xl space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
           <div class="flex items-center gap-3">
@@ -803,7 +774,6 @@
               <p class="text-xs text-indigo-300">Caja privada, gastos familiares y compromisos de deuda 100% aislados de la finca</p>
             </div>
           </div>
-          <!-- Botones de Acción Inmediata en el Mini-Dashboard -->
           <div class="flex items-center gap-2 flex-wrap">
             <button onclick="openModalUniversalIncome('personal')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i>
@@ -824,7 +794,6 @@
           </div>
         </div>
 
-        <!-- Indicadores Rápidos del Mini-Dashboard Personal -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
           <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-3">
             <span class="text-[10px] uppercase font-bold text-indigo-300 block">SALDO EN CAJA</span>
@@ -845,10 +814,9 @@
         </div>
       </div>
 
-      <!-- Tarjetas de Deudas Personales e Historial de Movimientos -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        <!-- Deudas Personales (AQUÍ SÍ SE GESTIONAN LAS DEUDAS CON AMORTIZACIÓN) -->
+        <!-- Deudas Personales -->
         <div class="bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-800 shadow-sm space-y-3">
           <div class="flex items-center justify-between">
             <h4 class="font-extrabold text-sm text-white flex items-center gap-1.5">
@@ -862,7 +830,6 @@
           </div>
 
           <div id="personalDebtsContainer" class="space-y-3">
-            <!-- Render dinámico -->
           </div>
         </div>
 
@@ -890,7 +857,6 @@
                 </tr>
               </thead>
               <tbody id="interAccountTransfersBody" class="divide-y divide-slate-800 font-mono">
-                <!-- Render dinámico -->
               </tbody>
             </table>
           </div>
@@ -918,7 +884,6 @@
               </tr>
             </thead>
             <tbody id="personalTransactionsTableBody" class="divide-y divide-slate-800 font-mono">
-              <!-- Render dinámico -->
             </tbody>
           </table>
         </div>
@@ -926,9 +891,6 @@
 
     </div>
 
-    <!-- ============================================================== -->
-    <!-- PESTAÑA 4: CATEGORÍAS & CATÁLOGOS                              -->
-    <!-- ============================================================== -->
     <div id="tabCategories" class="main-tab-view hidden space-y-6">
       
       <div class="bg-slate-900 p-5 sm:p-6 rounded-3xl border border-slate-800 shadow-xl space-y-2">
@@ -967,7 +929,6 @@
                 </tr>
               </thead>
               <tbody id="catVarietiesTableBody" class="divide-y divide-slate-800 font-mono">
-                <!-- Render dinámico -->
               </tbody>
             </table>
           </div>
@@ -999,7 +960,6 @@
                 </tr>
               </thead>
               <tbody id="catClientsTableBody" class="divide-y divide-slate-800">
-                <!-- Render dinámico -->
               </tbody>
             </table>
           </div>
@@ -1009,9 +969,6 @@
 
     </div>
 
-    <!-- ============================================================== -->
-    <!-- PESTAÑA 5: TRANSFERENCIAS INTERCUENTAS                         -->
-    <!-- ============================================================== -->
     <div id="tabTransfersView" class="main-tab-view hidden space-y-6">
       <div class="bg-slate-900 p-5 sm:p-6 rounded-3xl border border-slate-800 shadow-xl space-y-3">
         <h3 class="text-base sm:text-lg font-black text-white flex items-center gap-2">
@@ -1028,9 +985,6 @@
       </div>
     </div>
 
-    <!-- ============================================================== -->
-    <!-- PESTAÑA 6: FACTURA SRI ECUADOR                                 -->
-    <!-- ============================================================== -->
     <div id="tabInvoiceView" class="main-tab-view hidden space-y-6">
       <div class="bg-slate-900 p-4 sm:p-5 rounded-3xl border border-slate-800 shadow-sm space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -1059,7 +1013,7 @@
               <h3 id="invTradeNamePrint" class="font-black text-lg text-slate-900 uppercase">ROSSE CABS</h3>
               <p class="text-slate-600 leading-tight">
                 <b>Emisor:</b> <span id="invOwnerNamePrint">Jhordy</span><br>
-                <b>Matriz:</b> Sangolquí, Pichincha, Ecuador 🇪🇨<br>
+                <b>Matriz:</b> Tupigachi - Ecuador 🇪🇨<br>
                 <b>Obligado a Llevar Contabilidad:</b> NO (Régimen RIMPE Emprendedor)
               </p>
             </div>
@@ -1082,7 +1036,7 @@
             </div>
             <div>
               <p><b>Fecha de Emisión:</b> 2026-09-23</p>
-              <p><b>Dirección / Teléfono:</b> Pichincha, Ecuador - 0963923399</p>
+              <p><b>Dirección / Teléfono:</b> Tupigachi, Ecuador - 0963923399</p>
             </div>
           </div>
 
@@ -1123,26 +1077,47 @@
 
   </main>
 
-  <!-- ============================================================== -->
-  <!-- PIE DE PÁGINA OFICIAL CON CRÉDITOS Y WHATSAPP                 -->
-  <!-- ============================================================== -->
   <footer class="bg-slate-900 border-t border-slate-800 py-6 px-4 text-center text-xs text-slate-400 transition-colors">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
       <div>
         <p class="font-black text-slate-200">
           Diseñado por <span class="text-rose-400">I´m_Jhordy</span>
         </p>
-        <p class="text-[11px] mt-0.5">Sangolquí, Pichincha, Ecuador 🇪🇨</p>
+        <p class="text-[11px] mt-0.5">Tupigachi - Ecuador 🇪🇨</p>
       </div>
 
-      <div class="flex items-center gap-4 text-xs font-bold">
+      <div class="flex items-center gap-4 text-xs font-bold flex-wrap justify-center">
         <!-- TikTok -->
-        <a href="https://www.tiktok.com/@I_m_Jhordy" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-slate-300 hover:text-rose-400 transition">
-          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+        <a href="https://www.tiktok.com/@mr_jhordy21?_r=1&_t=ZS-9A039casma0" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-slate-300 hover:text-rose-400 transition" title="TikTok @mr_jhordy21">
+          <svg class="w-4 h-4 fill-current shrink-0 inline-block" style="width:16px;height:16px;min-width:16px;" viewBox="0 0 24 24">
             <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298-.002.595.042.88.13V9.4a6.33 6.33 0 0 0-1-.08A6.34 6.34 0 0 0 3 15.66a6.34 6.34 0 0 0 10.81 4.48 6.3 6.3 0 0 0 1.86-4.48V8.72a8.18 8.18 0 0 0 4.92 1.63V6.9a4.85 4.85 0 0 1-1-.21z"/>
           </svg>
-          <span>@I_m_Jhordy</span>
+          <span>TikTok</span>
         </a>
+
+        <!-- Facebook -->
+        <span class="flex items-center gap-1 text-slate-500 hover:text-blue-500 cursor-pointer transition" title="Facebook">
+          <svg class="w-4 h-4 fill-current shrink-0 inline-block" style="width:16px;height:16px;min-width:16px;" viewBox="0 0 24 24">
+            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+          </svg>
+          <span>Facebook</span>
+        </span>
+
+        <!-- YouTube -->
+        <span class="flex items-center gap-1 text-slate-500 hover:text-red-500 cursor-pointer transition" title="YouTube">
+          <svg class="w-4 h-4 fill-current shrink-0 inline-block" style="width:16px;height:16px;min-width:16px;" viewBox="0 0 24 24">
+            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+          </svg>
+          <span>YouTube</span>
+        </span>
+
+        <!-- Instagram -->
+        <span class="flex items-center gap-1 text-slate-500 hover:text-pink-500 cursor-pointer transition" title="Instagram">
+          <svg class="w-4 h-4 fill-current shrink-0 inline-block" style="width:16px;height:16px;min-width:16px;" viewBox="0 0 24 24">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+          </svg>
+          <span>Instagram</span>
+        </span>
 
         <!-- WhatsApp -->
         <a href="https://wa.me/593963923399?text=Hola%20Jhordy,%20tengo%20una%20consulta%20sobre%20el%20sistema%20ROSSE%20CABS" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-emerald-400 hover:underline">
@@ -1153,9 +1128,7 @@
     </div>
   </footer>
 
-  <!-- ============================================================== -->
-  <!-- BARRA DE NAVEGACIÓN INFERIOR MÓVIL                             -->
-  <!-- ============================================================== -->
+  <!-- BARRA DE NAVEGACIÓN INFERIOR MÓVIL -->
   <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 px-3 py-2 shadow-2xl flex items-center justify-around text-xs font-bold no-print">
     <button onclick="switchMainTab('tabDashboard')" id="mobNavDashboard" class="flex flex-col items-center gap-1 text-indigo-400 transition">
       <span class="text-base">⊞</span>
@@ -1177,11 +1150,8 @@
     </button>
   </nav>
 
-  <!-- ============================================================== -->
-  <!-- MODALES DE CONTROL, OPERACIONES Y AJUSTES                      -->
-  <!-- ============================================================== -->
 
-  <!-- MODAL: REGISTRAR COSECHA (CON CALCULADORA DE MALLAS) -->
+  <!-- MODAL: REGISTRAR COSECHA -->
   <div id="modalHarvest" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-3">
     <div class="bg-slate-900 rounded-3xl p-5 sm:p-6 w-full max-w-lg border border-slate-800 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -1268,7 +1238,7 @@
     </div>
   </div>
 
-  <!-- MODAL: ENVIAR FLOR / VENDER (CON CALCULADORA DE MALLAS Y DISPONIBILIDAD EN VIVO) -->
+  <!-- MODAL: ENVIAR FLOR / VENDER -->
   <div id="modalSendFlower" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-3">
     <div class="bg-slate-900 rounded-3xl p-5 sm:p-6 w-full max-w-lg border border-slate-800 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -1317,7 +1287,7 @@
         <div class="bg-slate-950/60 p-3.5 rounded-2xl border border-slate-800 space-y-2">
           <div class="flex items-center justify-between">
             <span class="font-bold text-slate-300">📦 Calculadora de Mallas y Tallos a Enviar</span>
-            <span class="text-[10px] text-slate-500">Mallas $\times$ Tallos + Sueltos</span>
+            <span class="text-[10px] text-slate-500">Mallas × Tallos + Sueltos</span>
           </div>
 
           <div class="grid grid-cols-3 gap-2">
@@ -1742,33 +1712,106 @@
           <input type="text" id="setBusinessName" value="ROSSE CABS" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs font-semibold">
         </div>
 
+        <!-- Contraseña Personal de Seguridad -->
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Tu Contraseña Personal (para autorizar borrados)</label>
+          <input type="password" id="setUserPassword" placeholder="Ej. 1234" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs font-semibold">
+          <p class="text-[10px] text-slate-400 mt-0.5">Esta clave protegerá tus datos contra borrados accidentales.</p>
+        </div>
+
+        <div class="flex justify-end">
+          <button onclick="saveGeneralSettings()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-4 py-2 rounded-xl text-xs transition">
+            Guardar Configuración
+          </button>
+        </div>
+
         <!-- Copia de Seguridad -->
         <div class="bg-slate-800 p-3.5 rounded-2xl border border-slate-700 space-y-2">
           <span class="font-bold text-slate-200 block">💾 Copia de Seguridad y Respaldo</span>
           <p class="text-[11px] text-slate-400">
-            Tus datos se guardan de forma privada en este dispositivo. Comparte tu respaldo por WhatsApp o descarga el archivo.
+            Tus datos se guardan de forma privada en este dispositivo. Comparte tu respaldo por WhatsApp, descarga el archivo o restaura una copia anterior.
           </p>
-          <div class="flex gap-2">
-            <button onclick="exportBackupData()" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 rounded-xl text-center transition">
-              Descargar JSON
+          <div class="grid grid-cols-3 gap-2">
+            <button onclick="exportBackupData()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 rounded-xl text-center transition text-[11px]">
+              Descargar
             </button>
-            <button onclick="shareBackupWhatsApp()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-xl text-center transition">
-              Compartir Respaldo
+            <button onclick="shareBackupWhatsApp()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-xl text-center transition text-[11px]">
+              WhatsApp
+            </button>
+            <button onclick="openModalRestoreBackup()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-2 rounded-xl text-center transition text-[11px]">
+              Cargar Copia
             </button>
           </div>
         </div>
 
         <!-- Zona de Peligro: Reinicio Total -->
-        <div class="bg-rose-950/40 p-3.5 rounded-2xl border border-rose-900/60 space-y-2">
+        <div class="bg-rose-950/40 p-3.5 rounded-2xl border border-rose-900/60 space-y-2.5">
           <span class="font-bold text-rose-300 block">⚠️ Reinicio Total y Borrado Seguro</span>
-          <p class="text-[11px] text-rose-400">
-            Para borrar el sistema ingresa la clave de rescate oficial: <code class="font-mono font-black">I´M_JHORDY</code>
+          <p class="text-[11px] text-rose-300/90 leading-relaxed">
+            Para vaciar el sistema ingresa <b>tu contraseña personal</b> o la <b>clave maestra de rescate</b>.
           </p>
-          <input type="text" id="masterResetKeyInput" placeholder="Escribe la clave de rescate..." class="w-full bg-slate-900 border border-rose-800 rounded-xl px-3 py-2 text-xs font-mono">
-          <button onclick="executeSafeReset()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-2 rounded-xl transition">
+          <input type="password" id="masterResetKeyInput" placeholder="Escribe tu contraseña o clave de rescate..." class="w-full bg-slate-900 border border-rose-800 rounded-xl px-3 py-2 text-xs font-mono">
+          
+          <!-- Mensaje de ayuda si olvidó la contraseña -->
+          <div class="p-2.5 rounded-xl bg-slate-900/90 border border-rose-900/80 text-[11px] text-slate-300 space-y-1">
+            <p class="font-bold text-amber-300 flex items-center gap-1">
+              <span>❓</span>
+              <span>¿Olvidaste tu contraseña?</span>
+            </p>
+            <p class="text-slate-400 leading-tight">
+              Comunícate directamente con <b>Jhordy</b> para solicitar la clave maestra de rescate oficial.
+            </p>
+            <a href="https://wa.me/593963923399?text=Hola%20Jhordy,%20olvid%C3%A9%20mi%20contrase%C3%B1a%20en%20el%20sistema%20ROSSE%20CABS%20y%20necesito%20la%20clave%20de%20rescate" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 font-bold hover:underline pt-0.5">
+              <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+              <span>Pedir clave de rescate a Jhordy por WhatsApp</span>
+            </a>
+          </div>
+
+          <button onclick="executeSafeReset()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-2 rounded-xl transition active:scale-95 shadow-md">
             Ejecutar Borrado Seguro
           </button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: RESTAURAR COPIA DE SEGURIDAD (ARCHIVO O TEXTO) -->
+  <div id="modalRestoreBackup" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-3">
+    <div class="bg-slate-900 rounded-3xl p-5 sm:p-6 w-full max-w-md border border-slate-800 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h4 class="font-black text-sm sm:text-base text-white flex items-center gap-2">
+          <span>📥</span>
+          <span>Cargar / Restaurar Copia de Seguridad</span>
+        </h4>
+        <button onclick="closeModal('modalRestoreBackup')" class="p-1 rounded-xl text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3.5 text-xs">
+        <!-- Opción 1: Archivo -->
+        <div class="p-3 bg-slate-800 rounded-2xl border border-slate-700 space-y-2">
+          <span class="font-bold text-slate-200 block">Opción 1: Seleccionar archivo desde tu dispositivo</span>
+          <button onclick="triggerFileInput()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition">
+            <i data-lucide="folder-open" class="w-4 h-4"></i>
+            <span>Buscar archivo (.json)</span>
+          </button>
+          <input type="file" id="backupFileInput" accept=".json,application/json,text/plain,*/*" class="hidden" onchange="handleBackupFile(event)">
+        </div>
+
+        <!-- Opción 2: Pegar Texto -->
+        <div class="space-y-1.5">
+          <span class="font-bold text-slate-200 block">Opción 2: O pega aquí el código / JSON copiado</span>
+          <textarea id="restoreRawTextInput" rows="4" placeholder="Pega aquí el código copiado de tu respaldo..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 font-mono text-[11px] text-slate-200 outline-none resize-none"></textarea>
+          <button onclick="restoreFromRawText()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-2 rounded-xl transition flex items-center justify-center gap-1.5">
+            <i data-lucide="check" class="w-4 h-4"></i>
+            <span>Restaurar desde Texto Pegado</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="flex justify-end pt-1">
+        <button onclick="closeModal('modalRestoreBackup')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:bg-slate-800">Cerrar</button>
       </div>
     </div>
   </div>
@@ -1779,9 +1822,6 @@
     <span id="toastMessage">Operación realizada con éxito</span>
   </div>
 
-  <!-- ============================================================== -->
-  <!-- NÚCLEO DE JAVASCRIPT: LÓGICA AGRONÓMICA, CONTABLE Y PERSISTENCIA-->
-  <!-- ============================================================== -->
   <script>
     /* Claves de sistema y persistencia */
     const MASTER_RESCUE_KEY = "I´M_JHORDY";
@@ -1791,6 +1831,7 @@
     let appState = {
       ownerName: "Jhordy",
       businessName: "ROSSE CABS",
+      userPassword: "123",
       theme: "dark",
       varieties: [
         { name: "Explorer", plants: 5000 },
@@ -2576,7 +2617,17 @@
     function openModalSettings() {
       document.getElementById('setOwnerName').value = appState.ownerName;
       document.getElementById('setBusinessName').value = appState.businessName;
+      document.getElementById('setUserPassword').value = appState.userPassword || "123";
+      document.getElementById('masterResetKeyInput').value = "";
       openModal('modalSettings');
+    }
+
+    function saveGeneralSettings() {
+      appState.ownerName = document.getElementById('setOwnerName').value.trim() || "Jhordy";
+      appState.businessName = document.getElementById('setBusinessName').value.trim() || "ROSSE CABS";
+      appState.userPassword = document.getElementById('setUserPassword').value.trim() || "123";
+      saveState();
+      showToast("Configuración y contraseña guardadas con éxito", "✅");
     }
 
     function exportBackupData() {
@@ -2596,14 +2647,71 @@
       window.open(url, '_blank');
     }
 
-    function executeSafeReset() {
-      const key = document.getElementById('masterResetKeyInput').value.trim();
-      if (key !== MASTER_RESCUE_KEY) {
-        showToast("Clave de rescate incorrecta", "❌");
+    function openModalRestoreBackup() {
+      document.getElementById('restoreRawTextInput').value = '';
+      openModal('modalRestoreBackup');
+    }
+
+    function triggerFileInput() {
+      const input = document.getElementById('backupFileInput');
+      input.value = '';
+      input.click();
+    }
+
+    function handleBackupFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        processBackupJson(e.target.result);
+      };
+      reader.readAsText(file);
+    }
+
+    function restoreFromRawText() {
+      const raw = document.getElementById('restoreRawTextInput').value.trim();
+      if (!raw) {
+        showToast("Pega el contenido del respaldo", "⚠️");
         return;
       }
+      processBackupJson(raw);
+    }
+
+    function processBackupJson(jsonString) {
+      try {
+        const data = JSON.parse(jsonString);
+        if (data && (data.varieties || data.harvests || data.transactions || data.sales)) {
+          appState = { ...appState, ...data };
+          saveState();
+          closeModal('modalRestoreBackup');
+          closeModal('modalSettings');
+          showToast("¡Copia de seguridad restaurada con éxito!", "✅");
+        } else {
+          showToast("El formato del archivo no es válido", "❌");
+        }
+      } catch (err) {
+        showToast("Error al procesar el archivo o código JSON", "❌");
+      }
+    }
+
+    function executeSafeReset() {
+      const inputKey = document.getElementById('masterResetKeyInput').value.trim();
+      const userPass = appState.userPassword || "123";
+
+      if (!inputKey) {
+        showToast("Ingresa tu contraseña o la clave de rescate", "⚠️");
+        return;
+      }
+
+      if (inputKey !== userPass && inputKey !== MASTER_RESCUE_KEY) {
+        showToast("Contraseña incorrecta. Pide la clave a Jhordy al 0963923399", "❌");
+        return;
+      }
+
       localStorage.removeItem(STORAGE_KEY);
-      location.reload();
+      showToast("Sistema borrado y reiniciado correctamente", "🚨");
+      setTimeout(() => location.reload(), 1000);
     }
 
     function calculateBalances() {
