@@ -51,6 +51,8 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Canvas Confetti CDN -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+  <!-- JsBarcode CDN para Factura SRI -->
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap');
@@ -121,12 +123,12 @@
     </div>
   </div>
 
-  <!-- Encabezado Superior -->
+  <!-- Encabezado Superior Responsivo -->
   <header class="no-print bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-30 shadow-md">
-    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 flex items-center justify-between gap-2">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-2.5">
 
-      <!-- Logo, Nombre de la Finca y BOTÓN PERMANENTE DE WHATSAPP -->
-      <div class="flex items-center gap-2.5 min-w-0">
+      <!-- Logo, Nombre de la Finca y BOTÓN DE RESPALDO A WHATSAPP -->
+      <div class="flex items-center gap-2 sm:gap-3 min-w-0">
         <div id="navHeaderLogoContainer" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-rose-600 via-rose-500 to-amber-500 flex-shrink-0 flex items-center justify-center font-black text-white text-base sm:text-lg shadow-sm overflow-hidden border border-white/20">
           <span id="navHeaderLogoEmoji">🌹</span>
           <img id="navHeaderLogoImg" src="" alt="Logo" class="w-full h-full object-cover hidden">
@@ -139,20 +141,22 @@
               <span id="headerOwnerName" class="text-[11px] sm:text-xs text-rose-300 font-semibold truncate">Jhordy</span>
             </h1>
           </div>
-          <p class="text-[10px] sm:text-[11px] text-slate-400 hidden sm:block">Finca Florícola de Rosas & Finanzas Personales — Tupigachi</p>
+          <p class="text-[10px] text-slate-400 hidden sm:block">Finca Florícola & Finanzas Personales — Tupigachi</p>
         </div>
 
-        <!-- BOTÓN FIJO DE RESPALDO A WHATSAPP (SIEMPRE VISIBLE) -->
-        <button onclick="shareBackupDataWhatsApp()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs shadow-md transition active:scale-95 flex items-center gap-1 flex-shrink-0 ml-1 border border-amber-300" title="Descargar copia JSON y compartir a tu WhatsApp">
-          <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
-          <span class="hidden xs:inline">📲 Respaldar en WhatsApp</span>
-          <span class="xs:hidden">WhatsApp</span>
+        <!-- BOTÓN FIJO DE RESPALDO A WHATSAPP (TEXTO EXACTO Y RESPONSIVO) -->
+        <button onclick="shareBackupDataWhatsApp()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold px-3 py-1.5 rounded-xl text-[11px] sm:text-xs shadow-md transition active:scale-95 flex items-center gap-1.5 border border-emerald-400/40 flex-shrink-0" title="Descargar copia JSON y enviar respaldo a WhatsApp">
+          <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24">
+            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.969.587 1.849.914 3.011.914 3.181 0 5.767-2.586 5.768-5.766.001-3.182-2.585-5.768-5.768-5.768zm0-1.844c4.2 0 7.612 3.412 7.613 7.612 0 4.201-3.413 7.612-7.613 7.612-1.352 0-2.616-.354-3.711-.971l-5.32 1.393 1.423-5.187c-.672-1.127-1.042-2.434-1.042-3.847 0-4.2 3.412-7.612 7.612-7.612z"/>
+          </svg>
+          <span class="hidden sm:inline">Realizar respaldo en WhatsApp</span>
+          <span class="sm:hidden">Respaldar WhatsApp</span>
         </button>
       </div>
 
-      <!-- Balances en Vivo y Controles -->
+      <!-- Balances en Vivo y Acciones Rápidas -->
       <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
-        <!-- Badge Saldo Personal -->
+        <!-- Saldo Personal -->
         <div class="flex items-center gap-1.5 bg-blue-950/80 border border-blue-500/30 px-2 sm:px-3 py-1 rounded-xl text-xs cursor-pointer hover:bg-blue-900/60 transition" onclick="switchMainTab('tabPersonal')" title="Ver Finanzas Personales">
           <div class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></div>
           <div>
@@ -161,8 +165,8 @@
           </div>
         </div>
 
-        <!-- Badge Saldo ROSSE CABS -->
-        <div class="flex items-center gap-1.5 bg-rose-950/80 border border-rose-500/30 px-2 sm:px-3 py-1 rounded-xl text-xs cursor-pointer hover:bg-rose-900/60 transition" onclick="switchMainTab('tabRosse')" title="Ver Finca ROSSE CABS">
+        <!-- Saldo ROSSE CABS -->
+        <div class="flex items-center gap-1.5 bg-rose-950/80 border border-rose-500/30 px-2 sm:px-3 py-1 rounded-xl text-xs cursor-pointer hover:bg-rose-900/60 transition" onclick="switchMainTab('tabBusiness')" title="Ver Finca ROSSE CABS">
           <div class="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse"></div>
           <div>
             <span id="badgeRosseLabel" class="text-[8px] sm:text-[9px] text-rose-300 font-semibold block leading-tight hidden xs:inline">ROSSE CABS</span>
@@ -170,21 +174,10 @@
           </div>
         </div>
 
-        <!-- Botón Rápido de Transferencia -->
-        <button onclick="openModalTransfer()" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 text-slate-950 font-bold p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl text-xs shadow transition active:scale-95 flex items-center gap-1" title="Transferir entre ROSSE CABS y Personal">
-          <i data-lucide="arrow-left-right" class="w-3.5 h-3.5"></i>
-          <span class="hidden sm:inline text-xs">Transferir</span>
-        </button>
-
         <!-- Botón Modo Claro / Oscuro -->
-        <button onclick="toggleTheme()" id="btnToggleTheme" class="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 transition active:scale-95" title="Modo Claro / Oscuro">
+        <button onclick="toggleTheme()" class="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 transition" title="Modo Claro / Oscuro">
           <i data-lucide="sun" id="iconThemeSun" class="w-3.5 h-3.5 hidden"></i>
           <i data-lucide="moon" id="iconThemeMoon" class="w-3.5 h-3.5"></i>
-        </button>
-
-        <!-- Botón Guía -->
-        <button onclick="openModalHelpTour()" class="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-rose-300 border border-slate-700" title="Guía de Uso">
-          <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
         </button>
 
         <!-- Botón Ajustes -->
@@ -194,48 +187,36 @@
       </div>
     </div>
 
-    <!-- Navegación de Escritorio -->
+    <!-- BARRA DE ACCESO RÁPIDO ESCRITORIO: EXACTAMENTE LAS 7 SECCIONES -->
     <nav class="hidden md:block bg-slate-950 border-t border-slate-800 px-3 sm:px-6">
       <div class="max-w-7xl mx-auto flex items-center gap-1 overflow-x-auto py-1 text-xs">
         <button onclick="switchMainTab('tabHome')" id="navTabHome" class="nav-tab px-3.5 py-2 rounded-lg font-bold text-white bg-slate-800 flex items-center gap-1.5 transition whitespace-nowrap">
-          <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i>
-          <span>Dashboard & Rentabilidad</span>
-        </button>
-        <button onclick="switchMainTab('tabHarvest')" id="navTabHarvest" class="nav-tab px-3.5 py-2 rounded-lg font-bold text-slate-400 hover:text-white hover:bg-slate-800/60 flex items-center gap-1.5 transition whitespace-nowrap">
-          <i data-lucide="calculator" class="w-3.5 h-3.5 text-rose-400"></i>
-          <span>Cosecha & Calculadora Mallas</span>
-        </button>
-        <button onclick="switchMainTab('tabSettlements')" id="navTabSettlements" class="nav-tab px-3.5 py-2 rounded-lg font-bold text-slate-400 hover:text-white hover:bg-slate-800/60 flex items-center gap-1.5 transition whitespace-nowrap">
-          <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 text-emerald-400"></i>
-          <span>Recortes & Liquidaciones</span>
-        </button>
-        <button onclick="switchMainTab('tabVarieties')" id="navTabVarieties" class="nav-tab px-3.5 py-2 rounded-lg font-bold text-slate-400 hover:text-white hover:bg-slate-800/60 flex items-center gap-1.5 transition whitespace-nowrap">
-          <i data-lucide="sprout" class="w-3.5 h-3.5 text-finca-500"></i>
-          <span>Censo & Variedades</span>
-        </button>
-        <button onclick="switchMainTab('tabRosse')" id="navTabRosse" class="nav-tab px-3.5 py-2 rounded-lg font-bold text-slate-400 hover:text-white hover:bg-slate-800/60 flex items-center gap-1.5 transition whitespace-nowrap">
-          <i data-lucide="dollar-sign" class="w-3.5 h-3.5 text-amber-400"></i>
-          <span>Contabilidad ROSSE CABS</span>
-        </button>
-        <button onclick="switchMainTab('tabLabor')" id="navTabLabor" class="nav-tab px-3.5 py-2 rounded-lg font-bold text-slate-400 hover:text-white hover:bg-slate-800/60 flex items-center gap-1.5 transition whitespace-nowrap">
-          <i data-lucide="users" class="w-3.5 h-3.5 text-cyan-400"></i>
-          <span>Jornales & Labores</span>
+          <i data-lucide="layout-dashboard" class="w-3.5 h-3.5 text-rose-400"></i>
+          <span>Dashboard</span>
         </button>
         <button onclick="switchMainTab('tabPersonal')" id="navTabPersonal" class="nav-tab px-3.5 py-2 rounded-lg font-bold text-slate-400 hover:text-white hover:bg-slate-800/60 flex items-center gap-1.5 transition whitespace-nowrap">
           <i data-lucide="wallet" class="w-3.5 h-3.5 text-blue-400"></i>
-          <span>Finanzas Personales</span>
+          <span>Personal</span>
+        </button>
+        <button onclick="switchMainTab('tabBusiness')" id="navTabBusiness" class="nav-tab px-3.5 py-2 rounded-lg font-bold text-slate-400 hover:text-white hover:bg-slate-800/60 flex items-center gap-1.5 transition whitespace-nowrap">
+          <i data-lucide="sprout" class="w-3.5 h-3.5 text-emerald-400"></i>
+          <span id="navBusinessName">Negocio</span>
+        </button>
+        <button onclick="switchMainTab('tabCatalog')" id="navTabCatalog" class="nav-tab px-3.5 py-2 rounded-lg font-bold text-slate-400 hover:text-white hover:bg-slate-800/60 flex items-center gap-1.5 transition whitespace-nowrap">
+          <i data-lucide="database" class="w-3.5 h-3.5 text-indigo-400"></i>
+          <span>Catálogo</span>
+        </button>
+        <button onclick="switchMainTab('tabTransfers')" id="navTabTransfers" class="nav-tab px-3.5 py-2 rounded-lg font-bold text-slate-400 hover:text-white hover:bg-slate-800/60 flex items-center gap-1.5 transition whitespace-nowrap">
+          <i data-lucide="repeat" class="w-3.5 h-3.5 text-amber-400"></i>
+          <span>Traspasos</span>
         </button>
         <button onclick="switchMainTab('tabDebts')" id="navTabDebts" class="nav-tab px-3.5 py-2 rounded-lg font-bold text-slate-400 hover:text-white hover:bg-slate-800/60 flex items-center gap-1.5 transition whitespace-nowrap">
           <i data-lucide="credit-card" class="w-3.5 h-3.5 text-rose-400"></i>
           <span>Control de Deudas</span>
         </button>
-        <button onclick="switchMainTab('tabTransfers')" id="navTabTransfers" class="nav-tab px-3.5 py-2 rounded-lg font-bold text-slate-400 hover:text-white hover:bg-slate-800/60 flex items-center gap-1.5 transition whitespace-nowrap">
-          <i data-lucide="repeat" class="w-3.5 h-3.5 text-amber-400"></i>
-          <span>Transferencias</span>
-        </button>
         <button onclick="switchMainTab('tabInvoiceView')" id="navTabInvoiceView" class="nav-tab px-3.5 py-2 rounded-lg font-bold text-slate-400 hover:text-white hover:bg-slate-800/60 flex items-center gap-1.5 transition whitespace-nowrap">
-          <i data-lucide="file-check" class="w-3.5 h-3.5 text-blue-400"></i>
-          <span>Factura SRI Ecuador</span>
+          <i data-lucide="file-check" class="w-3.5 h-3.5 text-cyan-400"></i>
+          <span>Facturas SRI</span>
         </button>
       </div>
     </nav>
@@ -244,10 +225,9 @@
   <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 space-y-6">
 
     <!-- ============================================================== -->
-    <!-- TAB 1: INICIO & DASHBOARD GENERAL                              -->
+    <!-- 1. DASHBOARD GENERAL                                           -->
     <!-- ============================================================== -->
     <section id="tabHome" class="tab-content space-y-6">
-
       <!-- Banner de Bienvenida con Filtros de Período e Ingreso Extra -->
       <div id="tourTargetWelcome" class="bg-gradient-to-r from-slate-900 via-rose-950 to-slate-900 text-white rounded-3xl p-5 sm:p-7 shadow-xl border border-slate-700/60 relative overflow-hidden">
         <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -298,14 +278,6 @@
               <i data-lucide="plus-circle" class="w-4 h-4"></i>
               <span>+ Cosecha</span>
             </button>
-            <button onclick="openModalUniversalIncome('finca')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-2 rounded-2xl text-xs font-bold shadow-md flex items-center gap-1.5 transition active:scale-95">
-              <i data-lucide="arrow-down-left" class="w-4 h-4"></i>
-              <span>+ Ingreso Finca</span>
-            </button>
-            <button onclick="openModalUniversalExpense('finca')" class="bg-rose-700 hover:bg-rose-600 text-white px-3.5 py-2 rounded-2xl text-xs font-bold shadow-md flex items-center gap-1.5 transition active:scale-95">
-              <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
-              <span>- Gasto Finca</span>
-            </button>
           </div>
         </div>
       </div>
@@ -316,7 +288,7 @@
         <!-- 1. CAJA ROSSE CABS -->
         <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm relative overflow-hidden">
           <div class="flex items-center justify-between">
-            <span class="text-[10px] font-black uppercase tracking-wider text-rose-600">Caja Neta ROSSE CABS</span>
+            <span class="text-[10px] font-black uppercase tracking-wider text-rose-600">Caja Neta Negocio</span>
             <div class="w-8 h-8 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-sm">
               🌹
             </div>
@@ -337,7 +309,7 @@
           <p class="text-[11px] text-slate-500 mt-1"><span id="kpiExportStems">0</span> Exp. | <span id="kpiNationalStems">0</span> Nac.</p>
         </div>
 
-        <!-- 3. STOCK FLOR NACIONAL (DISPONIBLE PARA VENTA) -->
+        <!-- 3. STOCK FLOR NACIONAL -->
         <div class="bg-gradient-to-br from-rose-900 to-amber-950 text-white rounded-3xl p-5 border border-rose-700/50 shadow-lg relative overflow-hidden">
           <div class="flex items-center justify-between">
             <span class="text-[10px] font-black uppercase tracking-wider text-amber-300">Stock Flor Nacional</span>
@@ -349,7 +321,7 @@
           <p class="text-[11px] text-rose-200 mt-1">Comercializable local (cosecha + retornos)</p>
         </div>
 
-        <!-- 4. INGRESOS EXTRAS CONSOLIDADOS (NUEVO KPI) -->
+        <!-- 4. INGRESOS EXTRAS CONSOLIDADOS -->
         <div class="bg-gradient-to-br from-amber-500 via-amber-600 to-orange-600 text-slate-950 rounded-3xl p-5 border border-amber-300 shadow-lg">
           <div class="flex items-center justify-between">
             <span class="text-[10px] font-black uppercase text-amber-950">Ingresos Extras</span>
@@ -373,10 +345,9 @@
 
       </div>
 
-      <!-- Resumen Dual: ROSSE CABS vs Finanzas Personales -->
+      <!-- Resumen Dual: Negocio vs Finanzas Personales -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-        <!-- Tarjeta Resumen ROSSE CABS -->
         <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm space-y-4">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2.5">
@@ -388,8 +359,8 @@
                 <span class="text-xs text-slate-400">Ventas de flor, agroquímicos, insumos y jornales</span>
               </div>
             </div>
-            <button onclick="switchMainTab('tabRosse')" class="text-xs font-bold text-rose-600 hover:text-rose-700 bg-rose-50 px-3 py-1.5 rounded-xl">
-              Ver Contabilidad ➔
+            <button onclick="switchMainTab('tabBusiness')" class="text-xs font-bold text-rose-600 hover:text-rose-700 bg-rose-50 px-3 py-1.5 rounded-xl">
+              Ver Negocio ➔
             </button>
           </div>
 
@@ -403,13 +374,12 @@
               <span id="dashRosseExpense" class="font-mono text-sm font-black text-rose-600">$0.00</span>
             </div>
             <div class="p-2.5 bg-rose-50 rounded-2xl">
-              <span class="text-[9px] uppercase font-bold text-rose-700 block">Caja ROSSE CABS</span>
+              <span class="text-[9px] uppercase font-bold text-rose-700 block">Caja Negocio</span>
               <span id="dashRosseBalance" class="font-mono text-sm font-black text-rose-700">$0.00</span>
             </div>
           </div>
         </div>
 
-        <!-- Tarjeta Resumen Finanzas Personales -->
         <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm space-y-4">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2.5">
@@ -444,9 +414,8 @@
 
       </div>
 
-      <!-- Gráficos de Producción y Flujo Financiero -->
+      <!-- Gráficos -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
         <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-3">
           <h4 class="font-extrabold text-xs uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
             <i data-lucide="bar-chart-2" class="w-4 h-4 text-rose-600"></i>
@@ -466,283 +435,14 @@
             <canvas id="chartVarietyDistribution"></canvas>
           </div>
         </div>
-
       </div>
 
     </section>
 
     <!-- ============================================================== -->
-    <!-- TAB 2: COSECHA & CALCULADORA DE MALLAS EN VIVO                 -->
-    <!-- ============================================================== -->
-    <section id="tabHarvest" class="tab-content hidden space-y-6">
-
-      <div class="bg-slate-900 text-white p-5 rounded-3xl shadow-lg border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <span class="text-[10px] uppercase font-bold tracking-wider text-rose-400">Control Técnico de Finca</span>
-          <h2 class="text-xl sm:text-2xl font-black">Cosecha de Rosas & Calculadora de Mallas</h2>
-          <p class="text-xs text-slate-300 mt-0.5">Calcula automáticamente mallas de 25 tallos más tallos sueltos, separando Exportación, Nacional y Merma.</p>
-        </div>
-
-        <button onclick="openModalHarvest()" class="bg-rose-600 hover:bg-rose-500 text-white font-bold px-4 py-2.5 rounded-2xl text-xs shadow transition active:scale-95 flex items-center gap-1.5">
-          <i data-lucide="plus-circle" class="w-4 h-4"></i>
-          <span>+ Nueva Cosecha</span>
-        </button>
-      </div>
-
-      <!-- Historial de Cosechas -->
-      <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm space-y-3">
-        <div class="flex items-center justify-between">
-          <h4 class="font-extrabold text-sm text-slate-800">Registros de Cosechas Realizadas</h4>
-          <span class="text-xs text-slate-400">Total tallos cosechados</span>
-        </div>
-
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs">
-            <thead>
-              <tr class="bg-slate-50 text-slate-600 uppercase text-[10px] font-black border-y border-slate-200">
-                <th class="py-2.5 px-3">Fecha</th>
-                <th class="py-2.5 px-3">Variedad</th>
-                <th class="py-2.5 px-3 text-right">Mallas Exp.</th>
-                <th class="py-2.5 px-3 text-right">Tallos Exp.</th>
-                <th class="py-2.5 px-3 text-right">Tallos Nac.</th>
-                <th class="py-2.5 px-3 text-right">Merma / Descarte</th>
-                <th class="py-2.5 px-3 text-right">Total Tallos</th>
-                <th class="py-2.5 px-3 text-center">Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="harvestTableBody" class="divide-y divide-slate-100"></tbody>
-          </table>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- ============================================================== -->
-    <!-- TAB 3: RECORTES & LIQUIDACIONES POR CLIENTE                     -->
-    <!-- ============================================================== -->
-    <section id="tabSettlements" class="tab-content hidden space-y-6">
-
-      <div class="bg-emerald-950 text-white p-5 rounded-3xl shadow-lg border border-emerald-900 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <span class="text-[10px] uppercase font-bold tracking-wider text-emerald-400">Liquidaciones & Devoluciones</span>
-          <h2 class="text-xl sm:text-2xl font-black">Recortes de Venta por Cliente</h2>
-          <p class="text-xs text-emerald-200 mt-0.5">Calcula el precio real neto por tallo y por malla según los tallos recibidos menos devoluciones.</p>
-        </div>
-
-        <button onclick="openModalSettlement()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2.5 rounded-2xl text-xs shadow transition active:scale-95 flex items-center gap-1.5">
-          <i data-lucide="plus-circle" class="w-4 h-4"></i>
-          <span>+ Nuevo Recorte / Liquidación</span>
-        </button>
-      </div>
-
-      <!-- Tabla de Liquidaciones -->
-      <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm space-y-3">
-        <h4 class="font-extrabold text-sm text-slate-800">Historial de Liquidaciones por Cliente</h4>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs">
-            <thead>
-              <tr class="bg-slate-50 text-slate-600 uppercase text-[10px] font-black border-y border-slate-200">
-                <th class="py-2.5 px-3">Fecha</th>
-                <th class="py-2.5 px-3">Cliente</th>
-                <th class="py-2.5 px-3 text-right">Tallos Enviados</th>
-                <th class="py-2.5 px-3 text-right">Devueltos (Merma)</th>
-                <th class="py-2.5 px-3 text-right">Tallos Netos</th>
-                <th class="py-2.5 px-3 text-right">Total Cobrado ($)</th>
-                <th class="py-2.5 px-3 text-right">Precio Real / Tallo</th>
-                <th class="py-2.5 px-3 text-right">Precio / Malla 25</th>
-                <th class="py-2.5 px-3 text-center">Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="settlementsTableBody" class="divide-y divide-slate-100"></tbody>
-          </table>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- ============================================================== -->
-    <!-- TAB 4: CENSO DE PLANTAS & RENTABILIDAD POR VARIEDAD            -->
-    <!-- ============================================================== -->
-    <section id="tabVarieties" class="tab-content hidden space-y-6">
-
-      <div class="bg-slate-900 text-white p-5 rounded-3xl shadow-lg border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <span class="text-[10px] uppercase font-bold tracking-wider text-finca-500">Padrón Agronómico</span>
-          <h2 class="text-xl sm:text-2xl font-black">Censo & Productividad por Variedad</h2>
-          <p class="text-xs text-slate-300 mt-0.5">Control de plantas sembradas por variedad (Explorer, Freedom, Mondial, etc.) y rendimiento por cama.</p>
-        </div>
-
-        <button onclick="openModalAddVariety()" class="bg-finca-600 hover:bg-finca-500 text-white font-bold px-4 py-2.5 rounded-2xl text-xs shadow transition active:scale-95 flex items-center gap-1.5">
-          <i data-lucide="plus" class="w-4 h-4"></i>
-          <span>+ Agregar Variedad</span>
-        </button>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="varietiesCardsContainer"></div>
-
-    </section>
-
-    <!-- ============================================================== -->
-    <!-- TAB 5: CONTABILIDAD ROSSE CABS                                 -->
-    <!-- ============================================================== -->
-    <section id="tabRosse" class="tab-content hidden space-y-6">
-
-      <div class="bg-rose-950 text-white p-5 rounded-3xl shadow-lg border border-rose-900 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <span class="text-[10px] uppercase font-bold tracking-wider text-rose-300">Flujo Financiero de la Finca</span>
-          <h2 class="text-xl sm:text-2xl font-black">Contabilidad — Finca ROSSE CABS</h2>
-          <p class="text-xs text-rose-200 mt-0.5">Ingresos por venta de flor, costos de fertilizantes, agroquímicos, jornales e ingresos extras.</p>
-        </div>
-
-        <div class="flex items-center gap-2 flex-wrap">
-          <button onclick="openModalExtraIncome('finca')" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-3.5 py-2 rounded-2xl text-xs shadow flex items-center gap-1.5 transition active:scale-95">
-            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-            <span>+ Ingreso Extra Finca</span>
-          </button>
-          <button onclick="openModalUniversalIncome('finca')" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-3.5 py-2 rounded-2xl text-xs shadow flex items-center gap-1.5 transition active:scale-95">
-            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-            <span>+ Ingreso Finca</span>
-          </button>
-          <button onclick="openModalUniversalExpense('finca')" class="bg-rose-600 hover:bg-rose-500 text-white font-bold px-3.5 py-2 rounded-2xl text-xs shadow flex items-center gap-1.5 transition active:scale-95">
-            <i data-lucide="minus" class="w-3.5 h-3.5"></i>
-            <span>- Registrar Gasto Finca</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- MINI-DASHBOARD FINANCIERO DE LA FINCA -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
-          <span class="text-[10px] font-black uppercase text-rose-600 block">Caja ROSSE CABS</span>
-          <span id="rosseMiniCash" class="font-mono text-xl font-black text-rose-600 block mt-1">$0.00</span>
-          <span class="text-[10px] text-slate-400 mt-0.5 block">Efectivo neto disponible</span>
-        </div>
-        <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
-          <span class="text-[10px] font-black uppercase text-emerald-600 block">Liquidaciones de Flor</span>
-          <span id="rosseMiniSettlements" class="font-mono text-xl font-black text-emerald-600 block mt-1">$0.00</span>
-          <span class="text-[10px] text-slate-400 mt-0.5 block">Ventas de exportación</span>
-        </div>
-        <div class="bg-white p-4 rounded-3xl border border-amber-300 bg-amber-50/40 shadow-sm">
-          <span class="text-[10px] font-black uppercase text-amber-800 block">✨ Ingresos Extras Finca</span>
-          <span id="rosseMiniExtraIncome" class="font-mono text-xl font-black text-amber-700 block mt-1">$0.00</span>
-          <span class="text-[10px] text-amber-900/80 mt-0.5 block">Asesorías, fletes y servicios</span>
-        </div>
-        <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
-          <span class="text-[10px] font-black uppercase text-slate-600 block">Total Egresos Finca</span>
-          <span id="rosseMiniExpenses" class="font-mono text-xl font-black text-slate-900 block mt-1">$0.00</span>
-          <span class="text-[10px] text-slate-400 mt-0.5 block">Insumos + Jornales</span>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <h4 class="font-extrabold text-sm text-slate-800">Libro Contable de la Finca</h4>
-          <div class="flex items-center gap-2">
-            <!-- Filtro de Año y Mes para la Finca -->
-            <label class="text-xs font-bold text-slate-600">Período:</label>
-            <select id="selectRosseYear" onchange="renderRosseAccounting()" class="bg-slate-100 border border-slate-300 rounded-xl px-2 py-1 text-xs font-bold text-slate-800 outline-none">
-              <option value="all">Todo Año</option>
-              <option value="2026" selected>2026</option>
-              <option value="2025">2025</option>
-              <option value="2024">2024</option>
-            </select>
-            <select id="selectRosseMonth" onchange="renderRosseAccounting()" class="bg-slate-100 border border-slate-300 rounded-xl px-2.5 py-1 text-xs font-bold text-slate-800 outline-none">
-              <option value="all">Todo el Año</option>
-              <option value="1">Enero</option>
-              <option value="2">Febrero</option>
-              <option value="3">Marzo</option>
-              <option value="4">Abril</option>
-              <option value="5">Mayo</option>
-              <option value="6">Junio</option>
-              <option value="7">Julio</option>
-              <option value="8">Agosto</option>
-              <option value="9" selected>Septiembre</option>
-              <option value="10">Octubre</option>
-              <option value="11">Noviembre</option>
-              <option value="12">Diciembre</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-3 gap-3 text-center">
-          <div class="p-3 bg-emerald-50 rounded-2xl">
-            <span class="text-[10px] text-emerald-800 font-bold uppercase block">Ingresos Finca</span>
-            <span id="fincaPeriodIncome" class="font-mono font-black text-sm text-emerald-700">$0.00</span>
-          </div>
-          <div class="p-3 bg-rose-50 rounded-2xl">
-            <span class="text-[10px] text-rose-800 font-bold uppercase block">Egresos Finca</span>
-            <span id="fincaPeriodExpense" class="font-mono font-black text-sm text-rose-700">$0.00</span>
-          </div>
-          <div class="p-3 bg-rose-50 rounded-2xl">
-            <span class="text-[10px] text-rose-800 font-bold uppercase block">Saldo Neto</span>
-            <span id="fincaPeriodNet" class="font-mono font-black text-sm text-rose-900">$0.00</span>
-          </div>
-        </div>
-
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs">
-            <thead>
-              <tr class="border-b border-slate-200 text-slate-400 font-bold uppercase text-[10px]">
-                <th class="py-2 px-2">Fecha</th>
-                <th class="py-2 px-2">Tipo</th>
-                <th class="py-2 px-2">Categoría</th>
-                <th class="py-2 px-2">Detalle</th>
-                <th class="py-2 px-2 text-right">Monto</th>
-                <th class="py-2 px-2 text-right">Acción</th>
-              </tr>
-            </thead>
-            <tbody id="rosseAccountingTableBody" class="divide-y divide-slate-100"></tbody>
-          </table>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- ============================================================== -->
-    <!-- TAB 6: JORNALES & LABORES DE FINCA                             -->
-    <!-- ============================================================== -->
-    <section id="tabLabor" class="tab-content hidden space-y-6">
-
-      <div class="bg-cyan-950 text-white p-5 rounded-3xl shadow-lg border border-cyan-900 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <span class="text-[10px] uppercase font-bold tracking-wider text-cyan-400">Control Laboral Agrícola</span>
-          <h2 class="text-xl sm:text-2xl font-black">Jornales & Labores de Finca</h2>
-          <p class="text-xs text-cyan-200 mt-0.5">Control de desbotone, fumigación, cosecha, malleo y clasificación con liquidación a contabilidad.</p>
-        </div>
-
-        <button onclick="openModalLabor()" class="bg-cyan-600 hover:bg-cyan-500 text-white font-bold px-4 py-2.5 rounded-2xl text-xs shadow transition active:scale-95 flex items-center gap-1.5">
-          <i data-lucide="plus-circle" class="w-4 h-4"></i>
-          <span>+ Registrar Jornal</span>
-        </button>
-      </div>
-
-      <!-- Tabla de Jornales -->
-      <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm space-y-3">
-        <h4 class="font-extrabold text-sm text-slate-800">Historial de Jornales y Pagos</h4>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs">
-            <thead>
-              <tr class="bg-slate-50 text-slate-600 uppercase text-[10px] font-black border-y border-slate-200">
-                <th class="py-2.5 px-3">Fecha</th>
-                <th class="py-2.5 px-3">Trabajador</th>
-                <th class="py-2.5 px-3">Labor Realizada</th>
-                <th class="py-2.5 px-3 text-right">Valor Jornal ($)</th>
-                <th class="py-2.5 px-3 text-center">Estado de Pago</th>
-                <th class="py-2.5 px-3 text-center">Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="laborTableBody" class="divide-y divide-slate-100"></tbody>
-          </table>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- ============================================================== -->
-    <!-- TAB 7: FINANZAS PERSONALES (+ MINI DASHBOARD & EXTRAS)         -->
+    <!-- 2. PERSONAL (CUENTA PRIVADA + MINI DASHBOARD + EXTRAS)         -->
     <!-- ============================================================== -->
     <section id="tabPersonal" class="tab-content hidden space-y-6">
-
       <div class="bg-blue-900 text-white p-5 rounded-3xl shadow-lg border border-blue-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <span class="text-[10px] uppercase font-bold tracking-wider text-blue-300">Cuenta Privada</span>
@@ -776,7 +476,7 @@
         <div class="bg-white p-4 rounded-3xl border border-amber-300 bg-amber-50/50 shadow-sm">
           <span class="text-[10px] font-black uppercase text-amber-800 block">✨ Ingresos Extras Personal</span>
           <span id="personalMiniExtraIncome" class="font-mono text-xl font-black text-amber-700 block mt-1">$0.00</span>
-          <span class="text-[10px] text-amber-900/80 mt-0.5 block">Trabajos extras, cachuelos y comisiones</span>
+          <span class="text-[10px] text-amber-900/80 mt-0.5 block">Trabajos extras y comisiones</span>
         </div>
         <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
           <span class="text-[10px] font-black uppercase text-rose-600 block">Total Gastos Personales</span>
@@ -794,7 +494,6 @@
         <div class="flex items-center justify-between">
           <h4 class="font-extrabold text-sm text-slate-800">Movimientos Personales del Período</h4>
           <div class="flex items-center gap-2">
-            <!-- Filtro de Año y Mes para Personal -->
             <label class="text-xs font-bold text-slate-600">Período:</label>
             <select id="selectPersonalYear" onchange="renderPersonalTransactions()" class="bg-slate-100 border border-slate-300 rounded-xl px-2 py-1 text-xs font-bold text-slate-800 outline-none">
               <option value="all">Todo Año</option>
@@ -836,19 +535,337 @@
           </table>
         </div>
       </div>
-
     </section>
 
     <!-- ============================================================== -->
-    <!-- TAB 8: CONTROL DE DEUDAS CON PAGO Y DESCUENTO AUTOMÁTICO       -->
+    <!-- 3. NEGOCIO (FINCA FLORÍCOLA ROSSE CABS + SUBSECCIONES)         -->
+    <!-- ============================================================== -->
+    <section id="tabBusiness" class="tab-content hidden space-y-6">
+      <div class="bg-rose-950 text-white p-5 rounded-3xl shadow-lg border border-rose-900 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <span class="text-[10px] uppercase font-bold tracking-wider text-rose-300">Gestión Florícola Integral</span>
+            <h2 class="text-xl sm:text-2xl font-black" id="businessHeaderTitle">FINCA ROSSE CABS</h2>
+            <p class="text-xs text-rose-200 mt-0.5">Cosecha con calculadora de mallas, liquidaciones, contabilidad de finca y jornales.</p>
+          </div>
+
+          <div class="flex items-center gap-2 flex-wrap">
+            <button onclick="openModalExtraIncome('finca')" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-3 py-1.5 rounded-xl text-xs shadow flex items-center gap-1 transition">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+              <span>+ Ingreso Extra Finca</span>
+            </button>
+            <button onclick="openModalUniversalIncome('finca')" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs shadow flex items-center gap-1 transition">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              <span>+ Ingreso Finca</span>
+            </button>
+            <button onclick="openModalUniversalExpense('finca')" class="bg-rose-600 hover:bg-rose-500 text-white font-bold px-3 py-1.5 rounded-xl text-xs shadow flex items-center gap-1 transition">
+              <i data-lucide="minus" class="w-3.5 h-3.5"></i>
+              <span>- Gasto Finca</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Submenú de Negocio -->
+        <div class="flex items-center gap-1.5 overflow-x-auto pt-2 border-t border-rose-900/80 text-xs">
+          <button onclick="switchBusinessSubTab('subHarvest')" id="bSubBtnHarvest" class="bsub-btn px-3 py-1.5 rounded-xl font-bold bg-white text-rose-950 transition">🌿 Cosecha & Mallas</button>
+          <button onclick="switchBusinessSubTab('subSettlements')" id="bSubBtnSettlements" class="bsub-btn px-3 py-1.5 rounded-xl font-bold text-rose-200 hover:bg-rose-900/60 transition">📄 Recortes & Liquidaciones</button>
+          <button onclick="switchBusinessSubTab('subAccounting')" id="bSubBtnAccounting" class="bsub-btn px-3 py-1.5 rounded-xl font-bold text-rose-200 hover:bg-rose-900/60 transition">💰 Contabilidad Finca</button>
+          <button onclick="switchBusinessSubTab('subLabor')" id="bSubBtnLabor" class="bsub-btn px-3 py-1.5 rounded-xl font-bold text-rose-200 hover:bg-rose-900/60 transition">👨‍🌾 Jornales & Labores</button>
+        </div>
+      </div>
+
+      <!-- MINI-DASHBOARD DE LA FINCA -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+          <span class="text-[10px] font-black uppercase text-rose-600 block">Caja Neta Negocio</span>
+          <span id="rosseMiniCash" class="font-mono text-xl font-black text-rose-600 block mt-1">$0.00</span>
+          <span class="text-[10px] text-slate-400 mt-0.5 block">Efectivo neto disponible</span>
+        </div>
+        <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+          <span class="text-[10px] font-black uppercase text-emerald-600 block">Liquidaciones de Flor</span>
+          <span id="rosseMiniSettlements" class="font-mono text-xl font-black text-emerald-600 block mt-1">$0.00</span>
+          <span class="text-[10px] text-slate-400 mt-0.5 block">Ventas cobradas a exportadoras</span>
+        </div>
+        <div class="bg-white p-4 rounded-3xl border border-amber-300 bg-amber-50/40 shadow-sm">
+          <span class="text-[10px] font-black uppercase text-amber-800 block">✨ Ingresos Extras Finca</span>
+          <span id="rosseMiniExtraIncome" class="font-mono text-xl font-black text-amber-700 block mt-1">$0.00</span>
+          <span class="text-[10px] text-amber-900/80 mt-0.5 block">Fletes, asesorías y esquejes</span>
+        </div>
+        <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+          <span class="text-[10px] font-black uppercase text-slate-600 block">Total Egresos Finca</span>
+          <span id="rosseMiniExpenses" class="font-mono text-xl font-black text-slate-900 block mt-1">$0.00</span>
+          <span class="text-[10px] text-slate-400 mt-0.5 block">Insumos + Jornales pagados</span>
+        </div>
+      </div>
+
+      <!-- SUBTAB 1: COSECHA & CALCULADORA MALLAS -->
+      <div id="subHarvest" class="bsub-content space-y-4">
+        <div class="flex items-center justify-between bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+          <div>
+            <h4 class="font-extrabold text-sm text-slate-900">Registros de Cosechas Realizadas</h4>
+            <span class="text-xs text-slate-500">Separación automática de Exportación (mallas de 25), Nacional y Descarte ($0)</span>
+          </div>
+          <button onclick="openModalHarvest()" class="bg-rose-600 hover:bg-rose-500 text-white font-bold px-3.5 py-2 rounded-2xl text-xs shadow flex items-center gap-1.5 transition">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            <span>+ Nueva Cosecha</span>
+          </button>
+        </div>
+
+        <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="bg-slate-50 text-slate-600 uppercase text-[10px] font-black border-y border-slate-200">
+                <th class="py-2.5 px-3">Fecha</th>
+                <th class="py-2.5 px-3">Variedad</th>
+                <th class="py-2.5 px-3 text-right">Mallas Exp.</th>
+                <th class="py-2.5 px-3 text-right">Tallos Exp.</th>
+                <th class="py-2.5 px-3 text-right">Tallos Nac.</th>
+                <th class="py-2.5 px-3 text-right">Merma</th>
+                <th class="py-2.5 px-3 text-right">Total Tallos</th>
+                <th class="py-2.5 px-3 text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="harvestTableBody" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SUBTAB 2: RECORTES & LIQUIDACIONES POR CLIENTE -->
+      <div id="subSettlements" class="bsub-content hidden space-y-4">
+        <div class="flex items-center justify-between bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+          <div>
+            <h4 class="font-extrabold text-sm text-slate-900">Historial de Liquidaciones por Cliente</h4>
+            <span class="text-xs text-slate-500">Cálculo de precio real neto por tallo y por malla 25 tras retornos a Flor Nacional</span>
+          </div>
+          <button onclick="openModalSettlement()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3.5 py-2 rounded-2xl text-xs shadow flex items-center gap-1.5 transition">
+            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+            <span>+ Nueva Liquidación</span>
+          </button>
+        </div>
+
+        <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="bg-slate-50 text-slate-600 uppercase text-[10px] font-black border-y border-slate-200">
+                <th class="py-2.5 px-3">Fecha</th>
+                <th class="py-2.5 px-3">Cliente</th>
+                <th class="py-2.5 px-3 text-right">Enviados</th>
+                <th class="py-2.5 px-3 text-right">Devueltos</th>
+                <th class="py-2.5 px-3 text-right">Netos</th>
+                <th class="py-2.5 px-3 text-right">Cobrado ($)</th>
+                <th class="py-2.5 px-3 text-right">Precio/Tallo</th>
+                <th class="py-2.5 px-3 text-right">Precio/Malla</th>
+                <th class="py-2.5 px-3 text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="settlementsTableBody" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SUBTAB 3: CONTABILIDAD FINCA -->
+      <div id="subAccounting" class="bsub-content hidden space-y-4">
+        <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <h4 class="font-extrabold text-sm text-slate-800">Libro Contable de la Finca</h4>
+            <div class="flex items-center gap-2">
+              <label class="text-xs font-bold text-slate-600">Período:</label>
+              <select id="selectRosseYear" onchange="renderRosseAccounting()" class="bg-slate-100 border border-slate-300 rounded-xl px-2 py-1 text-xs font-bold text-slate-800 outline-none">
+                <option value="all">Todo Año</option>
+                <option value="2026" selected>2026</option>
+                <option value="2025">2025</option>
+                <option value="2024">2024</option>
+              </select>
+              <select id="selectRosseMonth" onchange="renderRosseAccounting()" class="bg-slate-100 border border-slate-300 rounded-xl px-2.5 py-1 text-xs font-bold text-slate-800 outline-none">
+                <option value="all">Todo el Año</option>
+                <option value="1">Enero</option>
+                <option value="2">Febrero</option>
+                <option value="3">Marzo</option>
+                <option value="4">Abril</option>
+                <option value="5">Mayo</option>
+                <option value="6">Junio</option>
+                <option value="7">Julio</option>
+                <option value="8">Agosto</option>
+                <option value="9" selected>Septiembre</option>
+                <option value="10">Octubre</option>
+                <option value="11">Noviembre</option>
+                <option value="12">Diciembre</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3 text-center">
+            <div class="p-3 bg-emerald-50 rounded-2xl">
+              <span class="text-[10px] text-emerald-800 font-bold uppercase block">Ingresos Finca</span>
+              <span id="fincaPeriodIncome" class="font-mono font-black text-sm text-emerald-700">$0.00</span>
+            </div>
+            <div class="p-3 bg-rose-50 rounded-2xl">
+              <span class="text-[10px] text-rose-800 font-bold uppercase block">Egresos Finca</span>
+              <span id="fincaPeriodExpense" class="font-mono font-black text-sm text-rose-700">$0.00</span>
+            </div>
+            <div class="p-3 bg-rose-50 rounded-2xl">
+              <span class="text-[10px] text-rose-800 font-bold uppercase block">Saldo Neto</span>
+              <span id="fincaPeriodNet" class="font-mono font-black text-sm text-rose-900">$0.00</span>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead>
+                <tr class="border-b border-slate-200 text-slate-400 font-bold uppercase text-[10px]">
+                  <th class="py-2 px-2">Fecha</th>
+                  <th class="py-2 px-2">Tipo</th>
+                  <th class="py-2 px-2">Categoría</th>
+                  <th class="py-2 px-2">Detalle</th>
+                  <th class="py-2 px-2 text-right">Monto</th>
+                  <th class="py-2 px-2 text-right">Acción</th>
+                </tr>
+              </thead>
+              <tbody id="rosseAccountingTableBody" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBTAB 4: JORNALES & LABORES -->
+      <div id="subLabor" class="bsub-content hidden space-y-4">
+        <div class="flex items-center justify-between bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+          <div>
+            <h4 class="font-extrabold text-sm text-slate-900">Control de Jornales de Finca</h4>
+            <span class="text-xs text-slate-500">Mano de obra para desbotone, fumigación, corte y malleo</span>
+          </div>
+          <button onclick="openModalLabor()" class="bg-cyan-600 hover:bg-cyan-500 text-white font-bold px-3.5 py-2 rounded-2xl text-xs shadow flex items-center gap-1.5 transition">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            <span>+ Registrar Jornal</span>
+          </button>
+        </div>
+
+        <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="bg-slate-50 text-slate-600 uppercase text-[10px] font-black border-y border-slate-200">
+                <th class="py-2.5 px-3">Fecha</th>
+                <th class="py-2.5 px-3">Trabajador</th>
+                <th class="py-2.5 px-3">Labor Realizada</th>
+                <th class="py-2.5 px-3 text-right">Valor Jornal ($)</th>
+                <th class="py-2.5 px-3 text-center">Estado de Pago</th>
+                <th class="py-2.5 px-3 text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="laborTableBody" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- 4. CATÁLOGO (VARIEDADES, CLIENTES, TRABAJADORES, CATEGORÍAS)   -->
+    <!-- ============================================================== -->
+    <section id="tabCatalog" class="tab-content hidden space-y-6">
+      <div class="bg-indigo-950 text-white p-5 rounded-3xl shadow-lg border border-indigo-900 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <span class="text-[10px] uppercase font-bold tracking-wider text-indigo-300">Padrón Central de Formularios</span>
+          <h2 class="text-xl sm:text-2xl font-black">Catálogo General</h2>
+          <p class="text-xs text-indigo-200 mt-0.5">Define variedades, clientes/exportadoras y trabajadores una sola vez para seleccionarlos en dropdowns sin escribir a cada rato.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- 1. Variedades de Rosas -->
+        <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <h4 class="font-extrabold text-sm text-finca-800 flex items-center gap-1.5">
+              <span>🌹</span><span>Variedades de Rosas</span>
+            </h4>
+            <button onclick="openModalAddVariety()" class="bg-finca-600 hover:bg-finca-500 text-white text-xs font-bold px-2.5 py-1 rounded-xl">+ Añadir</button>
+          </div>
+          <div id="catalogVarietiesList" class="space-y-2 max-h-72 overflow-y-auto text-xs"></div>
+        </div>
+
+        <!-- 2. Clientes / Exportadoras -->
+        <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <h4 class="font-extrabold text-sm text-emerald-800 flex items-center gap-1.5">
+              <span>🏢</span><span>Clientes / Exportadoras</span>
+            </h4>
+            <button onclick="openModalAddClient()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-2.5 py-1 rounded-xl">+ Añadir</button>
+          </div>
+          <div id="catalogClientsList" class="space-y-2 max-h-72 overflow-y-auto text-xs"></div>
+        </div>
+
+        <!-- 3. Trabajadores Agrícolas -->
+        <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <h4 class="font-extrabold text-sm text-cyan-800 flex items-center gap-1.5">
+              <span>👷</span><span>Trabajadores Agrícolas</span>
+            </h4>
+            <button onclick="openModalAddWorker()" class="bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold px-2.5 py-1 rounded-xl">+ Añadir</button>
+          </div>
+          <div id="catalogWorkersList" class="space-y-2 max-h-72 overflow-y-auto text-xs"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- 5. TRASPASOS (TRANSFERENCIAS INTERCUENTAS)                     -->
+    <!-- ============================================================== -->
+    <section id="tabTransfers" class="tab-content hidden space-y-6">
+      <div class="bg-amber-500 text-slate-950 p-5 rounded-3xl shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <span class="text-[10px] uppercase font-black tracking-wider text-amber-950">Movimiento Seguro de Dinero</span>
+          <h2 class="text-xl sm:text-2xl font-black">Traspasos entre Cuentas</h2>
+          <p class="text-xs font-semibold text-amber-950/80 mt-0.5">Operación atómica: resta de una cuenta y suma a la otra dejando historial auditado.</p>
+        </div>
+
+        <button onclick="openModalTransfer()" class="bg-slate-950 text-white hover:bg-slate-800 font-bold px-4 py-2.5 rounded-2xl text-xs shadow transition active:scale-95 flex items-center gap-2">
+          <i data-lucide="arrow-left-right" class="w-4 h-4 text-amber-400"></i>
+          <span>Nuevo Traspaso</span>
+        </button>
+      </div>
+
+      <!-- Tarjetas de Saldo Actual -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="p-4 bg-white rounded-3xl border border-slate-200 shadow-sm">
+          <span class="text-[10px] uppercase font-bold text-rose-600 block">Saldo Actual ROSSE CABS</span>
+          <span id="transferCardRosseBalance" class="font-mono text-xl font-extrabold text-slate-900">$0.00</span>
+        </div>
+        <div class="p-4 bg-white rounded-3xl border border-slate-200 shadow-sm">
+          <span class="text-[10px] uppercase font-bold text-blue-600 block">Saldo Actual Personal</span>
+          <span id="transferCardPersonalBalance" class="font-mono text-xl font-extrabold text-slate-900">$0.00</span>
+        </div>
+      </div>
+
+      <!-- Historial de Transferencias -->
+      <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm space-y-3">
+        <h4 class="font-extrabold text-sm text-slate-800">Reporte de Traspasos Realizados</h4>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="border-b border-slate-200 text-slate-400 font-bold uppercase text-[10px]">
+                <th class="py-2 px-2">Fecha</th>
+                <th class="py-2 px-2">Origen</th>
+                <th class="py-2 px-2">Destino</th>
+                <th class="py-2 px-2">Detalle / Motivo</th>
+                <th class="py-2 px-2 text-right">Monto</th>
+              </tr>
+            </thead>
+            <tbody id="transfersHistoryTableBody" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- 6. CONTROL DE DEUDAS (FINCA Y PERSONAL)                        -->
     <!-- ============================================================== -->
     <section id="tabDebts" class="tab-content hidden space-y-6">
-
       <div class="bg-rose-950 text-white p-5 rounded-3xl shadow-lg border border-rose-900 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <span class="text-[10px] uppercase font-bold tracking-wider text-rose-300">Obligaciones Financieras</span>
-          <h2 class="text-xl sm:text-2xl font-black">Control Unificado de Deudas</h2>
-          <p class="text-xs text-rose-200 mt-0.5">Al presionar <b>"Pagar Deuda"</b>, el saldo pendiente se reduce y el pago se descuenta automáticamente de la cuenta elegida.</p>
+          <h2 class="text-xl sm:text-2xl font-black">Control de Deudas</h2>
+          <p class="text-xs text-rose-200 mt-0.5">Al presionar <b>"Pagar Deuda ($)"</b>, el saldo pendiente disminuye y el pago se descuenta automáticamente como egreso en la caja correspondiente.</p>
         </div>
 
         <button onclick="openModalDebt()" class="bg-rose-600 hover:bg-rose-500 text-white font-bold px-3.5 py-2 rounded-2xl text-xs shadow flex items-center gap-1.5 transition active:scale-95">
@@ -870,76 +887,31 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="unifiedDebtsCardsContainer"></div>
       </div>
-
     </section>
 
     <!-- ============================================================== -->
-    <!-- TAB 9: TRANSFERENCIAS INTERCUENTAS                             -->
-    <!-- ============================================================== -->
-    <section id="tabTransfers" class="tab-content hidden space-y-6">
-
-      <div class="bg-amber-500 text-slate-950 p-5 rounded-3xl shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <span class="text-[10px] uppercase font-black tracking-wider text-amber-950">Movimiento Seguro de Dinero</span>
-          <h2 class="text-xl sm:text-2xl font-black">Transferencias entre Cuentas</h2>
-          <p class="text-xs font-semibold text-amber-950/80 mt-0.5">Operación atómica: resta de una cuenta y suma a la otra dejando historial auditado.</p>
-        </div>
-
-        <button onclick="openModalTransfer()" class="bg-slate-950 text-white hover:bg-slate-800 font-bold px-4 py-2.5 rounded-2xl text-xs shadow transition active:scale-95 flex items-center gap-2">
-          <i data-lucide="arrow-left-right" class="w-4 h-4 text-amber-400"></i>
-          <span>Nueva Transferencia</span>
-        </button>
-      </div>
-
-      <!-- Tarjetas de Saldo Actual -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div class="p-4 bg-white rounded-3xl border border-slate-200 shadow-sm">
-          <span class="text-[10px] uppercase font-bold text-rose-600 block">Saldo Actual ROSSE CABS</span>
-          <span id="transferCardRosseBalance" class="font-mono text-xl font-extrabold text-slate-900">$0.00</span>
-        </div>
-        <div class="p-4 bg-white rounded-3xl border border-slate-200 shadow-sm">
-          <span class="text-[10px] uppercase font-bold text-blue-600 block">Saldo Actual Personal</span>
-          <span id="transferCardPersonalBalance" class="font-mono text-xl font-extrabold text-slate-900">$0.00</span>
-        </div>
-      </div>
-
-      <!-- Historial de Transferencias -->
-      <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm space-y-3">
-        <h4 class="font-extrabold text-sm text-slate-800">Reporte de Transferencias Realizadas</h4>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs">
-            <thead>
-              <tr class="border-b border-slate-200 text-slate-400 font-bold uppercase text-[10px]">
-                <th class="py-2 px-2">Fecha</th>
-                <th class="py-2 px-2">Origen</th>
-                <th class="py-2 px-2">Destino</th>
-                <th class="py-2 px-2">Detalle / Motivo</th>
-                <th class="py-2 px-2 text-right">Monto</th>
-              </tr>
-            </thead>
-            <tbody id="transfersHistoryTableBody" class="divide-y divide-slate-100"></tbody>
-          </table>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- ============================================================== -->
-    <!-- TAB 10: FACTURA SRI ECUADOR (RIDE IMPRIMIBLE/PDF)              -->
+    <!-- 7. FACTURAS SRI (RIDE IMPRIMIBLE/PDF)                          -->
     <!-- ============================================================== -->
     <section id="tabInvoiceView" class="tab-content hidden space-y-6">
-
       <div class="no-print bg-slate-900 text-white p-5 rounded-3xl shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <span class="text-[10px] uppercase font-bold tracking-wider text-rose-300">Comprobante Electrónico Formal</span>
           <h2 class="text-xl sm:text-2xl font-black">Factura SRI Ecuador (RIDE)</h2>
-          <p class="text-xs text-slate-300 mt-0.5">Formato oficial con RUC, Clave de Acceso (49 dígitos), desglose de IVA (15%) y datos personalizables.</p>
+          <p class="text-xs text-slate-300 mt-0.5">Formato oficial con RUC, Clave de Acceso (49 dígitos), código de barras Code128, desglose de IVA y datos editables.</p>
         </div>
 
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 flex-wrap">
           <button onclick="openModalInvoiceEditor()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold px-3.5 py-2 rounded-2xl text-xs shadow flex items-center gap-1.5 transition">
             <i data-lucide="edit" class="w-3.5 h-3.5"></i>
             <span>Editar Datos Emisor</span>
+          </button>
+          <button onclick="openModalInvoiceClientEditor()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-3.5 py-2 rounded-2xl text-xs shadow flex items-center gap-1.5 transition">
+            <i data-lucide="user-check" class="w-3.5 h-3.5"></i>
+            <span>Editar Cliente</span>
+          </button>
+          <button onclick="openModalInvoiceAddItem()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3.5 py-2 rounded-2xl text-xs shadow flex items-center gap-1.5 transition">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            <span>+ Agregar Ítem</span>
           </button>
           <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-black px-4 py-2 rounded-2xl text-xs shadow flex items-center gap-1.5 transition active:scale-95">
             <i data-lucide="printer" class="w-4 h-4"></i>
@@ -952,7 +924,6 @@
       <div id="printableInvoiceArea" class="bg-white p-6 sm:p-10 rounded-3xl border border-slate-300 shadow-lg text-slate-900 max-w-4xl mx-auto space-y-6">
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6 border-b border-slate-300">
-
           <!-- Datos del Emisor -->
           <div class="space-y-2">
             <div class="flex items-center gap-2">
@@ -985,17 +956,15 @@
               <span id="invNumber" class="font-mono font-bold text-slate-900">001-001-000000105</span>
             </div>
             <div class="text-xs space-y-0.5 pt-1 border-t border-slate-200">
-              <p class="text-[10px] text-slate-500">NÚMERO DE AUTORIZACIÓN:</p>
+              <p class="text-[10px] text-slate-500">NÚMERO DE AUTORIZACIÓN / CLAVE DE ACCESO:</p>
               <p id="invAuthNumber" class="font-mono text-[9px] font-bold break-all leading-tight">2509202601172639233900120010010000001051234567819</p>
             </div>
-            <div class="text-xs space-y-0.5">
-              <p class="text-[10px] text-slate-500">CLAVE DE ACCESO:</p>
-              <div class="bg-white p-1.5 border border-slate-300 rounded font-mono text-[8px] font-bold break-all text-center tracking-widest text-slate-800" id="invAccessKey">
-                2509202601172639233900120010010000001051234567819
-              </div>
+            
+            <!-- Código de barras SVG dinámico -->
+            <div class="flex flex-col items-center justify-center pt-1 bg-white p-2 rounded-xl border border-slate-200">
+              <svg id="invBarcodeSvg" class="w-full max-h-14"></svg>
             </div>
           </div>
-
         </div>
 
         <!-- Datos del Cliente / Comprador -->
@@ -1024,27 +993,19 @@
             <thead class="bg-slate-900 text-white font-bold text-[10px] uppercase">
               <tr>
                 <th class="py-2 px-3">Código</th>
-                <th class="py-2 px-3">Cantidad (Tallos)</th>
+                <th class="py-2 px-3">Cantidad</th>
                 <th class="py-2 px-3">Descripción / Variedad</th>
                 <th class="py-2 px-3 text-right">Precio Unit.</th>
                 <th class="py-2 px-3 text-right">Descuento</th>
                 <th class="py-2 px-3 text-right">Precio Total</th>
+                <th class="py-2 px-2 text-center no-print">Quitar</th>
               </tr>
             </thead>
-            <tbody id="invItemsTableBody" class="divide-y divide-slate-200">
-              <tr>
-                <td class="py-2 px-3 font-mono">EXP-01</td>
-                <td class="py-2 px-3 font-mono font-bold">1,000</td>
-                <td class="py-2 px-3 font-semibold">Rosas Variedad Explorer (40 Mallas de 25 tallos)</td>
-                <td class="py-2 px-3 text-right font-mono">$0.45</td>
-                <td class="py-2 px-3 text-right font-mono">$0.00</td>
-                <td class="py-2 px-3 text-right font-mono font-bold">$450.00</td>
-              </tr>
-            </tbody>
+            <tbody id="invItemsTableBody" class="divide-y divide-slate-200"></tbody>
           </table>
         </div>
 
-        <!-- Resumen de Impuestos y Totales -->
+        <!-- Totales de Factura -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
           <div class="space-y-3 text-xs">
             <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200">
@@ -1061,7 +1022,7 @@
             </div>
             <div class="flex justify-between text-slate-600">
               <span>SUBTOTAL 0%:</span>
-              <span id="invSubtotal0" class="font-mono font-bold">$450.00</span>
+              <span id="invSubtotal0" class="font-mono font-bold">$0.00</span>
             </div>
             <div class="flex justify-between text-slate-600">
               <span>IVA 15%:</span>
@@ -1069,42 +1030,48 @@
             </div>
             <div class="flex justify-between text-base font-black text-slate-900 pt-2 border-t border-slate-300">
               <span>VALOR TOTAL:</span>
-              <span id="invGrandTotal" class="font-mono text-rose-700">$450.00</span>
+              <span id="invGrandTotal" class="font-mono text-rose-700">$0.00</span>
             </div>
           </div>
         </div>
-
       </div>
-
     </section>
 
   </main>
 
-  <!-- Barra de Navegación Inferior Móvil Fija -->
+  <!-- BARRA DE ACCESO RÁPIDO MÓVIL (< 768px): EXACTAMENTE LAS 7 SECCIONES -->
   <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 px-1 py-1.5 shadow-2xl no-print flex items-center justify-around text-[10px] font-bold">
-    <button onclick="switchMainTab('tabHome')" id="mobTabHome" class="mob-tab-btn flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl text-rose-400 transition">
+    <button onclick="switchMainTab('tabHome')" id="mobTabHome" class="mob-tab-btn flex flex-col items-center gap-0.5 px-1.5 py-1 rounded-xl text-rose-400 transition">
       <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
       <span>Dashboard</span>
     </button>
-    <button onclick="switchMainTab('tabHarvest')" id="mobTabHarvest" class="mob-tab-btn flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl text-slate-400 hover:text-white transition">
-      <i data-lucide="calculator" class="w-4 h-4"></i>
-      <span>Cosecha</span>
+    <button onclick="switchMainTab('tabPersonal')" id="mobTabPersonal" class="mob-tab-btn flex flex-col items-center gap-0.5 px-1.5 py-1 rounded-xl text-slate-400 hover:text-white transition">
+      <i data-lucide="wallet" class="w-4 h-4"></i>
+      <span>Personal</span>
     </button>
-    <button onclick="switchMainTab('tabSettlements')" id="mobTabSettlements" class="mob-tab-btn flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl text-slate-400 hover:text-white transition">
-      <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
-      <span>Recortes</span>
+    <button onclick="switchMainTab('tabBusiness')" id="mobTabBusiness" class="mob-tab-btn flex flex-col items-center gap-0.5 px-1.5 py-1 rounded-xl text-slate-400 hover:text-white transition">
+      <i data-lucide="sprout" class="w-4 h-4"></i>
+      <span id="mobBusinessName">Negocio</span>
     </button>
-    <button onclick="switchMainTab('tabDebts')" id="mobTabDebts" class="mob-tab-btn flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl text-slate-400 hover:text-white transition">
+    <button onclick="switchMainTab('tabCatalog')" id="mobTabCatalog" class="mob-tab-btn flex flex-col items-center gap-0.5 px-1.5 py-1 rounded-xl text-slate-400 hover:text-white transition">
+      <i data-lucide="database" class="w-4 h-4"></i>
+      <span>Catálogo</span>
+    </button>
+    <button onclick="switchMainTab('tabTransfers')" id="mobTabTransfers" class="mob-tab-btn flex flex-col items-center gap-0.5 px-1.5 py-1 rounded-xl text-slate-400 hover:text-white transition">
+      <i data-lucide="repeat" class="w-4 h-4"></i>
+      <span>Traspasos</span>
+    </button>
+    <button onclick="switchMainTab('tabDebts')" id="mobTabDebts" class="mob-tab-btn flex flex-col items-center gap-0.5 px-1.5 py-1 rounded-xl text-slate-400 hover:text-white transition">
       <i data-lucide="credit-card" class="w-4 h-4"></i>
       <span>Deudas</span>
     </button>
-    <button onclick="switchMainTab('tabRosse')" id="mobTabRosse" class="mob-tab-btn flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl text-slate-400 hover:text-white transition">
-      <i data-lucide="dollar-sign" class="w-4 h-4"></i>
-      <span>Finca</span>
+    <button onclick="switchMainTab('tabInvoiceView')" id="mobTabInvoiceView" class="mob-tab-btn flex flex-col items-center gap-0.5 px-1.5 py-1 rounded-xl text-slate-400 hover:text-white transition">
+      <i data-lucide="file-check" class="w-4 h-4"></i>
+      <span>Facturas</span>
     </button>
   </nav>
 
-  <!-- Pie de Página Oficial con Créditos y Redes Sociales -->
+  <!-- Pie de Página Oficial -->
   <footer class="no-print mt-auto bg-slate-950 text-slate-400 border-t border-slate-800 py-6 px-4">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
       <div>
@@ -1117,7 +1084,7 @@
       </div>
 
       <div class="flex items-center gap-4 text-xs font-bold flex-wrap justify-center">
-        <!-- TikTok Oficial -->
+        <!-- TikTok -->
         <a href="https://www.tiktok.com/@mr_jhordy21?_r=1&_t=ZS-9A039casma0" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-slate-300 hover:text-purple-400 transition" title="TikTok @mr_jhordy21">
           <svg class="w-4 h-4 fill-current shrink-0" style="width:16px;height:16px;min-width:16px;" viewBox="0 0 24 24">
             <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298-.002.595.042.88.13V9.4a6.33 6.33 0 0 0-1-.08A6.34 6.34 0 0 0 3 15.66a6.34 6.34 0 0 0 10.81 4.48 6.3 6.3 0 0 0 1.86-4.48V8.72a8.18 8.18 0 0 0 4.92 1.63V6.9a4.85 4.85 0 0 1-1-.21z"/>
@@ -1125,32 +1092,13 @@
           <span>TikTok</span>
         </a>
 
-        <!-- Facebook -->
-        <span class="flex items-center gap-1 text-slate-500 hover:text-blue-500 cursor-pointer transition" title="Facebook">
-          <svg class="w-4 h-4 fill-current shrink-0" style="width:16px;height:16px;min-width:16px;" viewBox="0 0 24 24">
-            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-          </svg>
-          <span>Facebook</span>
-        </span>
-
-        <!-- YouTube -->
-        <span class="flex items-center gap-1 text-slate-500 hover:text-red-500 cursor-pointer transition" title="YouTube">
-          <svg class="w-4 h-4 fill-current shrink-0" style="width:16px;height:16px;min-width:16px;" viewBox="0 0 24 24">
-            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-          </svg>
-          <span>YouTube</span>
-        </span>
-
-        <!-- Instagram -->
-        <span class="flex items-center gap-1 text-slate-500 hover:text-pink-500 cursor-pointer transition" title="Instagram">
-          <svg class="w-4 h-4 fill-current shrink-0" style="width:16px;height:16px;min-width:16px;" viewBox="0 0 24 24">
-            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-          </svg>
-          <span>Instagram</span>
-        </span>
+        <!-- Redes secundarias -->
+        <span class="flex items-center gap-1 text-slate-500 hover:text-blue-500 cursor-pointer transition"><span>Facebook</span></span>
+        <span class="flex items-center gap-1 text-slate-500 hover:text-red-500 cursor-pointer transition"><span>YouTube</span></span>
+        <span class="flex items-center gap-1 text-slate-500 hover:text-pink-500 cursor-pointer transition"><span>Instagram</span></span>
 
         <!-- WhatsApp -->
-        <a href="https://wa.me/593963923399?text=Hola%20Jhordy,%20tengo%20una%20consulta%20sobre%20ROSSE%20CABS" target="_blank" rel="noopener noreferrer" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3.5 py-1.5 rounded-2xl flex items-center gap-1.5 shadow transition active:scale-95">
+        <a href="https://wa.me/593963923399?text=Hola%20Jhordy,%20tengo%20una%20consulta%20sobre%20ROSSE%20CABS" target="_blank" rel="noopener noreferrer" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3.5 py-1.5 rounded-2xl flex items-center gap-1.5 shadow transition">
           <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
           <span>0963923399</span>
         </a>
@@ -1159,7 +1107,7 @@
   </footer>
 
   <!-- ============================================================== -->
-  <!-- MODALES DE CONTROL, OPERACIONES Y PAGOS                        -->
+  <!-- MODALES DEL SISTEMA                                            -->
   <!-- ============================================================== -->
 
   <!-- MODAL: REGISTRAR INGRESO EXTRA (FINCA O PERSONAL) -->
@@ -1177,7 +1125,7 @@
         <div>
           <label class="block font-black text-slate-700 mb-1">¿A qué cuenta pertenece este ingreso extra?</label>
           <select id="extraIncomeAccountSelect" class="w-full px-3 py-2 rounded-xl border border-amber-300 font-bold bg-amber-50/50">
-            <option value="finca">🌹 Finca ROSSE CABS (Asesoría, fletes florales, venta de esquejes)</option>
+            <option value="finca">🌹 Negocio ROSSE CABS (Asesoría, fletes florales, venta de esquejes)</option>
             <option value="personal">💳 Finanzas Personales (Otro trabajo, cachuelo, comisión)</option>
           </select>
         </div>
@@ -1198,10 +1146,6 @@
           <input type="text" id="extraIncomeDetail" required placeholder="Ej. Flete de flor, asesoría técnica, trabajo de fin de semana..." class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold">
         </div>
 
-        <div class="p-2.5 rounded-xl bg-emerald-50 text-emerald-900 border border-emerald-200 text-[11px] leading-tight">
-          💡 <b>Nota:</b> Este monto se sumará al saldo disponible y aparecerá en las tarjetas de <b>Ingresos Extras</b> del Dashboard y de tu cuenta para que puedas filtrarlo por mes o por todo el año.
-        </div>
-
         <div class="pt-2 flex justify-end gap-2">
           <button type="button" onclick="closeModal('modalExtraIncome')" class="px-4 py-2 font-bold text-slate-500">Cancelar</button>
           <button type="submit" class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black shadow transition active:scale-95">Guardar Ingreso Extra</button>
@@ -1210,7 +1154,7 @@
     </div>
   </div>
 
-  <!-- MODAL: REGISTRAR COSECHA CON CALCULADORA DE MALLAS EN VIVO -->
+  <!-- MODAL: REGISTRAR COSECHA (CON DROPDOWN DESDE CATÁLOGO) -->
   <div id="modalHarvest" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
     <div class="bg-white rounded-3xl p-5 sm:p-6 max-w-lg w-full shadow-2xl space-y-4 border border-slate-200 max-h-[92vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -1228,12 +1172,12 @@
             <input type="date" id="harvestDate" required class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold">
           </div>
           <div>
-            <label class="block font-bold text-slate-700 mb-1">Variedad</label>
+            <label class="block font-bold text-slate-700 mb-1">Variedad (de Catálogo)</label>
             <select id="harvestVariety" required class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold bg-white"></select>
           </div>
         </div>
 
-        <!-- CALCULADORA DE EXPORTACIÓN -->
+        <!-- Calculadora de Exportación -->
         <div class="p-3 bg-rose-50 rounded-2xl border border-rose-200 space-y-2">
           <span class="font-black text-rose-950 block">1. Flor de Exportación:</span>
           <div class="grid grid-cols-2 gap-2">
@@ -1251,7 +1195,7 @@
           </div>
         </div>
 
-        <!-- FLOR NACIONAL Y MERMA -->
+        <!-- Flor Nacional y Merma -->
         <div class="grid grid-cols-2 gap-3">
           <div class="p-3 bg-amber-50 rounded-2xl border border-amber-200">
             <label class="block font-bold text-amber-900 mb-1">2. Flor Nacional (Tallos)</label>
@@ -1281,7 +1225,7 @@
     </div>
   </div>
 
-  <!-- MODAL: NUEVA LIQUIDACIÓN / RECORTE DE CLIENTE -->
+  <!-- MODAL: NUEVA LIQUIDACIÓN (CLIENTE DE CATÁLOGO) -->
   <div id="modalSettlement" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
     <div class="bg-white rounded-3xl p-5 sm:p-6 max-w-lg w-full shadow-2xl space-y-4 border border-slate-200 max-h-[92vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -1299,8 +1243,8 @@
             <input type="date" id="settlementDate" required class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold">
           </div>
           <div>
-            <label class="block font-bold text-slate-700 mb-1">Cliente / Exportadora</label>
-            <input type="text" id="settlementClient" required placeholder="Ej. Florícola Exportadora S.A." class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold">
+            <label class="block font-bold text-slate-700 mb-1">Cliente / Exportadora (de Catálogo)</label>
+            <select id="settlementClient" required class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold bg-white"></select>
           </div>
         </div>
 
@@ -1338,14 +1282,14 @@
         <div class="pt-2 flex justify-end gap-2">
           <button type="button" onclick="closeModal('modalSettlement')" class="px-4 py-2 font-bold text-slate-500">Cancelar</button>
           <button type="submit" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold shadow transition">
-            Acreditar a ROSSE CABS
+            Acreditar a Negocio
           </button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- MODAL: REGISTRAR JORNAL DE FINCA -->
+  <!-- MODAL: REGISTRAR JORNAL (TRABAJADOR DE CATÁLOGO) -->
   <div id="modalLabor" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
     <div class="bg-white rounded-3xl p-5 sm:p-6 max-w-md w-full shadow-2xl space-y-4 border border-slate-200">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -1362,8 +1306,8 @@
           <input type="date" id="laborDate" required class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold">
         </div>
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Nombre del Trabajador</label>
-          <input type="text" id="laborWorker" required placeholder="Ej. Segundo Pillajo" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold">
+          <label class="block font-bold text-slate-700 mb-1">Trabajador (de Catálogo)</label>
+          <select id="laborWorker" required onchange="onSelectLaborWorker()" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold bg-white"></select>
         </div>
         <div>
           <label class="block font-bold text-slate-700 mb-1">Labor Realizada</label>
@@ -1389,13 +1333,10 @@
     </div>
   </div>
 
-  <!-- MODAL: AGREGAR O EDITAR VARIEDAD -->
+  <!-- MODALES DE CATÁLOGO (AÑADIR VARIEDAD, CLIENTE, TRABAJADOR) -->
   <div id="modalAddVariety" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
     <div class="bg-white rounded-3xl p-5 sm:p-6 max-w-md w-full shadow-2xl space-y-4 border border-slate-200">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 class="font-extrabold text-base text-slate-900">Agregar Variedad de Rosa</h3>
-        <button onclick="closeModal('modalAddVariety')" class="text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
-      </div>
+      <h3 class="font-extrabold text-base text-slate-900">Agregar Variedad de Rosa al Catálogo</h3>
       <form onsubmit="saveNewVariety(event)" class="space-y-3 text-xs">
         <div>
           <label class="block font-bold text-slate-700 mb-1">Nombre de la Variedad</label>
@@ -1417,7 +1358,55 @@
     </div>
   </div>
 
-  <!-- MODAL: GASTO UNIVERSAL (ROSSE CABS O PERSONAL) -->
+  <div id="modalAddClient" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+    <div class="bg-white rounded-3xl p-5 sm:p-6 max-w-md w-full shadow-2xl space-y-4 border border-slate-200">
+      <h3 class="font-extrabold text-base text-slate-900">Agregar Cliente / Exportadora al Catálogo</h3>
+      <form onsubmit="saveNewClient(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Nombre Comercial / Exportadora</label>
+          <input type="text" id="clientNameInput" required placeholder="Ej. Florícola Exportadora S.A." class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">RUC / Identificación</label>
+          <input type="text" id="clientRucInput" placeholder="1792345678001" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-mono font-bold">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Ciudad / Dirección</label>
+          <input type="text" id="clientAddressInput" placeholder="Quito, Tabacundo, Cayambe" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold">
+        </div>
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="closeModal('modalAddClient')" class="px-4 py-2 font-bold text-slate-500">Cancelar</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-emerald-600 text-white font-bold">Guardar Cliente</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modalAddWorker" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+    <div class="bg-white rounded-3xl p-5 sm:p-6 max-w-md w-full shadow-2xl space-y-4 border border-slate-200">
+      <h3 class="font-extrabold text-base text-slate-900">Agregar Trabajador al Catálogo</h3>
+      <form onsubmit="saveNewWorker(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Nombre Completo del Trabajador</label>
+          <input type="text" id="workerNameInput" required placeholder="Ej. Segundo Pillajo" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Labor Habitual</label>
+          <input type="text" id="workerTaskInput" placeholder="Cosecha y Corte, Fumigación" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Jornal Estándar ($)</label>
+          <input type="number" step="0.01" id="workerPayInput" value="15.00" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-mono font-bold">
+        </div>
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="closeModal('modalAddWorker')" class="px-4 py-2 font-bold text-slate-500">Cancelar</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-cyan-600 text-white font-bold">Guardar Trabajador</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: GASTO UNIVERSAL -->
   <div id="modalUniversalExpense" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4 border border-slate-200">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -1434,7 +1423,7 @@
           <div class="grid grid-cols-2 gap-2 pt-1">
             <label class="flex items-center gap-2 p-2 rounded-xl bg-white border border-rose-300 font-bold text-rose-900 cursor-pointer">
               <input type="radio" name="expenseAccountChoice" value="finca" checked onchange="updateExpenseCategoryOptions()" class="accent-rose-600">
-              <span>🌹 ROSSE CABS</span>
+              <span>🌹 Negocio</span>
             </label>
             <label class="flex items-center gap-2 p-2 rounded-xl bg-white border border-slate-300 font-bold text-slate-700 cursor-pointer">
               <input type="radio" name="expenseAccountChoice" value="personal" onchange="updateExpenseCategoryOptions()" class="accent-blue-600">
@@ -1472,7 +1461,7 @@
     </div>
   </div>
 
-  <!-- MODAL: INGRESO UNIVERSAL (ROSSE CABS O PERSONAL) -->
+  <!-- MODAL: INGRESO UNIVERSAL -->
   <div id="modalUniversalIncome" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4 border border-slate-200">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -1489,7 +1478,7 @@
           <div class="grid grid-cols-2 gap-2 pt-1">
             <label class="flex items-center gap-2 p-2 rounded-xl bg-white border border-emerald-300 font-bold text-emerald-900 cursor-pointer">
               <input type="radio" name="incomeAccountChoice" value="finca" checked onchange="updateIncomeCategoryOptions()" class="accent-emerald-600">
-              <span>🌹 ROSSE CABS</span>
+              <span>🌹 Negocio</span>
             </label>
             <label class="flex items-center gap-2 p-2 rounded-xl bg-white border border-slate-300 font-bold text-slate-700 cursor-pointer">
               <input type="radio" name="incomeAccountChoice" value="personal" onchange="updateIncomeCategoryOptions()" class="accent-blue-600">
@@ -1544,7 +1533,7 @@
           <div class="grid grid-cols-2 gap-2">
             <label class="flex items-center gap-2 p-2 rounded-xl bg-rose-50 border border-rose-300 font-bold text-rose-900 cursor-pointer">
               <input type="radio" name="debtAccountChoice" value="finca" checked class="accent-rose-600">
-              <span>🌹 ROSSE CABS</span>
+              <span>🌹 Negocio</span>
             </label>
             <label class="flex items-center gap-2 p-2 rounded-xl bg-blue-50 border border-blue-300 font-bold text-blue-900 cursor-pointer">
               <input type="radio" name="debtAccountChoice" value="personal" class="accent-blue-600">
@@ -1588,7 +1577,7 @@
     </div>
   </div>
 
-  <!-- MODAL: PAGAR / ABONAR A DEUDA CON DESCUENTO CONTABLE AUTOMÁTICO -->
+  <!-- MODAL: PAGAR / ABONAR A DEUDA CON DESCUENTO CONTABLE -->
   <div id="modalDebtPayment" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4 border border-slate-200">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -1606,7 +1595,7 @@
         </div>
 
         <div class="p-3 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-[11px] font-bold">
-          ⚡ <b>Descuento Automático:</b> Al confirmar, este valor se descontará inmediatamente como egreso de la cuenta de la deuda (<span id="payNoticeAccount">ROSSE CABS</span>) amortizando el saldo.
+          ⚡ <b>Descuento Automático:</b> Este pago disminuirá el saldo de la deuda y se descontará como egreso de tu caja (<span id="payNoticeAccount">Negocio</span>).
         </div>
 
         <div class="grid grid-cols-2 gap-3">
@@ -1650,8 +1639,8 @@
         <div>
           <label class="block font-bold text-slate-700 mb-1">Dirección de la Transferencia</label>
           <select id="transferDirection" onchange="updateTransferMaxNotice()" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold bg-slate-50">
-            <option value="finca_to_personal">🌹 De ROSSE CABS ➔ 💳 A Personal (Retiro utilidades)</option>
-            <option value="personal_to_finca">💳 De Personal ➔ 🌹 A ROSSE CABS (Inyección capital)</option>
+            <option value="finca_to_personal">🌹 De Negocio ➔ 💳 A Personal (Retiro utilidades)</option>
+            <option value="personal_to_finca">💳 De Personal ➔ 🌹 A Negocio (Inyección capital)</option>
           </select>
         </div>
 
@@ -1683,6 +1672,66 @@
     </div>
   </div>
 
+  <!-- MODAL: FACTURA SRI (EDITAR EMISOR, CLIENTE, AÑADIR ÍTEM) -->
+  <div id="modalInvoiceEditor" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-3 border border-slate-200 text-xs max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+        <h3 class="font-black text-slate-900 text-sm">Datos del Emisor Factura SRI</h3>
+        <button onclick="closeModal('modalInvoiceEditor')" class="text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form onsubmit="saveInvoiceCustomData(event)" class="space-y-2.5">
+        <div><label class="block font-bold text-slate-700">RUC Emisor</label><input type="text" id="editInvRuc" required class="w-full px-3 py-1.5 rounded-xl border border-slate-300 font-mono font-bold"></div>
+        <div><label class="block font-bold text-slate-700">No. Factura Secuencial</label><input type="text" id="editInvNumber" required class="w-full px-3 py-1.5 rounded-xl border border-slate-300 font-mono font-bold"></div>
+        <div><label class="block font-bold text-slate-700">Nombre Comercial</label><input type="text" id="editInvTradeName" required class="w-full px-3 py-1.5 rounded-xl border border-slate-300 font-bold"></div>
+        <div><label class="block font-bold text-slate-700">Razón Social</label><input type="text" id="editInvName" required class="w-full px-3 py-1.5 rounded-xl border border-slate-300 font-bold"></div>
+        <div><label class="block font-bold text-slate-700">Dirección</label><input type="text" id="editInvAddress" required class="w-full px-3 py-1.5 rounded-xl border border-slate-300 font-bold"></div>
+        <div><label class="block font-bold text-slate-700">Clave de Acceso (49 dígitos)</label><input type="text" id="editInvAccessKey" maxlength="49" required class="w-full px-3 py-1.5 rounded-xl border border-slate-300 font-mono text-[10px] font-bold"></div>
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="closeModal('modalInvoiceEditor')" class="px-3 py-1.5 text-slate-500 font-bold">Cancelar</button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-blue-600 text-white font-bold">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modalInvoiceClientEditor" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-3 border border-slate-200 text-xs">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+        <h3 class="font-black text-slate-900 text-sm">Editar Cliente de Factura</h3>
+        <button onclick="closeModal('modalInvoiceClientEditor')" class="text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form onsubmit="saveInvoiceClientData(event)" class="space-y-2.5">
+        <div><label class="block font-bold text-slate-700">Razón Social / Comprador</label><input type="text" id="editInvClientName" required class="w-full px-3 py-1.5 rounded-xl border border-slate-300 font-bold"></div>
+        <div><label class="block font-bold text-slate-700">RUC / Cédula</label><input type="text" id="editInvClientRuc" required class="w-full px-3 py-1.5 rounded-xl border border-slate-300 font-mono font-bold"></div>
+        <div><label class="block font-bold text-slate-700">Fecha de Emisión</label><input type="text" id="editInvClientDate" required class="w-full px-3 py-1.5 rounded-xl border border-slate-300 font-bold"></div>
+        <div><label class="block font-bold text-slate-700">Dirección</label><input type="text" id="editInvClientAddress" required class="w-full px-3 py-1.5 rounded-xl border border-slate-300 font-bold"></div>
+        <div><label class="block font-bold text-slate-700">Email</label><input type="email" id="editInvClientEmail" class="w-full px-3 py-1.5 rounded-xl border border-slate-300 font-bold"></div>
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="closeModal('modalInvoiceClientEditor')" class="px-3 py-1.5 text-slate-500 font-bold">Cancelar</button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-indigo-600 text-white font-bold">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modalInvoiceAddItem" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl p-5 max-w-sm w-full shadow-2xl space-y-3 text-xs">
+      <h3 class="font-extrabold text-sm text-slate-900">Agregar Ítem a Factura</h3>
+      <form onsubmit="addInvoiceItem(event)" class="space-y-2.5">
+        <div><label class="font-bold block mb-0.5">Código</label><input type="text" id="invItemCode" value="EXP-01" class="w-full p-2 border rounded-xl font-mono font-bold"></div>
+        <div><label class="font-bold block mb-0.5">Descripción de la Flor / Variedad</label><input type="text" id="invItemDesc" required placeholder="Ej. Rosas Explorer (40 Mallas)" class="w-full p-2 border rounded-xl font-bold"></div>
+        <div class="grid grid-cols-2 gap-2">
+          <div><label class="font-bold block mb-0.5">Cantidad</label><input type="number" id="invItemQty" required value="1000" class="w-full p-2 border rounded-xl font-mono font-bold"></div>
+          <div><label class="font-bold block mb-0.5">Precio Unit.</label><input type="number" step="0.001" id="invItemPrice" required value="0.45" class="w-full p-2 border rounded-xl font-mono font-bold"></div>
+        </div>
+        <div class="flex justify-end gap-2 pt-1">
+          <button type="button" onclick="closeModal('modalInvoiceAddItem')" class="px-3 py-1.5 font-bold text-slate-500">Cancelar</button>
+          <button type="submit" class="px-4 py-1.5 bg-amber-500 text-slate-950 font-bold rounded-xl">Agregar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- MODAL: AJUSTES, LOGO PERSONALIZADO, NOTIFICACIONES Y RESPALDOS -->
   <div id="modalSettings" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4 border border-slate-200 max-h-[92vh] overflow-y-auto">
@@ -1695,8 +1744,7 @@
       </div>
 
       <div class="space-y-4 text-xs">
-
-        <!-- LOGO O FOTO DEL NEGOCIO PERSONALIZABLE -->
+        <!-- Logo Personalizable -->
         <div class="p-3.5 bg-rose-50 rounded-2xl border border-rose-200 space-y-2">
           <div class="flex items-center justify-between">
             <span class="font-black text-rose-950">Foto o Logo del Negocio</span>
@@ -1719,48 +1767,25 @@
 
         <form onsubmit="saveSettings(event)" class="space-y-3">
           <div>
-            <label class="block font-bold text-slate-700 mb-1">Nombre de la Finca</label>
+            <label class="block font-bold text-slate-700 mb-1">Nombre del Negocio / Finca</label>
             <input type="text" id="settingStoreName" required class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold">
           </div>
-
           <div>
             <label class="block font-bold text-slate-700 mb-1">Nombre del Propietario</label>
             <input type="text" id="settingOwnerName" required class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold">
           </div>
-
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">Tema Visual</label>
-              <select id="settingThemeSelect" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold bg-white">
-                <option value="light">☀️ Modo Claro</option>
-                <option value="dark">🌙 Modo Oscuro</option>
-              </select>
-            </div>
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">Contraseña Personal</label>
-              <input type="text" id="settingUserPassword" required class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold">
-            </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Contraseña Personal</label>
+            <input type="text" id="settingUserPassword" required class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold">
           </div>
-
           <button type="submit" class="w-full py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold shadow transition">
             Guardar Configuración
           </button>
         </form>
 
-        <!-- Permisos de Notificaciones -->
-        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-2xl border border-slate-200">
-          <div>
-            <span class="font-bold text-slate-800 block">🔔 Notificaciones del Celular / PC</span>
-            <span class="text-[10px] text-slate-500">Recordatorio semanal de respaldo a WhatsApp</span>
-          </div>
-          <button onclick="requestSystemNotifications()" class="px-3.5 py-1.5 rounded-xl font-bold text-xs bg-slate-200 hover:bg-slate-300 text-slate-800 transition">
-            Permitir
-          </button>
-        </div>
-
         <!-- Respaldos -->
         <div class="pt-3 border-t border-slate-100 space-y-2">
-          <span class="font-black text-slate-800 block">Copias de Seguridad (Privadas en tu Móvil)</span>
+          <span class="font-black text-slate-800 block">Copias de Seguridad</span>
           <div class="grid grid-cols-2 gap-2">
             <button onclick="shareBackupDataWhatsApp()" class="p-2.5 rounded-xl bg-amber-500 text-slate-950 font-black flex items-center justify-center gap-1.5 shadow transition active:scale-95">
               <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
@@ -1780,19 +1805,15 @@
             🚨 Borrar Todos los Datos / Resetear Sistema
           </button>
         </div>
-
       </div>
     </div>
   </div>
 
-  <!-- MODAL: RESTAURAR COPIA DE SEGURIDAD (DOBLE OPCIÓN) -->
+  <!-- MODAL: RESTAURAR COPIA DE SEGURIDAD -->
   <div id="modalRestoreBackup" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl border border-slate-200 text-xs space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h4 class="font-black text-slate-900 text-sm flex items-center gap-2">
-          <span>📥</span>
-          <span>Restaurar Copia de Seguridad</span>
-        </h4>
+        <h4 class="font-black text-slate-900 text-sm">📥 Restaurar Copia de Seguridad</h4>
         <button onclick="closeModal('modalRestoreBackup')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
 
@@ -1815,14 +1836,13 @@
           </button>
         </div>
       </div>
-
       <div class="flex justify-end pt-1">
         <button onclick="closeModal('modalRestoreBackup')" class="px-4 py-2 font-bold text-slate-400">Cerrar</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL: CONFIRMAR BORRADO DE SEGURIDAD (CON ASISTENCIA WHATSAPP) -->
+  <!-- MODAL: CONFIRMAR BORRADO DE SEGURIDAD -->
   <div id="modalSecurityReset" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl space-y-3.5 border border-slate-200 text-xs">
       <div class="flex items-center justify-between border-b border-slate-100 pb-2">
@@ -1836,13 +1856,8 @@
       <input type="password" id="inputResetPassword" placeholder="Contraseña de seguridad..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 font-bold text-sm text-center">
 
       <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-[11px] text-amber-900 text-left space-y-1">
-        <p class="font-bold flex items-center gap-1">
-          <span>❓</span>
-          <span>¿Olvidaste tu contraseña?</span>
-        </p>
-        <p class="text-slate-600 leading-tight">
-          Pide la clave maestra de rescate a <b>Jhordy</b> al celular <b>0963923399</b> en Tupigachi.
-        </p>
+        <p class="font-bold">❓ ¿Olvidaste tu contraseña?</p>
+        <p class="text-slate-600 leading-tight">Pide la clave maestra de rescate a <b>Jhordy</b> al celular <b>0963923399</b> en Tupigachi.</p>
         <a href="https://wa.me/593963923399?text=Hola%20Jhordy,%20olvide%20mi%20clave%20en%20ROSSE%20CABS%20y%20necesito%20la%20clave%20de%20rescate" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-bold text-emerald-600 hover:underline pt-0.5">
           <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
           <span>Pedir clave a Jhordy por WhatsApp</span>
@@ -1856,91 +1871,22 @@
     </div>
   </div>
 
-  <!-- MODAL: EDITAR EMISOR FACTURA SRI -->
-  <div id="modalInvoiceEditor" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-3 border border-slate-200 text-xs max-h-[90vh] overflow-y-auto">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-2">
-        <h3 class="font-black text-slate-900 text-sm">Datos del Emisor Factura SRI</h3>
-        <button onclick="closeModal('modalInvoiceEditor')" class="text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
-      </div>
-      <form onsubmit="saveInvoiceCustomData(event)" class="space-y-2.5">
-        <div>
-          <label class="block font-bold text-slate-700">RUC Emisor</label>
-          <input type="text" id="editInvRuc" required class="w-full px-3 py-1.5 rounded-xl border border-slate-300 font-mono font-bold">
-        </div>
-        <div>
-          <label class="block font-bold text-slate-700">No. Factura Secuencial</label>
-          <input type="text" id="editInvNumber" required class="w-full px-3 py-1.5 rounded-xl border border-slate-300 font-mono font-bold">
-        </div>
-        <div>
-          <label class="block font-bold text-slate-700">Nombre Comercial</label>
-          <input type="text" id="editInvTradeName" required class="w-full px-3 py-1.5 rounded-xl border border-slate-300 font-bold">
-        </div>
-        <div>
-          <label class="block font-bold text-slate-700">Razón Social</label>
-          <input type="text" id="editInvName" required class="w-full px-3 py-1.5 rounded-xl border border-slate-300 font-bold">
-        </div>
-        <div>
-          <label class="block font-bold text-slate-700">Dirección</label>
-          <input type="text" id="editInvAddress" required class="w-full px-3 py-1.5 rounded-xl border border-slate-300 font-bold">
-        </div>
-        <div class="pt-2 flex justify-end gap-2">
-          <button type="button" onclick="closeModal('modalInvoiceEditor')" class="px-3 py-1.5 text-slate-500 font-bold">Cancelar</button>
-          <button type="submit" class="px-4 py-2 rounded-xl bg-blue-600 text-white font-bold">Guardar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- MODAL: GUÍA DE USO INTERACTIVA (TOUR) -->
-  <div id="modalInteractiveTour" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-3xl p-6 max-w-lg w-full shadow-2xl space-y-4 border border-slate-200">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-        <div class="flex items-center gap-2 text-rose-600">
-          <span id="tourIconStep" class="text-2xl">🌹</span>
-          <span id="tourTitleStep" class="font-black text-base text-slate-900">Guía de Uso del Sistema</span>
-          <span id="tourProgressBadge" class="text-[10px] font-bold uppercase tracking-wider text-rose-600 ml-auto">Paso 1 de 5</span>
-        </div>
-        <button onclick="closeModal('modalInteractiveTour')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
-      </div>
-
-      <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-700 leading-relaxed min-h-[90px]" id="tourContentStep"></div>
-
-      <div class="flex items-center justify-between pt-2">
-        <button id="btnTourPrev" onclick="prevTourStep()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 transition hidden">
-          Anterior
-        </button>
-        <div class="flex items-center gap-2 ml-auto">
-          <button onclick="closeModal('modalInteractiveTour')" class="px-3 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-slate-600">
-            Saltar
-          </button>
-          <button id="btnTourNext" onclick="nextTourStep()" class="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs shadow transition active:scale-95">
-            Siguiente ➔
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- ============================================================== -->
-  <!-- JAVASCRIPT CORE ENGINE — ROSSE CABS & FINANZAS PERSONALES      -->
+  <!-- JAVASCRIPT CORE ENGINE                                         -->
   <!-- ============================================================== -->
   <script>
     const MASTER_RESCUE_KEY = "I´M_JHORDY";
-    const STORAGE_KEY = "rosse_cabs_agrocontable_v3";
+    const STORAGE_KEY = "rosse_cabs_agrocontable_v7";
 
-    // 1. REGISTRO DE SERVICE WORKER INLINE PARA MODO 100% OFFLINE
     function registerOfflinePWA() {
       if ('serviceWorker' in navigator) {
         try {
           const swCode = `
-            const CACHE_NAME = 'rosse-cabs-cache-v1';
+            const CACHE_NAME = 'rosse-cabs-cache-v7';
             self.addEventListener('install', (e) => { self.skipWaiting(); });
             self.addEventListener('activate', (e) => { e.waitUntil(clients.claim()); });
             self.addEventListener('fetch', (e) => {
-              e.respondWith(
-                fetch(e.request).catch(() => caches.match(e.request))
-              );
+              e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
             });
           `;
           const blob = new Blob([swCode], { type: 'application/javascript' });
@@ -1953,7 +1899,6 @@
       }
     }
 
-    // 2. ALMACENAMIENTO PERSISTENTE
     function requestPersistentStorage() {
       if (navigator.storage && navigator.storage.persist) {
         navigator.storage.persist().then(granted => {
@@ -1962,12 +1907,12 @@
       }
     }
 
-    // Estado global de la aplicación
     let appState = {
       settings: {
         storeName: "ROSSE CABS",
         ownerName: "Jhordy",
         userPassword: "admin",
+        activeYear: "2026",
         theme: "light",
         logoDataUrl: null,
         lastBackupDate: new Date().toISOString().split('T')[0],
@@ -1978,8 +1923,33 @@
           name: "JHORDY ALEXANDER",
           address: "Tupigachi - Pichincha, Ecuador",
           phone: "0963923399",
-          accounting: "NO"
+          accounting: "NO",
+          accessKey: "2509202601172639233900120010010000001051234567819",
+          clientName: "FLORÍCOLA EXPORTADORA S.A.",
+          clientRuc: "1792345678001",
+          clientDate: "25/09/2026",
+          clientAddress: "Quito, Ecuador",
+          clientEmail: "cliente@email.com",
+          items: [
+            { code: "EXP-01", desc: "Rosas Variedad Explorer (40 Mallas de 25 tallos)", qty: 1000, price: 0.45 }
+          ]
         }
+      },
+      catalog: {
+        varieties: [
+          { id: "v1", name: "Explorer", color: "Rojo Intenso", plantsCount: 3000 },
+          { id: "v2", name: "Freedom", color: "Rojo Clásico", plantsCount: 2500 },
+          { id: "v3", name: "Mondial", color: "Blanco Cremoso", plantsCount: 2000 },
+          { id: "v4", name: "Playa Blanca", color: "Blanco Puro", plantsCount: 1500 }
+        ],
+        clients: [
+          { id: "c1", name: "Florícola Exportadora S.A.", ruc: "1792345678001", address: "Quito, Ecuador" },
+          { id: "c2", name: "Rosas del Austro Cía.", ruc: "1791112223001", address: "Tabacundo, Ecuador" }
+        ],
+        workers: [
+          { id: "w1", name: "Segundo Pillajo", task: "Cosecha y Corte", defaultPay: 15.00 },
+          { id: "w2", name: "Rosa Guamán", task: "Desbotone", defaultPay: 14.00 }
+        ]
       },
       categories: {
         fincaExpense: ["Fertilizantes y Abonos", "Agroquímicos y Fumigación", "Mallas y Plásticos", "Herramientas y Riego", "Jornales y Mano de Obra", "Gasolina y Transporte", "Pago de Deuda Finca", "Otros Gastos Finca"],
@@ -1987,12 +1957,6 @@
         personalExpense: ["Alimentación", "Vivienda / Servicios", "Transporte Propio", "Salud", "Educación", "Cuota de Deuda", "Ocio / Varios"],
         personalIncome: ["Sueldo / Salario", "Ingreso Extra ✨", "Comisiones", "Inversiones", "Otros Ingresos"]
       },
-      varieties: [
-        { id: "v1", name: "Explorer", color: "Rojo Intenso", plantsCount: 3000 },
-        { id: "v2", name: "Freedom", color: "Rojo Clásico", plantsCount: 2500 },
-        { id: "v3", name: "Mondial", color: "Blanco Cremoso", plantsCount: 2000 },
-        { id: "v4", name: "Playa Blanca", color: "Blanco Puro", plantsCount: 1500 }
-      ],
       harvests: [
         { id: "h1", date: "2026-09-20", varietyName: "Explorer", exportMallas: 40, exportSueltos: 0, exportTotalStems: 1000, nationalStems: 80, discardStems: 20, grandTotalStems: 1100 },
         { id: "h2", date: "2026-09-22", varietyName: "Mondial", exportMallas: 30, exportSueltos: 15, exportTotalStems: 765, nationalStems: 60, discardStems: 15, grandTotalStems: 840 }
@@ -2025,37 +1989,7 @@
     };
 
     let currentDebtFilter = 'all';
-    let tourStep = 1;
 
-    const tourSteps = [
-      {
-        icon: "🌹",
-        title: "1. Separación Estricta de Cuentas",
-        content: "El dinero de tu finca <b>ROSSE CABS</b> y tus <b>Finanzas Personales</b> se lleva en cajas separadas. Cuando gastes dinero, el sistema te preguntará siempre de cuál cuenta se pagará. Si necesitas mover dinero entre ellas, usa el botón <b>Transferir</b>."
-      },
-      {
-        icon: "🌿",
-        title: "2. Cosecha con Calculadora de Mallas",
-        content: "Al registrar cortes ingresa las mallas (25 tallos) y tallos sueltos. El sistema calcula al instante la <b>Exportación</b>, la <b>Flor Nacional</b> (para venta local) y la <b>Merma/Descarte</b> ($0)."
-      },
-      {
-        icon: "✨",
-        title: "3. Ingresos Extras Registrados",
-        content: "Puedes registrar trabajos adicionales de la finca (fletes florales, asesorías, venta de esquejes) o particulares desde el botón <b>'+ Ingreso Extra'</b> y filtrarlos por mes o por todo el año."
-      },
-      {
-        icon: "💳",
-        title: "4. Pagar Deudas con Descuento en Caja",
-        content: "En el módulo de Deudas, cada obligación tiene el botón <b>'Pagar / Abonar a Deuda'</b>. Al abonar, el saldo de la deuda baja y el pago se descuenta como egreso de la cuenta correspondiente."
-      },
-      {
-        icon: "📲",
-        title: "5. Respaldo a WhatsApp & Modo Sin Internet",
-        content: "El botón permanente <b>'📲 Respaldar en WhatsApp'</b> descarga el archivo <code>.json</code> en tus descargas y abre tu chat. Además, la app funciona 100% en la finca sin internet."
-      }
-    ];
-
-    // Cargar estado inicial
     function loadStateFromStorage() {
       try {
         const saved = localStorage.getItem(STORAGE_KEY);
@@ -2063,6 +1997,8 @@
           const parsed = JSON.parse(saved);
           appState = { ...appState, ...parsed };
           if (parsed.settings) appState.settings = { ...appState.settings, ...parsed.settings };
+          if (parsed.settings?.invoice) appState.settings.invoice = { ...appState.settings.invoice, ...parsed.settings.invoice };
+          if (parsed.catalog) appState.catalog = { ...appState.catalog, ...parsed.catalog };
           if (parsed.categories) appState.categories = { ...appState.categories, ...parsed.categories };
         }
       } catch(e) {}
@@ -2117,11 +2053,8 @@
         isExtra: true
       };
 
-      if (account === 'finca') {
-        appState.fincaTransactions.push(item);
-      } else {
-        appState.personalTransactions.push(item);
-      }
+      if (account === 'finca') appState.fincaTransactions.push(item);
+      else appState.personalTransactions.push(item);
 
       saveState();
       closeModal('modalExtraIncome');
@@ -2130,7 +2063,6 @@
     }
 
     function calculateFinances() {
-      // Filtros de fecha del Dashboard General (Año y Mes o Todo el Año)
       const dYear = document.getElementById('dashYearFilter')?.value || 'all';
       const dMonth = document.getElementById('dashMonthFilter')?.value || 'all';
 
@@ -2145,24 +2077,19 @@
         return true;
       };
 
-      // Ingresos Finca = Liquidaciones por flor + Ingresos manuales
       const filteredSettlements = (appState.settlements || []).filter(s => filterByDate(s.date));
       const settlementIncome = filteredSettlements.reduce((sum, s) => sum + Number(s.totalPaid || 0), 0);
 
       const filteredFincaTxs = (appState.fincaTransactions || []).filter(t => filterByDate(t.date));
       const fincaManualIncome = filteredFincaTxs.filter(t => t.type === 'ingreso').reduce((sum, t) => sum + Number(t.amount || 0), 0);
       const fincaTotalIncome = settlementIncome + fincaManualIncome;
-
-      // Ingresos Extras Finca
       const fincaExtraIncome = filteredFincaTxs.filter(t => t.type === 'ingreso' && t.isExtra).reduce((sum, t) => sum + Number(t.amount || 0), 0);
 
-      // Egresos Finca = Gastos manuales + Jornales pagados
       const fincaManualExpenses = filteredFincaTxs.filter(t => t.type === 'egreso').reduce((sum, t) => sum + Number(t.amount || 0), 0);
       const filteredLabors = (appState.labors || []).filter(l => filterByDate(l.date));
       const laborPaidExpenses = filteredLabors.filter(l => l.paid).reduce((sum, l) => sum + Number(l.amount || 0), 0);
       const fincaTotalExpenses = fincaManualExpenses + laborPaidExpenses;
 
-      // Transferencias
       const filteredTransfers = (appState.transfers || []).filter(t => filterByDate(t.date));
       const transferredToPersonal = filteredTransfers.filter(t => t.to === 'personal').reduce((sum, t) => sum + Number(t.amount || 0), 0);
       const transferredFromPersonal = filteredTransfers.filter(t => t.from === 'personal').reduce((sum, t) => sum + Number(t.amount || 0), 0);
@@ -2171,19 +2098,14 @@
 
       const fincaFinalBalance = (fincaTotalIncome + transferredToFinca) - (fincaTotalExpenses + transferredFromFinca);
 
-      // Finanzas Personales
       const filteredPersonalTxs = (appState.personalTransactions || []).filter(t => filterByDate(t.date));
       const personalIncomeTotal = filteredPersonalTxs.filter(t => t.type === 'ingreso').reduce((sum, t) => sum + Number(t.amount || 0), 0);
       const personalExpenseTotal = filteredPersonalTxs.filter(t => t.type === 'egreso').reduce((sum, t) => sum + Number(t.amount || 0), 0);
       const personalFinalBalance = (personalIncomeTotal + transferredToPersonal) - (personalExpenseTotal + transferredFromPersonal);
-
-      // Ingresos Extras Personales
       const personalExtraIncome = filteredPersonalTxs.filter(t => t.type === 'ingreso' && t.isExtra).reduce((sum, t) => sum + Number(t.amount || 0), 0);
 
-      // Total Ingresos Extras Consolidados en Dashboard
       const consolidatedExtraIncome = personalExtraIncome + fincaExtraIncome;
 
-      // Cosecha acumulada
       let totalStemsHarvested = 0;
       let totalExportStems = 0;
       let totalNationalStems = 0;
@@ -2193,12 +2115,9 @@
         totalNationalStems += Number(h.nationalStems || 0);
       });
 
-      // Stock disponible de flor nacional = Flor nacional cosechada + devoluciones de clientes
       const totalReturnedStems = filteredSettlements.reduce((sum, s) => sum + Number(s.stemsReturned || 0), 0);
       const availableNationalStock = totalNationalStems + totalReturnedStems;
-
-      // Total plantas sembradas
-      const totalPlants = (appState.varieties || []).reduce((sum, v) => sum + Number(v.plantsCount || 0), 0);
+      const totalPlants = (appState.catalog?.varieties || []).reduce((sum, v) => sum + Number(v.plantsCount || 0), 0);
 
       return {
         fincaTotalIncome,
@@ -2230,12 +2149,16 @@
 
     function refreshAllUI() {
       const f = calculateFinances();
+      const storeName = appState.settings.storeName;
 
-      document.getElementById('headerStoreName').textContent = appState.settings.storeName;
+      document.getElementById('headerStoreName').textContent = storeName;
       document.getElementById('headerOwnerName').textContent = appState.settings.ownerName;
       document.getElementById('homeWelcomeOwner').textContent = appState.settings.ownerName;
-      document.getElementById('badgeRosseLabel').textContent = appState.settings.storeName;
-      document.getElementById('dashRosseTitle').textContent = `Finca ${appState.settings.storeName}`;
+      document.getElementById('badgeRosseLabel').textContent = storeName;
+      document.getElementById('dashRosseTitle').textContent = `Finca ${storeName}`;
+      document.getElementById('businessHeaderTitle').textContent = storeName.toUpperCase();
+      document.getElementById('navBusinessName').textContent = storeName;
+      document.getElementById('mobBusinessName').textContent = storeName;
 
       document.getElementById('badgeRosseBalance').textContent = `$${f.fincaFinalBalance.toFixed(2)}`;
       document.getElementById('badgePersonalBalance').textContent = `$${f.personalFinalBalance.toFixed(2)}`;
@@ -2258,13 +2181,12 @@
       document.getElementById('dashPersonalExpense').textContent = `$${f.personalExpenseTotal.toFixed(2)}`;
       document.getElementById('dashPersonalDebt').textContent = `$${calculateTotalRemainingDebt().toFixed(2)}`;
 
-      // MINI-DASHBOARD ROSSE CABS
+      // Mini dashboards
       document.getElementById('rosseMiniCash').textContent = `$${f.fincaFinalBalance.toFixed(2)}`;
       document.getElementById('rosseMiniSettlements').textContent = `$${f.settlementIncome.toFixed(2)}`;
       document.getElementById('rosseMiniExtraIncome').textContent = `$${f.fincaExtraIncome.toFixed(2)}`;
       document.getElementById('rosseMiniExpenses').textContent = `$${f.fincaTotalExpenses.toFixed(2)}`;
 
-      // MINI-DASHBOARD PERSONAL
       const regularPersonalIncome = Math.max(0, f.personalIncomeTotal - f.personalExtraIncome);
       document.getElementById('personalMiniIncome').textContent = `$${regularPersonalIncome.toFixed(2)}`;
       document.getElementById('personalMiniExtraIncome').textContent = `$${f.personalExtraIncome.toFixed(2)}`;
@@ -2274,73 +2196,206 @@
       updateLogoInUI();
       renderHarvestTable();
       renderSettlementsTable();
-      renderVarietiesCards();
       renderRosseAccounting();
       renderLaborTable();
       renderPersonalTransactions();
+      renderCatalogUI();
       renderUnifiedDebts();
       renderTransfersHistory();
       renderInvoicePreview();
       updateCharts();
       if (window.lucide) lucide.createIcons();
     }
-
-    // MANEJO DE LOGO PERSONALIZADO
-    function handleLogoUpload(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        appState.settings.logoDataUrl = e.target.result;
-        saveState();
-        showToast("¡Logo del negocio actualizado!");
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function removeCustomLogo() {
-      appState.settings.logoDataUrl = null;
-      saveState();
-      showToast("Logo restablecido al ícono por defecto");
-    }
-
-    function updateLogoInUI() {
-      const navImg = document.getElementById('navHeaderLogoImg');
-      const navEmoji = document.getElementById('navHeaderLogoEmoji');
-      const invImg = document.getElementById('invLogoImg');
-      const invEmoji = document.getElementById('invLogoEmoji');
-      const badge = document.getElementById('logoStatusBadge');
-      const btnRemove = document.getElementById('btnRemoveLogo');
-
-      if (appState.settings.logoDataUrl) {
-        if (navImg) { navImg.src = appState.settings.logoDataUrl; navImg.classList.remove('hidden'); }
-        if (navEmoji) navEmoji.classList.add('hidden');
-        if (invImg) { invImg.src = appState.settings.logoDataUrl; invImg.classList.remove('hidden'); }
-        if (invEmoji) invEmoji.classList.add('hidden');
-        if (badge) badge.textContent = "Foto personalizada activa 📷";
-        if (btnRemove) btnRemove.classList.remove('hidden');
-      } else {
-        if (navImg) navImg.classList.add('hidden');
-        if (navEmoji) navEmoji.classList.remove('hidden');
-        if (invImg) invImg.classList.add('hidden');
-        if (invEmoji) invEmoji.classList.remove('hidden');
-        if (badge) badge.textContent = "Ícono por defecto (🌹)";
-        if (btnRemove) btnRemove.classList.add('hidden');
+    function renderCatalogUI() {
+      // 1. Variedades
+      const vList = document.getElementById('catalogVarietiesList');
+      if (vList) {
+        vList.innerHTML = '';
+        (appState.catalog?.varieties || []).forEach(v => {
+          const div = document.createElement('div');
+          div.className = "p-2.5 bg-slate-50 border rounded-2xl flex justify-between items-center";
+          div.innerHTML = `
+            <div>
+              <span class="font-bold text-slate-900 block">${v.name}</span>
+              <span class="text-[10px] text-slate-400">${v.color || 'Rosas'} • ${Number(v.plantsCount || 0).toLocaleString()} plantas</span>
+            </div>
+            <button onclick="deleteVariety('${v.id}')" class="text-slate-300 hover:text-rose-600 p-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+          `;
+          vList.appendChild(div);
+        });
       }
+
+      // 2. Clientes
+      const cList = document.getElementById('catalogClientsList');
+      if (cList) {
+        cList.innerHTML = '';
+        (appState.catalog?.clients || []).forEach(c => {
+          const div = document.createElement('div');
+          div.className = "p-2.5 bg-slate-50 border rounded-2xl flex justify-between items-center";
+          div.innerHTML = `
+            <div>
+              <span class="font-bold text-slate-900 block">${c.name}</span>
+              <span class="text-[10px] text-slate-400">RUC: ${c.ruc || '-'} • ${c.address || ''}</span>
+            </div>
+            <button onclick="deleteClient('${c.id}')" class="text-slate-300 hover:text-rose-600 p-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+          `;
+          cList.appendChild(div);
+        });
+      }
+
+      // 3. Trabajadores
+      const wList = document.getElementById('catalogWorkersList');
+      if (wList) {
+        wList.innerHTML = '';
+        (appState.catalog?.workers || []).forEach(w => {
+          const div = document.createElement('div');
+          div.className = "p-2.5 bg-slate-50 border rounded-2xl flex justify-between items-center";
+          div.innerHTML = `
+            <div>
+              <span class="font-bold text-slate-900 block">${w.name}</span>
+              <span class="text-[10px] text-slate-400">${w.task || 'Labor'} • $${Number(w.defaultPay || 15).toFixed(2)}/día</span>
+            </div>
+            <button onclick="deleteWorker('${w.id}')" class="text-slate-300 hover:text-rose-600 p-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+          `;
+          wList.appendChild(div);
+        });
+      }
+
+      // Actualizar Selects en Modales de Cosecha, Recortes y Jornales
+      populateFormDropdowns();
+    }
+
+    function populateFormDropdowns() {
+      // Variedades para cosecha
+      const selVar = document.getElementById('harvestVariety');
+      if (selVar) {
+        const cur = selVar.value;
+        selVar.innerHTML = '';
+        (appState.catalog?.varieties || []).forEach(v => {
+          const opt = document.createElement('option');
+          opt.value = v.name;
+          opt.textContent = `${v.name} (${v.color || 'Rosas'})`;
+          selVar.appendChild(opt);
+        });
+        if (cur) selVar.value = cur;
+      }
+
+      // Clientes para liquidaciones
+      const selClient = document.getElementById('settlementClient');
+      if (selClient) {
+        const cur = selClient.value;
+        selClient.innerHTML = '';
+        (appState.catalog?.clients || []).forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c.name;
+          opt.textContent = c.name;
+          selClient.appendChild(opt);
+        });
+        if (cur) selClient.value = cur;
+      }
+
+      // Trabajadores para jornales
+      const selWorker = document.getElementById('laborWorker');
+      if (selWorker) {
+        const cur = selWorker.value;
+        selWorker.innerHTML = '';
+        (appState.catalog?.workers || []).forEach(w => {
+          const opt = document.createElement('option');
+          opt.value = w.name;
+          opt.textContent = `${w.name} ($${Number(w.defaultPay || 15).toFixed(2)})`;
+          selWorker.appendChild(opt);
+        });
+        if (cur) selWorker.value = cur;
+      }
+    }
+
+    function onSelectLaborWorker() {
+      const name = document.getElementById('laborWorker')?.value;
+      const worker = (appState.catalog?.workers || []).find(w => w.name === name);
+      if (worker) {
+        if (worker.task) document.getElementById('laborTask').value = worker.task;
+        if (worker.defaultPay) document.getElementById('laborAmount').value = Number(worker.defaultPay).toFixed(2);
+      }
+    }
+
+    function openModalAddVariety() {
+      document.getElementById('varietyName').value = '';
+      document.getElementById('varietyColor').value = '';
+      document.getElementById('varietyPlantsCount').value = '1000';
+      document.getElementById('modalAddVariety').classList.remove('hidden');
+    }
+
+    function saveNewVariety(e) {
+      e.preventDefault();
+      const name = document.getElementById('varietyName').value.trim();
+      const color = document.getElementById('varietyColor').value.trim() || 'Rosas';
+      const plantsCount = parseInt(document.getElementById('varietyPlantsCount').value) || 0;
+      if (!appState.catalog.varieties) appState.catalog.varieties = [];
+      appState.catalog.varieties.push({ id: 'v_' + Date.now(), name, color, plantsCount });
+      saveState();
+      closeModal('modalAddVariety');
+      showToast(`Variedad "${name}" agregada`);
+    }
+
+    function deleteVariety(id) {
+      appState.catalog.varieties = (appState.catalog.varieties || []).filter(v => v.id !== id);
+      saveState();
+      showToast("Variedad eliminada del catálogo");
+    }
+
+    function openModalAddClient() {
+      document.getElementById('clientNameInput').value = '';
+      document.getElementById('clientRucInput').value = '';
+      document.getElementById('clientAddressInput').value = '';
+      document.getElementById('modalAddClient').classList.remove('hidden');
+    }
+
+    function saveNewClient(e) {
+      e.preventDefault();
+      const name = document.getElementById('clientNameInput').value.trim();
+      const ruc = document.getElementById('clientRucInput').value.trim();
+      const address = document.getElementById('clientAddressInput').value.trim();
+      if (!appState.catalog.clients) appState.catalog.clients = [];
+      appState.catalog.clients.push({ id: 'c_' + Date.now(), name, ruc, address });
+      saveState();
+      closeModal('modalAddClient');
+      showToast(`Cliente "${name}" agregado al catálogo`);
+    }
+
+    function deleteClient(id) {
+      appState.catalog.clients = (appState.catalog.clients || []).filter(c => c.id !== id);
+      saveState();
+      showToast("Cliente eliminado");
+    }
+
+    function openModalAddWorker() {
+      document.getElementById('workerNameInput').value = '';
+      document.getElementById('workerTaskInput').value = 'Cosecha y Corte';
+      document.getElementById('workerPayInput').value = '15.00';
+      document.getElementById('modalAddWorker').classList.remove('hidden');
+    }
+
+    function saveNewWorker(e) {
+      e.preventDefault();
+      const name = document.getElementById('workerNameInput').value.trim();
+      const task = document.getElementById('workerTaskInput').value.trim();
+      const defaultPay = parseFloat(document.getElementById('workerPayInput').value) || 15.00;
+      if (!appState.catalog.workers) appState.catalog.workers = [];
+      appState.catalog.workers.push({ id: 'w_' + Date.now(), name, task, defaultPay });
+      saveState();
+      closeModal('modalAddWorker');
+      showToast(`Trabajador "${name}" agregado`);
+    }
+
+    function deleteWorker(id) {
+      appState.catalog.workers = (appState.catalog.workers || []).filter(w => w.id !== id);
+      saveState();
+      showToast("Trabajador eliminado");
     }
 
     function openModalHarvest() {
       document.getElementById('harvestDate').value = new Date().toISOString().split('T')[0];
-      const sel = document.getElementById('harvestVariety');
-      sel.innerHTML = '';
-      (appState.varieties || []).forEach(v => {
-        const opt = document.createElement('option');
-        opt.value = v.name;
-        opt.textContent = `${v.name} (${v.color || 'Rosas'})`;
-        sel.appendChild(opt);
-      });
-
+      populateFormDropdowns();
       document.getElementById('calcExportMallas').value = 0;
       document.getElementById('calcExportSueltos').value = 0;
       document.getElementById('calcNationalStems').value = 0;
@@ -2392,7 +2447,6 @@
     function renderHarvestTable() {
       const tbody = document.getElementById('harvestTableBody');
       tbody.innerHTML = '';
-
       if (!appState.harvests || appState.harvests.length === 0) {
         tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-slate-400">No hay registros de cosecha todavía.</td></tr>`;
         return;
@@ -2425,10 +2479,9 @@
       showToast("Registro de cosecha eliminado");
     }
 
-    // LIQUIDACIONES / RECORTES POR CLIENTE
     function openModalSettlement() {
       document.getElementById('settlementDate').value = new Date().toISOString().split('T')[0];
-      document.getElementById('settlementClient').value = '';
+      populateFormDropdowns();
       document.getElementById('settlementStemsSent').value = '';
       document.getElementById('settlementStemsReturned').value = 0;
       document.getElementById('settlementPaid').value = '';
@@ -2477,13 +2530,12 @@
       saveState();
       closeModal('modalSettlement');
       if (window.confetti) confetti({ particleCount: 50, spread: 60 });
-      showToast(`¡Liquidación de ${clientName} acreditada a ROSSE CABS!`);
+      showToast(`¡Liquidación de ${clientName} acreditada!`);
     }
 
     function renderSettlementsTable() {
       const tbody = document.getElementById('settlementsTableBody');
       tbody.innerHTML = '';
-
       if (!appState.settlements || appState.settlements.length === 0) {
         tbody.innerHTML = `<tr><td colspan="9" class="text-center py-6 text-slate-400">No hay liquidaciones registradas.</td></tr>`;
         return;
@@ -2517,296 +2569,10 @@
       showToast("Liquidación eliminada");
     }
 
-    function openModalDebt() {
-      document.getElementById('debtName').value = '';
-      document.getElementById('debtInitial').value = '';
-      document.getElementById('debtQuota').value = '';
-      document.getElementById('debtStart').value = new Date().toISOString().split('T')[0];
-      document.getElementById('debtEnd').value = new Date(Date.now() + 180 * 86400000).toISOString().split('T')[0];
-      document.getElementById('modalDebt').classList.remove('hidden');
-    }
-
-    function saveUnifiedDebt(e) {
-      e.preventDefault();
-      const account = document.querySelector('input[name="debtAccountChoice"]:checked').value;
-      const name = document.getElementById('debtName').value.trim();
-      const initialAmount = parseFloat(document.getElementById('debtInitial').value) || 0;
-      const monthlyPayment = parseFloat(document.getElementById('debtQuota').value) || 0;
-      const startDate = document.getElementById('debtStart').value;
-      const endDate = document.getElementById('debtEnd').value;
-
-      appState.debts.push({
-        id: 'd_' + Date.now(),
-        account,
-        name,
-        initialAmount,
-        monthlyPayment,
-        startDate,
-        endDate
-      });
-
-      saveState();
-      closeModal('modalDebt');
-      showToast("Deuda registrada exitosamente");
-    }
-
-    function filterDebtsList(acc) {
-      currentDebtFilter = acc;
-      document.querySelectorAll('#btnFilterDebtAll, #btnFilterDebtFinca, #btnFilterDebtPersonal').forEach(b => {
-        b.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition";
-      });
-
-      if (acc === 'all') document.getElementById('btnFilterDebtAll').className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white transition";
-      if (acc === 'finca') document.getElementById('btnFilterDebtFinca').className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-600 text-white transition";
-      if (acc === 'personal') document.getElementById('btnFilterDebtPersonal').className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white transition";
-
-      renderUnifiedDebts();
-    }
-
-    function renderUnifiedDebts() {
-      const container = document.getElementById('unifiedDebtsCardsContainer');
-      container.innerHTML = '';
-
-      const debts = (appState.debts || []).filter(d => {
-        if (currentDebtFilter === 'all') return true;
-        return d.account === currentDebtFilter;
-      });
-
-      if (debts.length === 0) {
-        container.innerHTML = `<div class="col-span-full p-6 text-center text-xs text-slate-400 border border-dashed rounded-2xl">No hay deudas registradas con este criterio.</div>`;
-        return;
-      }
-
-      debts.forEach(d => {
-        const payments = (appState.debtPayments || []).filter(p => p.debtId === d.id);
-        const totalPaid = payments.reduce((s, p) => s + Number(p.amount), 0);
-        const remaining = Math.max(0, Number(d.initialAmount) - totalPaid);
-        const pctPaid = Math.min(100, Math.round((totalPaid / Number(d.initialAmount)) * 100));
-        const isFinca = d.account === 'finca';
-
-        const card = document.createElement('div');
-        card.className = "p-4 bg-slate-50 border border-slate-200 rounded-2xl shadow-sm space-y-2.5";
-        card.innerHTML = `
-          <div class="flex justify-between items-start">
-            <div>
-              <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase ${isFinca ? 'bg-rose-100 text-rose-800' : 'bg-blue-100 text-blue-800'}">
-                ${isFinca ? '🌹 ROSSE CABS' : '💳 Personal'}
-              </span>
-              <h5 class="font-extrabold text-sm text-slate-900 mt-1">${d.name}</h5>
-              <span class="text-[10px] text-slate-400 block">Vence: ${d.endDate}</span>
-            </div>
-            <button onclick="deleteUnifiedDebt('${d.id}')" class="text-slate-300 hover:text-rose-500 p-1"><i data-lucide="trash" class="w-3.5 h-3.5"></i></button>
-          </div>
-
-          <div class="space-y-1 text-xs">
-            <div class="flex justify-between">
-              <span class="text-slate-500 font-semibold">Saldo Pendiente:</span>
-              <span class="font-mono font-black text-rose-600">$${remaining.toFixed(2)}</span>
-            </div>
-            <div class="flex justify-between text-[11px] text-slate-400">
-              <span>Monto Inicial: $${Number(d.initialAmount).toFixed(2)}</span>
-              <span>Abonado: $${totalPaid.toFixed(2)} (${pctPaid}%)</span>
-            </div>
-          </div>
-
-          <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
-            <div class="${isFinca ? 'bg-rose-600' : 'bg-blue-600'} h-full rounded-full transition-all" style="width: ${pctPaid}%"></div>
-          </div>
-
-          <!-- BOTÓN CLAVE: PAGAR DEUDA CON DESCUENTO CONTABLE -->
-          <div class="flex justify-end pt-1">
-            <button onclick="openModalDebtPayment('${d.id}')" class="text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-black px-3.5 py-1.5 rounded-xl shadow-sm flex items-center gap-1.5 active:scale-95 transition">
-              <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
-              <span>Pagar Deuda ($)</span>
-            </button>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-      lucide.createIcons();
-    }
-
-    function deleteUnifiedDebt(id) {
-      appState.debts = (appState.debts || []).filter(d => d.id !== id);
-      appState.debtPayments = (appState.debtPayments || []).filter(p => p.debtId !== id);
-      saveState();
-      showToast("Deuda eliminada");
-    }
-
-    function openModalDebtPayment(preselectedId = null) {
-      document.getElementById('debtPayDate').value = new Date().toISOString().split('T')[0];
-      document.getElementById('debtPayAmount').value = '';
-      document.getElementById('debtPayNote').value = '';
-      const sel = document.getElementById('debtPaySelect');
-      sel.innerHTML = '';
-
-      (appState.debts || []).forEach(d => {
-        const opt = document.createElement('option');
-        opt.value = d.id;
-        opt.textContent = `[${d.account === 'finca' ? 'ROSSE CABS' : 'Personal'}] ${d.name}`;
-        if (preselectedId && d.id === preselectedId) opt.selected = true;
-        sel.appendChild(opt);
-      });
-
-      const chosenDebt = (appState.debts || []).find(d => d.id === (preselectedId || sel.value));
-      document.getElementById('payNoticeAccount').textContent = (chosenDebt && chosenDebt.account === 'finca') ? 'Finca ROSSE CABS' : 'Personal';
-
-      sel.onchange = function() {
-        const cur = (appState.debts || []).find(d => d.id === sel.value);
-        document.getElementById('payNoticeAccount').textContent = (cur && cur.account === 'finca') ? 'Finca ROSSE CABS' : 'Personal';
-      };
-
-      document.getElementById('modalDebtPayment').classList.remove('hidden');
-    }
-
-    // EJECUCIÓN DEL PAGO Y DESCUENTO AUTOMÁTICO EN CAJA
-    function executeDebtPayment(e) {
-      e.preventDefault();
-      const debtId = document.getElementById('debtPaySelect').value;
-      const amount = parseFloat(document.getElementById('debtPayAmount').value) || 0;
-      const date = document.getElementById('debtPayDate').value;
-      const note = document.getElementById('debtPayNote').value.trim() || 'Pago de cuota';
-
-      const debt = (appState.debts || []).find(d => d.id === debtId);
-      if (!debt) return;
-
-      // 1. Guardar abono en la deuda
-      appState.debtPayments.push({
-        id: 'dp_' + Date.now(),
-        debtId,
-        date,
-        amount,
-        note
-      });
-
-      // 2. DESCUENTO AUTOMÁTICO EN LA CONTABILIDAD CORRESPONDIENTE
-      if (debt.account === 'finca') {
-        appState.fincaTransactions.push({
-          id: 'ft_' + Date.now(),
-          date,
-          type: 'egreso',
-          category: 'Pago de Deuda Finca',
-          detail: `Pago automático a deuda: ${debt.name} (${note})`,
-          amount
-        });
-      } else {
-        appState.personalTransactions.push({
-          id: 'pt_' + Date.now(),
-          date,
-          type: 'egreso',
-          category: 'Cuota de Deuda',
-          detail: `Pago automático a deuda: ${debt.name} (${note})`,
-          amount
-        });
-      }
-
-      saveState();
-      closeModal('modalDebtPayment');
-      if (window.confetti) confetti({ particleCount: 50, spread: 60 });
-      showToast(`¡Pago de $${amount.toFixed(2)} registrado y descontado en caja!`);
-    }
-
-    function shareBackupDataWhatsApp() {
-      const dataString = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
-      const filename = `Respaldo_ROSSE_CABS_${new Date().toISOString().split('T')[0]}.json`;
-
-      // 1. DESCARGA AUTOMÁTICA DEL ARCHIVO .JSON EN EL DISPOSITIVO
-      const a = document.createElement('a');
-      a.setAttribute("href", dataString);
-      a.setAttribute("download", filename);
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-
-      // 2. APERTURA DE WHATSAPP CON RESUMEN AUDITADO
-      const f = calculateFinances();
-      const totalDebts = calculateTotalRemainingDebt();
-      const summary = `*RESPALDO ROSSE CABS*\nFecha: ${new Date().toLocaleDateString()}\nPropietario: ${appState.settings.ownerName}\nCaja ROSSE CABS: $${f.fincaFinalBalance.toFixed(2)}\nCaja Personal: $${f.personalFinalBalance.toFixed(2)}\nIngresos Extras: $${f.consolidatedExtraIncome.toFixed(2)}\nDeudas Pendientes: $${totalDebts.toFixed(2)}\nTallos Cosechados: ${f.totalStemsHarvested.toLocaleString()}\nStock Flor Nacional: ${f.availableNationalStock.toLocaleString()} tallos\nUbicación: Tupigachi - Ecuador 🇪🇨\n(El archivo .json fue descargado en tus Descargas para respaldo seguro)`;
-
-      const url = `https://wa.me/593963923399?text=${encodeURIComponent(summary)}`;
-      window.open(url, '_blank');
-
-      appState.settings.lastBackupDate = new Date().toISOString().split('T')[0];
-      saveState();
-      showToast("Archivo JSON descargado y WhatsApp abierto", "📲");
-    }
-
-    function openModalRestoreBackup() {
-      document.getElementById('restoreRawTextInput').value = '';
-      document.getElementById('modalRestoreBackup').classList.remove('hidden');
-    }
-
-    function handleBackupFileUpload(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        processRestoredJson(e.target.result);
-      };
-      reader.readAsText(file);
-    }
-
-    function restoreFromRawText() {
-      const raw = document.getElementById('restoreRawTextInput').value.trim();
-      if (!raw) {
-        showToast("Pega el texto JSON de respaldo", "⚠️");
-        return;
-      }
-      processRestoredJson(raw);
-    }
-
-    function processRestoredJson(jsonString) {
-      try {
-        const imported = JSON.parse(jsonString);
-        if (imported && (imported.settings || imported.harvests || imported.fincaTransactions)) {
-          appState = imported;
-          saveState();
-          closeModal('modalRestoreBackup');
-          closeModal('modalSettings');
-          if (window.confetti) confetti({ particleCount: 70, spread: 60 });
-          showToast("¡Respaldo restaurado exitosamente!");
-        } else {
-          showToast("Formato de respaldo no válido", "❌");
-        }
-      } catch(e) {
-        showToast("Error al procesar el archivo o texto JSON", "❌");
-      }
-    }
-
-    function openModalSecurityReset() {
-      document.getElementById('inputResetPassword').value = '';
-      document.getElementById('modalSecurityReset').classList.remove('hidden');
-    }
-
-    function executeTotalReset() {
-      const input = document.getElementById('inputResetPassword').value.trim();
-      const valid = appState.settings.userPassword || 'admin';
-
-      if (input !== valid && input !== MASTER_RESCUE_KEY) {
-        showToast("Contraseña incorrecta. Contacta a Jhordy al 0963923399", "❌");
-        return;
-      }
-
-      appState.harvests = [];
-      appState.settlements = [];
-      appState.labors = [];
-      appState.fincaTransactions = [];
-      appState.personalTransactions = [];
-      appState.transfers = [];
-      appState.debts = [];
-      appState.debtPayments = [];
-
-      saveState();
-      closeModal('modalSecurityReset');
-      closeModal('modalSettings');
-      showToast("Todos los datos fueron borrados. Aplicación en cero.", "🚨");
-    }
-
     function openModalLabor() {
       document.getElementById('laborDate').value = new Date().toISOString().split('T')[0];
-      document.getElementById('laborWorker').value = '';
-      document.getElementById('laborAmount').value = '15.00';
+      populateFormDropdowns();
+      onSelectLaborWorker();
       document.getElementById('modalLabor').classList.remove('hidden');
     }
 
@@ -2836,13 +2602,12 @@
       if (!labor) return;
       labor.paid = !labor.paid;
       saveState();
-      showToast(labor.paid ? "Jornal pagado y descontado en ROSSE CABS" : "Jornal marcado como pendiente");
+      showToast(labor.paid ? "Jornal pagado y descontado en negocio" : "Jornal marcado como pendiente");
     }
 
     function renderLaborTable() {
       const tbody = document.getElementById('laborTableBody');
       tbody.innerHTML = '';
-
       if (!appState.labors || appState.labors.length === 0) {
         tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">No hay jornales registrados.</td></tr>`;
         return;
@@ -2875,70 +2640,6 @@
       showToast("Jornal eliminado");
     }
 
-    function openModalAddVariety() {
-      document.getElementById('varietyName').value = '';
-      document.getElementById('varietyColor').value = '';
-      document.getElementById('varietyPlantsCount').value = '1000';
-      document.getElementById('modalAddVariety').classList.remove('hidden');
-    }
-
-    function saveNewVariety(e) {
-      e.preventDefault();
-      const name = document.getElementById('varietyName').value.trim();
-      const color = document.getElementById('varietyColor').value.trim() || 'Rosas';
-      const plantsCount = parseInt(document.getElementById('varietyPlantsCount').value) || 0;
-
-      appState.varieties.push({
-        id: 'v_' + Date.now(),
-        name,
-        color,
-        plantsCount
-      });
-
-      saveState();
-      closeModal('modalAddVariety');
-      showToast(`Variedad "${name}" agregada al padrón`);
-    }
-
-    function renderVarietiesCards() {
-      const container = document.getElementById('varietiesCardsContainer');
-      container.innerHTML = '';
-
-      (appState.varieties || []).forEach(v => {
-        // Calcular tallos cosechados de esta variedad
-        const stems = (appState.harvests || []).filter(h => h.varietyName === v.name).reduce((sum, h) => sum + Number(h.grandTotalStems || 0), 0);
-        const card = document.createElement('div');
-        card.className = "p-4 bg-white border border-slate-200 rounded-3xl shadow-sm space-y-2";
-        card.innerHTML = `
-          <div class="flex justify-between items-start">
-            <div>
-              <span class="text-[10px] font-black uppercase text-finca-600 tracking-wider">Variedad Activa</span>
-              <h5 class="font-extrabold text-base text-slate-900 mt-0.5">${v.name}</h5>
-              <span class="text-xs text-slate-400 font-semibold">${v.color}</span>
-            </div>
-            <button onclick="deleteVariety('${v.id}')" class="text-slate-300 hover:text-rose-500 p-1"><i data-lucide="trash" class="w-3.5 h-3.5"></i></button>
-          </div>
-          <div class="pt-2 border-t border-slate-100 flex justify-between items-center text-xs">
-            <span class="text-slate-500 font-bold">Plantas:</span>
-            <span class="font-mono font-black text-slate-900">${v.plantsCount.toLocaleString()}</span>
-          </div>
-          <div class="flex justify-between items-center text-xs">
-            <span class="text-slate-500 font-bold">Tallos Cosechados:</span>
-            <span class="font-mono font-black text-rose-600">${stems.toLocaleString()}</span>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-      lucide.createIcons();
-    }
-
-    function deleteVariety(id) {
-      appState.varieties = (appState.varieties || []).filter(v => v.id !== id);
-      saveState();
-      showToast("Variedad eliminada");
-    }
-
-    // GASTOS & INGRESOS UNIVERSALES
     function openModalUniversalExpense(defaultChoice = 'finca') {
       document.getElementById('expenseDate').value = new Date().toISOString().split('T')[0];
       document.getElementById('expenseAmount').value = '';
@@ -2955,7 +2656,6 @@
       const choice = document.querySelector('input[name="expenseAccountChoice"]:checked')?.value || 'finca';
       const sel = document.getElementById('expenseCategory');
       sel.innerHTML = '';
-
       const list = choice === 'finca' ? (appState.categories.fincaExpense || []) : (appState.categories.personalExpense || []);
       list.forEach(c => {
         const opt = document.createElement('option');
@@ -2982,11 +2682,8 @@
         amount
       };
 
-      if (choice === 'finca') {
-        appState.fincaTransactions.push(item);
-      } else {
-        appState.personalTransactions.push(item);
-      }
+      if (choice === 'finca') appState.fincaTransactions.push(item);
+      else appState.personalTransactions.push(item);
 
       saveState();
       closeModal('modalUniversalExpense');
@@ -3009,7 +2706,6 @@
       const choice = document.querySelector('input[name="incomeAccountChoice"]:checked')?.value || 'finca';
       const sel = document.getElementById('universalIncomeCategory');
       sel.innerHTML = '';
-
       const list = choice === 'finca' ? (appState.categories.fincaIncome || []) : (appState.categories.personalIncome || []);
       list.forEach(c => {
         const opt = document.createElement('option');
@@ -3036,21 +2732,17 @@
         amount
       };
 
-      if (choice === 'finca') {
-        appState.fincaTransactions.push(item);
-      } else {
-        appState.personalTransactions.push(item);
-      }
+      if (choice === 'finca') appState.fincaTransactions.push(item);
+      else appState.personalTransactions.push(item);
 
       saveState();
       closeModal('modalUniversalIncome');
-      showToast(`Ingreso guardado en ${choice === 'finca' ? 'ROSSE CABS' : 'Personal'}`);
+      showToast("Ingreso guardado exitosamente");
     }
 
     function renderRosseAccounting() {
       const tbody = document.getElementById('rosseAccountingTableBody');
       tbody.innerHTML = '';
-
       const rYear = document.getElementById('selectRosseYear')?.value || 'all';
       const rMonth = document.getElementById('selectRosseMonth')?.value || 'all';
 
@@ -3130,7 +2822,6 @@
     function renderPersonalTransactions() {
       const tbody = document.getElementById('personalTransactionsTableBody');
       tbody.innerHTML = '';
-
       const pYear = document.getElementById('selectPersonalYear')?.value || 'all';
       const pMonth = document.getElementById('selectPersonalMonth')?.value || 'all';
 
@@ -3171,6 +2862,185 @@
       showToast("Movimiento personal eliminado");
     }
 
+    function openModalDebt() {
+      document.getElementById('debtName').value = '';
+      document.getElementById('debtInitial').value = '';
+      document.getElementById('debtQuota').value = '';
+      document.getElementById('debtStart').value = new Date().toISOString().split('T')[0];
+      document.getElementById('debtEnd').value = new Date(Date.now() + 180 * 86400000).toISOString().split('T')[0];
+      document.getElementById('modalDebt').classList.remove('hidden');
+    }
+
+    function saveUnifiedDebt(e) {
+      e.preventDefault();
+      const account = document.querySelector('input[name="debtAccountChoice"]:checked').value;
+      const name = document.getElementById('debtName').value.trim();
+      const initialAmount = parseFloat(document.getElementById('debtInitial').value) || 0;
+      const monthlyPayment = parseFloat(document.getElementById('debtQuota').value) || 0;
+      const startDate = document.getElementById('debtStart').value;
+      const endDate = document.getElementById('debtEnd').value;
+
+      appState.debts.push({
+        id: 'd_' + Date.now(),
+        account,
+        name,
+        initialAmount,
+        monthlyPayment,
+        startDate,
+        endDate
+      });
+
+      saveState();
+      closeModal('modalDebt');
+      showToast("Deuda registrada exitosamente");
+    }
+
+    function filterDebtsList(acc) {
+      currentDebtFilter = acc;
+      document.querySelectorAll('#btnFilterDebtAll, #btnFilterDebtFinca, #btnFilterDebtPersonal').forEach(b => {
+        b.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition";
+      });
+
+      if (acc === 'all') document.getElementById('btnFilterDebtAll').className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white transition";
+      if (acc === 'finca') document.getElementById('btnFilterDebtFinca').className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-600 text-white transition";
+      if (acc === 'personal') document.getElementById('btnFilterDebtPersonal').className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white transition";
+
+      renderUnifiedDebts();
+    }
+
+    function renderUnifiedDebts() {
+      const container = document.getElementById('unifiedDebtsCardsContainer');
+      container.innerHTML = '';
+
+      const debts = (appState.debts || []).filter(d => {
+        if (currentDebtFilter === 'all') return true;
+        return d.account === currentDebtFilter;
+      });
+
+      if (debts.length === 0) {
+        container.innerHTML = `<div class="col-span-full p-6 text-center text-xs text-slate-400 border border-dashed rounded-2xl">No hay deudas registradas con este criterio.</div>`;
+        return;
+      }
+
+      debts.forEach(d => {
+        const payments = (appState.debtPayments || []).filter(p => p.debtId === d.id);
+        const totalPaid = payments.reduce((s, p) => s + Number(p.amount), 0);
+        const remaining = Math.max(0, Number(d.initialAmount) - totalPaid);
+        const pctPaid = Math.min(100, Math.round((totalPaid / Number(d.initialAmount)) * 100));
+        const isFinca = d.account === 'finca';
+
+        const card = document.createElement('div');
+        card.className = "p-4 bg-slate-50 border border-slate-200 rounded-2xl shadow-sm space-y-2.5";
+        card.innerHTML = `
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase ${isFinca ? 'bg-rose-100 text-rose-800' : 'bg-blue-100 text-blue-800'}">
+                ${isFinca ? '🌹 Negocio' : '💳 Personal'}
+              </span>
+              <h5 class="font-extrabold text-sm text-slate-900 mt-1">${d.name}</h5>
+              <span class="text-[10px] text-slate-400 block">Vence: ${d.endDate}</span>
+            </div>
+            <button onclick="deleteUnifiedDebt('${d.id}')" class="text-slate-300 hover:text-rose-500 p-1"><i data-lucide="trash" class="w-3.5 h-3.5"></i></button>
+          </div>
+
+          <div class="space-y-1 text-xs">
+            <div class="flex justify-between">
+              <span class="text-slate-500 font-semibold">Saldo Pendiente:</span>
+              <span class="font-mono font-black text-rose-600">$${remaining.toFixed(2)}</span>
+            </div>
+            <div class="flex justify-between text-[11px] text-slate-400">
+              <span>Monto Inicial: $${Number(d.initialAmount).toFixed(2)}</span>
+              <span>Abonado: $${totalPaid.toFixed(2)} (${pctPaid}%)</span>
+            </div>
+          </div>
+
+          <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+            <div class="${isFinca ? 'bg-rose-600' : 'bg-blue-600'} h-full rounded-full transition-all" style="width: ${pctPaid}%"></div>
+          </div>
+
+          <div class="flex justify-end pt-1">
+            <button onclick="openModalDebtPayment('${d.id}')" class="text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-black px-3.5 py-1.5 rounded-xl shadow-sm flex items-center gap-1.5 active:scale-95 transition">
+              <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+              <span>Pagar Deuda ($)</span>
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    function deleteUnifiedDebt(id) {
+      appState.debts = (appState.debts || []).filter(d => d.id !== id);
+      appState.debtPayments = (appState.debtPayments || []).filter(p => p.debtId !== id);
+      saveState();
+      showToast("Deuda eliminada");
+    }
+
+    function openModalDebtPayment(preselectedId = null) {
+      document.getElementById('debtPayDate').value = new Date().toISOString().split('T')[0];
+      document.getElementById('debtPayAmount').value = '';
+      document.getElementById('debtPayNote').value = '';
+      const sel = document.getElementById('debtPaySelect');
+      sel.innerHTML = '';
+
+      (appState.debts || []).forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d.id;
+        opt.textContent = `[${d.account === 'finca' ? 'Negocio' : 'Personal'}] ${d.name}`;
+        if (preselectedId && d.id === preselectedId) opt.selected = true;
+        sel.appendChild(opt);
+      });
+
+      const chosenDebt = (appState.debts || []).find(d => d.id === (preselectedId || sel.value));
+      document.getElementById('payNoticeAccount').textContent = (chosenDebt && chosenDebt.account === 'finca') ? 'Negocio' : 'Personal';
+
+      sel.onchange = function() {
+        const cur = (appState.debts || []).find(d => d.id === sel.value);
+        document.getElementById('payNoticeAccount').textContent = (cur && cur.account === 'finca') ? 'Negocio' : 'Personal';
+      };
+
+      document.getElementById('modalDebtPayment').classList.remove('hidden');
+    }
+
+    function executeDebtPayment(e) {
+      e.preventDefault();
+      const debtId = document.getElementById('debtPaySelect').value;
+      const amount = parseFloat(document.getElementById('debtPayAmount').value) || 0;
+      const date = document.getElementById('debtPayDate').value;
+      const note = document.getElementById('debtPayNote').value.trim() || 'Pago de cuota';
+
+      const debt = (appState.debts || []).find(d => d.id === debtId);
+      if (!debt) return;
+
+      appState.debtPayments.push({ id: 'dp_' + Date.now(), debtId, date, amount, note });
+
+      if (debt.account === 'finca') {
+        appState.fincaTransactions.push({
+          id: 'ft_' + Date.now(),
+          date,
+          type: 'egreso',
+          category: 'Pago de Deuda Finca',
+          detail: `Pago automático a deuda: ${debt.name} (${note})`,
+          amount
+        });
+      } else {
+        appState.personalTransactions.push({
+          id: 'pt_' + Date.now(),
+          date,
+          type: 'egreso',
+          category: 'Cuota de Deuda',
+          detail: `Pago automático a deuda: ${debt.name} (${note})`,
+          amount
+        });
+      }
+
+      saveState();
+      closeModal('modalDebtPayment');
+      if (window.confetti) confetti({ particleCount: 50, spread: 60 });
+      showToast(`¡Pago de $${amount.toFixed(2)} registrado y descontado en caja!`);
+    }
+
     function openModalTransfer() {
       document.getElementById('transferDate').value = new Date().toISOString().split('T')[0];
       document.getElementById('transferAmount').value = '';
@@ -3185,7 +3055,7 @@
       const notice = document.getElementById('transferOriginNotice');
 
       if (dir === 'finca_to_personal') {
-        notice.textContent = `Saldo disponible en ROSSE CABS: $${f.fincaFinalBalance.toFixed(2)}`;
+        notice.textContent = `Saldo disponible en Negocio: $${f.fincaFinalBalance.toFixed(2)}`;
       } else {
         notice.textContent = `Saldo disponible en Personal: $${f.personalFinalBalance.toFixed(2)}`;
       }
@@ -3202,11 +3072,11 @@
       const fromFinca = dir === 'finca_to_personal';
 
       if (fromFinca && amount > f.fincaFinalBalance) {
-        showToast("Saldo insuficiente en ROSSE CABS", "❌");
+        showToast("Saldo insuficiente en Negocio", "❌");
         return;
       }
       if (!fromFinca && amount > f.personalFinalBalance) {
-        showToast("Saldo insuficiente en la cuenta Personal", "❌");
+        showToast("Saldo insuficiente en Personal", "❌");
         return;
       }
 
@@ -3222,13 +3092,12 @@
       saveState();
       closeModal('modalTransfer');
       if (window.confetti) confetti({ particleCount: 50, spread: 60 });
-      showToast("Transferencia completada atómicamente");
+      showToast("Traspaso completado atómicamente");
     }
 
     function renderTransfersHistory() {
       const tbody = document.getElementById('transfersHistoryTableBody');
       tbody.innerHTML = '';
-
       if (!appState.transfers || appState.transfers.length === 0) {
         tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400">No se han realizado transferencias intercuentas.</td></tr>`;
         return;
@@ -3251,7 +3120,6 @@
       });
     }
 
-    // FACTURA SRI RIDE
     function renderInvoicePreview() {
       const inv = appState.settings.invoice;
       document.getElementById('invIssuerTradeName').textContent = inv.tradeName || appState.settings.storeName;
@@ -3261,6 +3129,51 @@
       document.getElementById('invAccountingObliged').textContent = inv.accounting;
       document.getElementById('invIssuerRuc').textContent = inv.ruc;
       document.getElementById('invNumber').textContent = inv.number;
+
+      document.getElementById('invClientName').textContent = inv.clientName || 'FLORÍCOLA EXPORTADORA S.A.';
+      document.getElementById('invClientRuc').textContent = inv.clientRuc || '1792345678001';
+      document.getElementById('invEmissionDate').textContent = inv.clientDate || new Date().toISOString().split('T')[0];
+      document.getElementById('invClientAddress').textContent = inv.clientAddress || 'Quito, Ecuador';
+      document.getElementById('invClientEmail').textContent = inv.clientEmail || 'cliente@email.com';
+
+      document.getElementById('invAuthNumber').textContent = inv.accessKey || "2509202601172639233900120010010000001051234567819";
+
+      try {
+        if (window.JsBarcode) {
+          JsBarcode("#invBarcodeSvg", inv.accessKey || "2509202601172639233900120010010000001051234567819", {
+            format: "CODE128",
+            lineColor: "#0f172a",
+            width: 1.5,
+            height: 38,
+            displayValue: false
+          });
+        }
+      } catch(e) {}
+
+      const tbody = document.getElementById('invItemsTableBody');
+      tbody.innerHTML = '';
+      let subtotal = 0;
+
+      (inv.items || []).forEach((item, idx) => {
+        const total = Number(item.qty || 0) * Number(item.price || 0);
+        subtotal += total;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="py-2 px-3 font-mono">${item.code || '-'}</td>
+          <td class="py-2 px-3 font-mono font-bold">${Number(item.qty).toLocaleString()}</td>
+          <td class="py-2 px-3 font-semibold">${item.desc}</td>
+          <td class="py-2 px-3 text-right font-mono">$${Number(item.price).toFixed(3)}</td>
+          <td class="py-2 px-3 text-right font-mono">$0.00</td>
+          <td class="py-2 px-3 text-right font-mono font-bold">$${total.toFixed(2)}</td>
+          <td class="py-2 px-2 text-center no-print">
+            <button onclick="removeInvoiceItem(${idx})" class="text-slate-300 hover:text-rose-600"><i data-lucide="trash" class="w-3.5 h-3.5"></i></button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('invSubtotal0').textContent = `$${subtotal.toFixed(2)}`;
+      document.getElementById('invGrandTotal').textContent = `$${subtotal.toFixed(2)}`;
     }
 
     function openModalInvoiceEditor() {
@@ -3270,6 +3183,7 @@
       document.getElementById('editInvTradeName').value = inv.tradeName;
       document.getElementById('editInvName').value = inv.name;
       document.getElementById('editInvAddress').value = inv.address;
+      document.getElementById('editInvAccessKey').value = inv.accessKey || '';
       document.getElementById('modalInvoiceEditor').classList.remove('hidden');
     }
 
@@ -3280,12 +3194,198 @@
       appState.settings.invoice.tradeName = document.getElementById('editInvTradeName').value.trim();
       appState.settings.invoice.name = document.getElementById('editInvName').value.trim();
       appState.settings.invoice.address = document.getElementById('editInvAddress').value.trim();
+      appState.settings.invoice.accessKey = document.getElementById('editInvAccessKey').value.trim();
       saveState();
       closeModal('modalInvoiceEditor');
       showToast("Factura SRI actualizada");
     }
 
-    // GRÁFICOS CHART.JS
+    function openModalInvoiceClientEditor() {
+      const inv = appState.settings.invoice;
+      document.getElementById('editInvClientName').value = inv.clientName || '';
+      document.getElementById('editInvClientRuc').value = inv.clientRuc || '';
+      document.getElementById('editInvClientDate').value = inv.clientDate || '';
+      document.getElementById('editInvClientAddress').value = inv.clientAddress || '';
+      document.getElementById('editInvClientEmail').value = inv.clientEmail || '';
+      document.getElementById('modalInvoiceClientEditor').classList.remove('hidden');
+    }
+
+    function saveInvoiceClientData(e) {
+      e.preventDefault();
+      appState.settings.invoice.clientName = document.getElementById('editInvClientName').value.trim();
+      appState.settings.invoice.clientRuc = document.getElementById('editInvClientRuc').value.trim();
+      appState.settings.invoice.clientDate = document.getElementById('editInvClientDate').value.trim();
+      appState.settings.invoice.clientAddress = document.getElementById('editInvClientAddress').value.trim();
+      appState.settings.invoice.clientEmail = document.getElementById('editInvClientEmail').value.trim();
+      saveState();
+      closeModal('modalInvoiceClientEditor');
+      showToast("Cliente de Factura actualizado");
+    }
+
+    function openModalInvoiceAddItem() {
+      document.getElementById('modalInvoiceAddItem').classList.remove('hidden');
+    }
+
+    function addInvoiceItem(e) {
+      e.preventDefault();
+      const code = document.getElementById('invItemCode').value.trim() || 'EXP';
+      const desc = document.getElementById('invItemDesc').value.trim();
+      const qty = parseInt(document.getElementById('invItemQty').value) || 1;
+      const price = parseFloat(document.getElementById('invItemPrice').value) || 0;
+
+      if (!appState.settings.invoice.items) appState.settings.invoice.items = [];
+      appState.settings.invoice.items.push({ code, desc, qty, price });
+      saveState();
+      closeModal('modalInvoiceAddItem');
+      showToast("Ítem añadido a la factura");
+    }
+
+    function removeInvoiceItem(idx) {
+      appState.settings.invoice.items.splice(idx, 1);
+      saveState();
+      showToast("Ítem quitado de la factura");
+    }
+
+    function shareBackupDataWhatsApp() {
+      const dataString = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
+      const filename = `Respaldo_ROSSE_CABS_${new Date().toISOString().split('T')[0]}.json`;
+
+      // 1. Descarga automática del archivo JSON real
+      const a = document.createElement('a');
+      a.setAttribute("href", dataString);
+      a.setAttribute("download", filename);
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      // 2. Apertura de WhatsApp con resumen auditado
+      const f = calculateFinances();
+      const totalDebts = calculateTotalRemainingDebt();
+      const summary = `*RESPALDO ROSSE CABS*\nFecha: ${new Date().toLocaleDateString()}\nPropietario: ${appState.settings.ownerName}\nCaja Negocio: $${f.fincaFinalBalance.toFixed(2)}\nCaja Personal: $${f.personalFinalBalance.toFixed(2)}\nIngresos Extras: $${f.consolidatedExtraIncome.toFixed(2)}\nDeudas Pendientes: $${totalDebts.toFixed(2)}\nTallos Cosechados: ${f.totalStemsHarvested.toLocaleString()}\nStock Flor Nacional: ${f.availableNationalStock.toLocaleString()} tallos\nUbicación: Tupigachi - Ecuador 🇪🇨\n(El archivo .json fue descargado en tus Descargas para respaldo seguro)`;
+
+      const url = `https://wa.me/593963923399?text=${encodeURIComponent(summary)}`;
+      window.open(url, '_blank');
+
+      appState.settings.lastBackupDate = new Date().toISOString().split('T')[0];
+      saveState();
+      showToast("Archivo JSON descargado y WhatsApp abierto", "📲");
+    }
+
+    function openModalRestoreBackup() {
+      document.getElementById('restoreRawTextInput').value = '';
+      document.getElementById('modalRestoreBackup').classList.remove('hidden');
+    }
+
+    function handleBackupFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        processRestoredJson(e.target.result);
+      };
+      reader.readAsText(file);
+    }
+
+    function restoreFromRawText() {
+      const raw = document.getElementById('restoreRawTextInput').value.trim();
+      if (!raw) {
+        showToast("Pega el texto JSON de respaldo", "⚠️");
+        return;
+      }
+      processRestoredJson(raw);
+    }
+
+    function processRestoredJson(jsonString) {
+      try {
+        const imported = JSON.parse(jsonString);
+        if (imported && (imported.settings || imported.harvests || imported.fincaTransactions)) {
+          appState = imported;
+          saveState();
+          closeModal('modalRestoreBackup');
+          closeModal('modalSettings');
+          if (window.confetti) confetti({ particleCount: 70, spread: 60 });
+          showToast("¡Respaldo restaurado exitosamente!");
+        } else {
+          showToast("Formato de respaldo no válido", "❌");
+        }
+      } catch(e) {
+        showToast("Error al procesar el archivo o texto JSON", "❌");
+      }
+    }
+
+    function handleLogoUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        appState.settings.logoDataUrl = e.target.result;
+        saveState();
+        showToast("¡Logo del negocio actualizado!");
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeCustomLogo() {
+      appState.settings.logoDataUrl = null;
+      saveState();
+      showToast("Logo restablecido al ícono por defecto");
+    }
+
+    function updateLogoInUI() {
+      const navImg = document.getElementById('navHeaderLogoImg');
+      const navEmoji = document.getElementById('navHeaderLogoEmoji');
+      const invImg = document.getElementById('invLogoImg');
+      const invEmoji = document.getElementById('invLogoEmoji');
+      const badge = document.getElementById('logoStatusBadge');
+      const btnRemove = document.getElementById('btnRemoveLogo');
+
+      if (appState.settings.logoDataUrl) {
+        if (navImg) { navImg.src = appState.settings.logoDataUrl; navImg.classList.remove('hidden'); }
+        if (navEmoji) navEmoji.classList.add('hidden');
+        if (invImg) { invImg.src = appState.settings.logoDataUrl; invImg.classList.remove('hidden'); }
+        if (invEmoji) invEmoji.classList.add('hidden');
+        if (badge) badge.textContent = "Foto personalizada activa 📷";
+        if (btnRemove) btnRemove.classList.remove('hidden');
+      } else {
+        if (navImg) navImg.classList.add('hidden');
+        if (navEmoji) navEmoji.classList.remove('hidden');
+        if (invImg) invImg.classList.add('hidden');
+        if (invEmoji) invEmoji.classList.remove('hidden');
+        if (badge) badge.textContent = "Ícono por defecto (🌹)";
+        if (btnRemove) btnRemove.classList.add('hidden');
+      }
+    }
+
+    function openModalSecurityReset() {
+      document.getElementById('inputResetPassword').value = '';
+      document.getElementById('modalSecurityReset').classList.remove('hidden');
+    }
+
+    function executeTotalReset() {
+      const input = document.getElementById('inputResetPassword').value.trim();
+      const valid = appState.settings.userPassword || 'admin';
+
+      if (input !== valid && input !== MASTER_RESCUE_KEY) {
+        showToast("Contraseña incorrecta. Contacta a Jhordy al 0963923399", "❌");
+        return;
+      }
+
+      appState.harvests = [];
+      appState.settlements = [];
+      appState.labors = [];
+      appState.fincaTransactions = [];
+      appState.personalTransactions = [];
+      appState.transfers = [];
+      appState.debts = [];
+      appState.debtPayments = [];
+
+      saveState();
+      closeModal('modalSecurityReset');
+      closeModal('modalSettings');
+      showToast("Todos los datos fueron borrados. Aplicación en cero.", "🚨");
+    }
+
     let chartHarvestInstance = null;
     let chartVarietyInstance = null;
 
@@ -3331,7 +3431,7 @@
         });
       }
 
-      const varNames = (appState.varieties || []).map(v => v.name);
+      const varNames = (appState.catalog?.varieties || []).map(v => v.name);
       const varCounts = varNames.map(name => {
         return (appState.harvests || []).filter(h => h.varietyName === name).reduce((sum, h) => sum + Number(h.grandTotalStems || 0), 0);
       });
@@ -3354,38 +3454,6 @@
       }
     }
 
-    // NOTIFICACIONES DEL SISTEMA (RECORDATORIO SEMANAL DE RESPALDO)
-    function requestSystemNotifications() {
-      if (!("Notification" in window)) {
-        showToast("Tu dispositivo no soporta notificaciones", "⚠️");
-        return;
-      }
-      Notification.requestPermission().then(permission => {
-        if (permission === 'granted') {
-          showToast("¡Notificaciones permitidas!");
-          checkBackupWeeklyNotice();
-        } else {
-          showToast("Permiso no concedido", "⚠️");
-        }
-      });
-    }
-
-    function checkBackupWeeklyNotice() {
-      const last = appState.settings.lastBackupDate;
-      if (!last) return;
-      const diffDays = Math.floor((new Date() - new Date(last)) / (1000 * 60 * 60 * 24));
-      if (diffDays >= 7 && Notification.permission === "granted") {
-        try {
-          if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-          new Notification("ROSSE CABS — Recordatorio de Respaldo", {
-            body: `Han pasado ${diffDays} días desde tu última copia de seguridad. Toca para respaldar en tu WhatsApp.`,
-            icon: 'https://cdn-icons-png.flaticon.com/512/3593/3593452.png'
-          });
-        } catch(e) {}
-      }
-    }
-
-    // NAVEGACIÓN Y TOUR
     function switchMainTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
       document.querySelectorAll('.nav-tab').forEach(b => {
@@ -3415,6 +3483,19 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    function switchBusinessSubTab(subId) {
+      document.querySelectorAll('.bsub-content').forEach(s => s.classList.add('hidden'));
+      document.querySelectorAll('.bsub-btn').forEach(b => {
+        b.className = "bsub-btn px-3 py-1.5 rounded-xl font-bold text-rose-200 hover:bg-rose-900/60 transition";
+      });
+
+      const active = document.getElementById(subId);
+      if (active) active.classList.remove('hidden');
+
+      const activeBtn = document.getElementById('bSubBtn' + subId.replace('sub', ''));
+      if (activeBtn) activeBtn.className = "bsub-btn px-3 py-1.5 rounded-xl font-bold bg-white text-rose-950 transition";
+    }
+
     function closeModal(modalId) {
       const el = document.getElementById(modalId);
       if (el) el.classList.add('hidden');
@@ -3442,52 +3523,10 @@
       if (window.Chart) updateCharts();
     }
 
-    function openModalHelpTour() {
-      tourStep = 1;
-      updateTourStepDisplay();
-      document.getElementById('modalInteractiveTour').classList.remove('hidden');
-    }
-
-    function updateTourStepDisplay() {
-      const step = tourSteps[tourStep - 1];
-      document.getElementById('tourIconStep').textContent = step.icon;
-      document.getElementById('tourTitleStep').textContent = step.title;
-      document.getElementById('tourProgressBadge').textContent = `Paso ${tourStep} de ${tourSteps.length}`;
-      document.getElementById('tourContentStep').innerHTML = step.content;
-
-      const btnPrev = document.getElementById('btnTourPrev');
-      const btnNext = document.getElementById('btnTourNext');
-
-      if (tourStep === 1) btnPrev.classList.add('hidden');
-      else btnPrev.classList.remove('hidden');
-
-      if (tourStep === tourSteps.length) btnNext.textContent = "¡Entendido y Listo! 🎉";
-      else btnNext.textContent = "Siguiente ➔";
-    }
-
-    function nextTourStep() {
-      if (tourStep < tourSteps.length) {
-        tourStep++;
-        updateTourStepDisplay();
-      } else {
-        closeModal('modalInteractiveTour');
-        if (window.confetti) confetti({ particleCount: 50, spread: 60 });
-        showToast("¡Listo! Ya conoces todo el sistema.");
-      }
-    }
-
-    function prevTourStep() {
-      if (tourStep > 1) {
-        tourStep--;
-        updateTourStepDisplay();
-      }
-    }
-
     function openModalSettings() {
       document.getElementById('settingStoreName').value = appState.settings.storeName;
       document.getElementById('settingOwnerName').value = appState.settings.ownerName;
       document.getElementById('settingUserPassword').value = appState.settings.userPassword;
-      document.getElementById('settingThemeSelect').value = appState.settings.theme || 'light';
       document.getElementById('modalSettings').classList.remove('hidden');
     }
 
@@ -3496,27 +3535,18 @@
       appState.settings.storeName = document.getElementById('settingStoreName').value.trim();
       appState.settings.ownerName = document.getElementById('settingOwnerName').value.trim();
       appState.settings.userPassword = document.getElementById('settingUserPassword').value.trim();
-      appState.settings.theme = document.getElementById('settingThemeSelect').value;
-      applyTheme(appState.settings.theme);
       saveState();
       closeModal('modalSettings');
       showToast("Configuración guardada");
     }
 
-    // INICIO DEL MOTOR
+    // ARRANQUE DE LA APLICACIÓN
     window.addEventListener('DOMContentLoaded', () => {
       loadStateFromStorage();
       registerOfflinePWA();
       requestPersistentStorage();
       applyTheme(appState.settings.theme || 'light', false);
       refreshAllUI();
-
-      setTimeout(checkBackupWeeklyNotice, 2500);
-
-      if (!localStorage.getItem('rosse_cabs_onboarded_v3')) {
-        setTimeout(openModalHelpTour, 600);
-        localStorage.setItem('rosse_cabs_onboarded_v3', 'true');
-      }
     });
   </script>
 </body>
