@@ -34,7 +34,7 @@ Almacenamiento 100% privado en el dispositivo (localStorage).
 
 Botón para compartir copia de seguridad .json directamente a tu chat de WhatsApp o correo electrónico vía Web Share API.
 
-Protección contra borrado accidental con tu contraseña personal o la clave maestra de rescate: I´M_JHORDY.
+Protección contra borrado accidental con tu contraseña personal o la clave maestra de rescate: MR_JHORDY.
 
 🚀 Despliegue e Instalación Rápida
 
@@ -50,7 +50,7 @@ En unos segundos tendrás tu enlace público listo para usar y guardar como acce
 
 👨‍💻 Creador & Contacto Directo
 
-Desarrollado por Jhordy (I´m_Jhordy) desde la Provincia de Pichincha, Ecuador 🇪🇨.
+Desarrollado por Jhordy (Mr_Jhordy) desde la Provincia de Pichincha, Ecuador 🇪🇨.
 
 📱 WhatsApp: +593 963923399
 
