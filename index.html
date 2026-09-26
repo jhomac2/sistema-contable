@@ -152,15 +152,6 @@
 
       <!-- Balances en Vivo y Controles -->
       <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
-        <!-- Selector Global de Año -->
-        <div class="flex items-center bg-slate-800/90 border border-slate-700 rounded-xl px-2 py-1 text-[11px] sm:text-xs">
-          <select id="globalYearSelect" onchange="changeGlobalYear(this.value)" class="bg-transparent text-white font-bold outline-none cursor-pointer">
-            <option value="2026" class="bg-slate-800">2026</option>
-            <option value="2025" class="bg-slate-800">2025</option>
-            <option value="2024" class="bg-slate-800">2024</option>
-          </select>
-        </div>
-
         <!-- Badge Saldo Personal -->
         <div class="flex items-center gap-1.5 bg-blue-950/80 border border-blue-500/30 px-2 sm:px-3 py-1 rounded-xl text-xs cursor-pointer hover:bg-blue-900/60 transition" onclick="switchMainTab('tabPersonal')" title="Ver Finanzas Personales">
           <div class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></div>
@@ -257,7 +248,7 @@
     <!-- ============================================================== -->
     <section id="tabHome" class="tab-content space-y-6">
 
-      <!-- Banner de Bienvenida -->
+      <!-- Banner de Bienvenida con Filtros de Período e Ingreso Extra -->
       <div id="tourTargetWelcome" class="bg-gradient-to-r from-slate-900 via-rose-950 to-slate-900 text-white rounded-3xl p-5 sm:p-7 shadow-xl border border-slate-700/60 relative overflow-hidden">
         <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
@@ -268,20 +259,50 @@
               Bienvenido, <span id="homeWelcomeOwner" class="text-rose-300">Jhordy</span>
             </h2>
             <p class="text-xs sm:text-sm text-slate-300 mt-1 max-w-xl">
-              Control técnico de <b>Cosecha de Rosas</b>, cálculo de mallas, retornos de merma, <b>Pago automatizado de Deudas</b> y separación estricta de cuentas.
+              Control técnico de <b>Cosecha de Rosas</b>, cálculo de mallas, retornos de merma, <b>Ingresos Extras</b> y separación estricta de cuentas.
             </p>
           </div>
 
           <div class="flex items-center gap-2 flex-wrap">
-            <button onclick="openModalHarvest()" class="bg-rose-600 hover:bg-rose-500 text-white px-3.5 py-2.5 rounded-2xl text-xs font-bold shadow-md flex items-center gap-1.5 transition active:scale-95">
-              <i data-lucide="plus-circle" class="w-4 h-4"></i>
-              <span>+ Registrar Cosecha</span>
+            <!-- FILTRO DE PERÍODO (AÑO Y MES O TODO EL AÑO) -->
+            <div class="flex items-center gap-1.5 bg-slate-800/90 border border-rose-500/30 px-3 py-1.5 rounded-2xl text-xs">
+              <span class="text-rose-300 font-bold">📅 Período:</span>
+              <select id="dashYearFilter" onchange="refreshAllUI()" class="bg-slate-900 text-white font-bold rounded-lg px-2 py-1 outline-none text-xs border border-slate-700">
+                <option value="all">Todos los Años</option>
+                <option value="2026" selected>2026</option>
+                <option value="2025">2025</option>
+                <option value="2024">2024</option>
+              </select>
+              <select id="dashMonthFilter" onchange="refreshAllUI()" class="bg-slate-900 text-white font-bold rounded-lg px-2 py-1 outline-none text-xs border border-slate-700">
+                <option value="all">Todo el Año</option>
+                <option value="01">Enero</option>
+                <option value="02">Febrero</option>
+                <option value="03">Marzo</option>
+                <option value="04">Abril</option>
+                <option value="05">Mayo</option>
+                <option value="06">Junio</option>
+                <option value="07">Julio</option>
+                <option value="08">Agosto</option>
+                <option value="09" selected>Septiembre</option>
+                <option value="10">Octubre</option>
+                <option value="11">Noviembre</option>
+                <option value="12">Diciembre</option>
+              </select>
+            </div>
+
+            <button onclick="openModalExtraIncome('finca')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-3.5 py-2 rounded-2xl text-xs font-black shadow flex items-center gap-1.5 transition active:scale-95" title="Registrar ingreso extra">
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+              <span>+ Ingreso Extra</span>
             </button>
-            <button onclick="openModalUniversalIncome('finca')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-2.5 rounded-2xl text-xs font-bold shadow-md flex items-center gap-1.5 transition active:scale-95">
+            <button onclick="openModalHarvest()" class="bg-rose-600 hover:bg-rose-500 text-white px-3.5 py-2 rounded-2xl text-xs font-bold shadow-md flex items-center gap-1.5 transition active:scale-95">
+              <i data-lucide="plus-circle" class="w-4 h-4"></i>
+              <span>+ Cosecha</span>
+            </button>
+            <button onclick="openModalUniversalIncome('finca')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-2 rounded-2xl text-xs font-bold shadow-md flex items-center gap-1.5 transition active:scale-95">
               <i data-lucide="arrow-down-left" class="w-4 h-4"></i>
               <span>+ Ingreso Finca</span>
             </button>
-            <button onclick="openModalUniversalExpense('finca')" class="bg-rose-700 hover:bg-rose-600 text-white px-3.5 py-2.5 rounded-2xl text-xs font-bold shadow-md flex items-center gap-1.5 transition active:scale-95">
+            <button onclick="openModalUniversalExpense('finca')" class="bg-rose-700 hover:bg-rose-600 text-white px-3.5 py-2 rounded-2xl text-xs font-bold shadow-md flex items-center gap-1.5 transition active:scale-95">
               <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
               <span>- Gasto Finca</span>
             </button>
@@ -290,7 +311,7 @@
       </div>
 
       <!-- TARJETAS PRINCIPALES DEL NEGOCIO (KPIS CLAVE) -->
-      <div id="tourTargetKPIs" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div id="tourTargetKPIs" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
 
         <!-- 1. CAJA ROSSE CABS -->
         <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm relative overflow-hidden">
@@ -300,20 +321,20 @@
               🌹
             </div>
           </div>
-          <span id="kpiRosseBalance" class="font-mono text-2xl sm:text-3xl font-black text-rose-600 block mt-2">$0.00</span>
-          <p class="text-[11px] text-slate-500 mt-1">Ventas de Flor − Gastos de Finca − Jornales</p>
+          <span id="kpiRosseBalance" class="font-mono text-2xl font-black text-rose-600 block mt-2">$0.00</span>
+          <p class="text-[11px] text-slate-500 mt-1">Ventas de Flor + Extras − Gastos Finca</p>
         </div>
 
         <!-- 2. TOTAL TALLOS COSECHADOS -->
         <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm relative overflow-hidden">
           <div class="flex items-center justify-between">
-            <span class="text-[10px] font-black uppercase tracking-wider text-emerald-600">Tallos Cosechados (Año)</span>
+            <span class="text-[10px] font-black uppercase tracking-wider text-emerald-600">Tallos Cosechados</span>
             <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-sm">
               🌿
             </div>
           </div>
-          <span id="kpiTotalStemsHarvested" class="font-mono text-2xl sm:text-3xl font-black text-emerald-600 block mt-2">0</span>
-          <p class="text-[11px] text-slate-500 mt-1"><span id="kpiExportStems">0</span> Exportación | <span id="kpiNationalStems">0</span> Nacional</p>
+          <span id="kpiTotalStemsHarvested" class="font-mono text-2xl font-black text-emerald-600 block mt-2">0</span>
+          <p class="text-[11px] text-slate-500 mt-1"><span id="kpiExportStems">0</span> Exp. | <span id="kpiNationalStems">0</span> Nac.</p>
         </div>
 
         <!-- 3. STOCK FLOR NACIONAL (DISPONIBLE PARA VENTA) -->
@@ -324,11 +345,21 @@
               🏪
             </div>
           </div>
-          <span id="kpiNationalStock" class="font-mono text-2xl sm:text-3xl font-black text-amber-300 block mt-2">0 tallos</span>
-          <p class="text-[11px] text-rose-200 mt-1">Flor comercializable local (cosecha + retornos de clientes)</p>
+          <span id="kpiNationalStock" class="font-mono text-2xl font-black text-amber-300 block mt-2">0 tallos</span>
+          <p class="text-[11px] text-rose-200 mt-1">Comercializable local (cosecha + retornos)</p>
         </div>
 
-        <!-- 4. TOTAL PLANTAS ACTIVAS -->
+        <!-- 4. INGRESOS EXTRAS CONSOLIDADOS (NUEVO KPI) -->
+        <div class="bg-gradient-to-br from-amber-500 via-amber-600 to-orange-600 text-slate-950 rounded-3xl p-5 border border-amber-300 shadow-lg">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-black uppercase text-amber-950">Ingresos Extras</span>
+            <span class="text-lg">✨</span>
+          </div>
+          <span id="kpiTotalExtraIncome" class="font-mono text-2xl font-black text-slate-950 block mt-2">$0.00</span>
+          <p class="text-[11px] text-amber-950 font-semibold mt-1">Asesorías, fletes, comisiones y otros extras</p>
+        </div>
+
+        <!-- 5. TOTAL PLANTAS ACTIVAS -->
         <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm relative overflow-hidden">
           <div class="flex items-center justify-between">
             <span class="text-[10px] font-black uppercase tracking-wider text-slate-500">Plantas Sembradas</span>
@@ -336,7 +367,7 @@
               🌱
             </div>
           </div>
-          <span id="kpiTotalPlants" class="font-mono text-2xl sm:text-3xl font-black text-slate-900 block mt-2">0</span>
+          <span id="kpiTotalPlants" class="font-mono text-2xl font-black text-slate-900 block mt-2">0</span>
           <p class="text-[11px] text-slate-500 mt-1">Padrón de variedades activas en camas</p>
         </div>
 
@@ -487,7 +518,7 @@
     </section>
 
     <!-- ============================================================== -->
-    <!-- TAB 3: RECORTES & LIQUIDACIONES POR CLIENTE                    -->
+    <!-- TAB 3: RECORTES & LIQUIDACIONES POR CLIENTE                     -->
     <!-- ============================================================== -->
     <section id="tabSettlements" class="tab-content hidden space-y-6">
 
@@ -530,7 +561,7 @@
     </section>
 
     <!-- ============================================================== -->
-    <!-- TAB 4: CENSO DE PLANTAS & RENTABILIDAD POR VARIEDAD           -->
+    <!-- TAB 4: CENSO DE PLANTAS & RENTABILIDAD POR VARIEDAD            -->
     <!-- ============================================================== -->
     <section id="tabVarieties" class="tab-content hidden space-y-6">
 
@@ -560,10 +591,14 @@
         <div>
           <span class="text-[10px] uppercase font-bold tracking-wider text-rose-300">Flujo Financiero de la Finca</span>
           <h2 class="text-xl sm:text-2xl font-black">Contabilidad — Finca ROSSE CABS</h2>
-          <p class="text-xs text-rose-200 mt-0.5">Ingresos por venta de flor, costos de fertilizantes, agroquímicos y gastos operativos.</p>
+          <p class="text-xs text-rose-200 mt-0.5">Ingresos por venta de flor, costos de fertilizantes, agroquímicos, jornales e ingresos extras.</p>
         </div>
 
         <div class="flex items-center gap-2 flex-wrap">
+          <button onclick="openModalExtraIncome('finca')" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-3.5 py-2 rounded-2xl text-xs shadow flex items-center gap-1.5 transition active:scale-95">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+            <span>+ Ingreso Extra Finca</span>
+          </button>
           <button onclick="openModalUniversalIncome('finca')" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-3.5 py-2 rounded-2xl text-xs shadow flex items-center gap-1.5 transition active:scale-95">
             <i data-lucide="plus" class="w-3.5 h-3.5"></i>
             <span>+ Ingreso Finca</span>
@@ -575,11 +610,42 @@
         </div>
       </div>
 
+      <!-- MINI-DASHBOARD FINANCIERO DE LA FINCA -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+          <span class="text-[10px] font-black uppercase text-rose-600 block">Caja ROSSE CABS</span>
+          <span id="rosseMiniCash" class="font-mono text-xl font-black text-rose-600 block mt-1">$0.00</span>
+          <span class="text-[10px] text-slate-400 mt-0.5 block">Efectivo neto disponible</span>
+        </div>
+        <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+          <span class="text-[10px] font-black uppercase text-emerald-600 block">Liquidaciones de Flor</span>
+          <span id="rosseMiniSettlements" class="font-mono text-xl font-black text-emerald-600 block mt-1">$0.00</span>
+          <span class="text-[10px] text-slate-400 mt-0.5 block">Ventas de exportación</span>
+        </div>
+        <div class="bg-white p-4 rounded-3xl border border-amber-300 bg-amber-50/40 shadow-sm">
+          <span class="text-[10px] font-black uppercase text-amber-800 block">✨ Ingresos Extras Finca</span>
+          <span id="rosseMiniExtraIncome" class="font-mono text-xl font-black text-amber-700 block mt-1">$0.00</span>
+          <span class="text-[10px] text-amber-900/80 mt-0.5 block">Asesorías, fletes y servicios</span>
+        </div>
+        <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+          <span class="text-[10px] font-black uppercase text-slate-600 block">Total Egresos Finca</span>
+          <span id="rosseMiniExpenses" class="font-mono text-xl font-black text-slate-900 block mt-1">$0.00</span>
+          <span class="text-[10px] text-slate-400 mt-0.5 block">Insumos + Jornales</span>
+        </div>
+      </div>
+
       <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <h4 class="font-extrabold text-sm text-slate-800">Libro Contable de la Finca</h4>
           <div class="flex items-center gap-2">
-            <label class="text-xs font-bold text-slate-600">Mes:</label>
+            <!-- Filtro de Año y Mes para la Finca -->
+            <label class="text-xs font-bold text-slate-600">Período:</label>
+            <select id="selectRosseYear" onchange="renderRosseAccounting()" class="bg-slate-100 border border-slate-300 rounded-xl px-2 py-1 text-xs font-bold text-slate-800 outline-none">
+              <option value="all">Todo Año</option>
+              <option value="2026" selected>2026</option>
+              <option value="2025">2025</option>
+              <option value="2024">2024</option>
+            </select>
             <select id="selectRosseMonth" onchange="renderRosseAccounting()" class="bg-slate-100 border border-slate-300 rounded-xl px-2.5 py-1 text-xs font-bold text-slate-800 outline-none">
               <option value="all">Todo el Año</option>
               <option value="1">Enero</option>
@@ -673,7 +739,7 @@
     </section>
 
     <!-- ============================================================== -->
-    <!-- TAB 7: FINANZAS PERSONALES                                     -->
+    <!-- TAB 7: FINANZAS PERSONALES (+ MINI DASHBOARD & EXTRAS)         -->
     <!-- ============================================================== -->
     <section id="tabPersonal" class="tab-content hidden space-y-6">
 
@@ -681,13 +747,17 @@
         <div>
           <span class="text-[10px] uppercase font-bold tracking-wider text-blue-300">Cuenta Privada</span>
           <h2 class="text-xl sm:text-2xl font-black">Finanzas Personales</h2>
-          <p class="text-xs text-blue-200 mt-0.5">Control de ingresos personales, ahorros propios y gastos del hogar.</p>
+          <p class="text-xs text-blue-200 mt-0.5">Control de ingresos personales, ahorros propios, sueldos, trabajos extras y gastos del hogar.</p>
         </div>
 
         <div class="flex items-center gap-2 flex-wrap">
+          <button onclick="openModalExtraIncome('personal')" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-3.5 py-2 rounded-2xl text-xs shadow flex items-center gap-1.5 transition active:scale-95">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+            <span>+ Ingreso Extra</span>
+          </button>
           <button onclick="openModalUniversalIncome('personal')" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-3 py-2 rounded-2xl text-xs shadow flex items-center gap-1.5 transition active:scale-95">
             <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-            <span>+ Ingreso Personal</span>
+            <span>+ Sueldo / Ingreso</span>
           </button>
           <button onclick="openModalUniversalExpense('personal')" class="bg-rose-500 hover:bg-rose-400 text-white font-bold px-3 py-2 rounded-2xl text-xs shadow flex items-center gap-1.5 transition active:scale-95">
             <i data-lucide="minus" class="w-3.5 h-3.5"></i>
@@ -696,11 +766,42 @@
         </div>
       </div>
 
+      <!-- MINI-DASHBOARD DE DINERO PERSONAL -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+          <span class="text-[10px] font-black uppercase text-emerald-600 block">Ingresos Regulares</span>
+          <span id="personalMiniIncome" class="font-mono text-xl font-black text-emerald-600 block mt-1">$0.00</span>
+          <span class="text-[10px] text-slate-400 mt-0.5 block">Sueldos y honorarios</span>
+        </div>
+        <div class="bg-white p-4 rounded-3xl border border-amber-300 bg-amber-50/50 shadow-sm">
+          <span class="text-[10px] font-black uppercase text-amber-800 block">✨ Ingresos Extras Personal</span>
+          <span id="personalMiniExtraIncome" class="font-mono text-xl font-black text-amber-700 block mt-1">$0.00</span>
+          <span class="text-[10px] text-amber-900/80 mt-0.5 block">Trabajos extras, cachuelos y comisiones</span>
+        </div>
+        <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+          <span class="text-[10px] font-black uppercase text-rose-600 block">Total Gastos Personales</span>
+          <span id="personalMiniExpense" class="font-mono text-xl font-black text-rose-600 block mt-1">$0.00</span>
+          <span class="text-[10px] text-slate-400 mt-0.5 block">Hogar, compras privadas, familia</span>
+        </div>
+        <div class="bg-white p-4 rounded-3xl border border-blue-200 bg-blue-50/50 shadow-sm">
+          <span class="text-[10px] font-black uppercase text-blue-700 block">Saldo Personal Disponible</span>
+          <span id="personalMiniBalance" class="font-mono text-xl font-black text-blue-800 block mt-1">$0.00</span>
+          <span class="text-[10px] text-blue-600 mt-0.5 block">Dinero neto en tu bolsillo</span>
+        </div>
+      </div>
+
       <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm space-y-3">
         <div class="flex items-center justify-between">
           <h4 class="font-extrabold text-sm text-slate-800">Movimientos Personales del Período</h4>
           <div class="flex items-center gap-2">
-            <label class="text-xs font-bold text-slate-600">Mes:</label>
+            <!-- Filtro de Año y Mes para Personal -->
+            <label class="text-xs font-bold text-slate-600">Período:</label>
+            <select id="selectPersonalYear" onchange="renderPersonalTransactions()" class="bg-slate-100 border border-slate-300 rounded-xl px-2 py-1 text-xs font-bold text-slate-800 outline-none">
+              <option value="all">Todo Año</option>
+              <option value="2026" selected>2026</option>
+              <option value="2025">2025</option>
+              <option value="2024">2024</option>
+            </select>
             <select id="selectPersonalMonth" onchange="renderPersonalTransactions()" class="bg-slate-100 border border-slate-300 rounded-xl px-2.5 py-1 text-xs font-bold text-slate-800 outline-none">
               <option value="all">Todo el Año</option>
               <option value="1">Enero</option>
@@ -773,7 +874,7 @@
     </section>
 
     <!-- ============================================================== -->
-    <!-- TAB 9: TRANSFERENCIAS INTERCUENTAS                            -->
+    <!-- TAB 9: TRANSFERENCIAS INTERCUENTAS                             -->
     <!-- ============================================================== -->
     <section id="tabTransfers" class="tab-content hidden space-y-6">
 
@@ -1060,6 +1161,54 @@
   <!-- ============================================================== -->
   <!-- MODALES DE CONTROL, OPERACIONES Y PAGOS                        -->
   <!-- ============================================================== -->
+
+  <!-- MODAL: REGISTRAR INGRESO EXTRA (FINCA O PERSONAL) -->
+  <div id="modalExtraIncome" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4 border border-amber-300">
+      <div class="flex items-center justify-between border-b border-amber-100 pb-3">
+        <h3 class="font-extrabold text-base text-slate-900 flex items-center gap-2">
+          <span class="text-amber-500 text-lg">✨</span>
+          <span id="extraIncomeModalTitle">Registrar Ingreso Extra</span>
+        </h3>
+        <button onclick="closeModal('modalExtraIncome')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form onsubmit="saveExtraIncome(event)" class="space-y-3.5 text-xs">
+        <div>
+          <label class="block font-black text-slate-700 mb-1">¿A qué cuenta pertenece este ingreso extra?</label>
+          <select id="extraIncomeAccountSelect" class="w-full px-3 py-2 rounded-xl border border-amber-300 font-bold bg-amber-50/50">
+            <option value="finca">🌹 Finca ROSSE CABS (Asesoría, fletes florales, venta de esquejes)</option>
+            <option value="personal">💳 Finanzas Personales (Otro trabajo, cachuelo, comisión)</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Fecha</label>
+            <input type="date" id="extraIncomeDate" required class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Monto Ganado ($ USD)</label>
+            <input type="number" step="0.01" min="0.01" id="extraIncomeAmount" required placeholder="0.00" class="w-full px-3 py-2 rounded-xl border border-amber-400 font-mono font-black text-base text-amber-900 bg-amber-50/30">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Concepto / Actividad Extra Realizada</label>
+          <input type="text" id="extraIncomeDetail" required placeholder="Ej. Flete de flor, asesoría técnica, trabajo de fin de semana..." class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold">
+        </div>
+
+        <div class="p-2.5 rounded-xl bg-emerald-50 text-emerald-900 border border-emerald-200 text-[11px] leading-tight">
+          💡 <b>Nota:</b> Este monto se sumará al saldo disponible y aparecerá en las tarjetas de <b>Ingresos Extras</b> del Dashboard y de tu cuenta para que puedas filtrarlo por mes o por todo el año.
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="closeModal('modalExtraIncome')" class="px-4 py-2 font-bold text-slate-500">Cancelar</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black shadow transition active:scale-95">Guardar Ingreso Extra</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <!-- MODAL: REGISTRAR COSECHA CON CALCULADORA DE MALLAS EN VIVO -->
   <div id="modalHarvest" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
@@ -1681,7 +1830,7 @@
           <i data-lucide="alert-triangle" class="w-4 h-4"></i>
           <span>Confirmar Borrado Total</span>
         </h4>
-        <button onclick="closeModal('modalSecurityReset')" class="text-slate-400"><i data-lucide="x" class="w-4 h-4"></i></button>
+        <button onclick="closeModal('modalSecurityReset')" class="text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
       <p class="text-slate-600">Ingresa tu contraseña personal o la clave maestra de rescate:</p>
       <input type="password" id="inputResetPassword" placeholder="Contraseña de seguridad..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 font-bold text-sm text-center">
@@ -1712,7 +1861,7 @@
     <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-3 border border-slate-200 text-xs max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-slate-100 pb-2">
         <h3 class="font-black text-slate-900 text-sm">Datos del Emisor Factura SRI</h3>
-        <button onclick="closeModal('modalInvoiceEditor')" class="text-slate-400"><i data-lucide="x" class="w-4 h-4"></i></button>
+        <button onclick="closeModal('modalInvoiceEditor')" class="text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
       <form onsubmit="saveInvoiceCustomData(event)" class="space-y-2.5">
         <div>
@@ -1749,10 +1898,8 @@
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div class="flex items-center gap-2 text-rose-600">
           <span id="tourIconStep" class="text-2xl">🌹</span>
-          <div>
-            <h3 id="tourTitleStep" class="font-black text-base text-slate-900">Guía de Uso del Sistema</h3>
-            <span id="tourProgressBadge" class="text-[10px] font-bold uppercase tracking-wider text-rose-600">Paso 1 de 5</span>
-          </div>
+          <span id="tourTitleStep" class="font-black text-base text-slate-900">Guía de Uso del Sistema</span>
+          <span id="tourProgressBadge" class="text-[10px] font-bold uppercase tracking-wider text-rose-600 ml-auto">Paso 1 de 5</span>
         </div>
         <button onclick="closeModal('modalInteractiveTour')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
@@ -1821,7 +1968,6 @@
         storeName: "ROSSE CABS",
         ownerName: "Jhordy",
         userPassword: "admin",
-        activeYear: "2026",
         theme: "light",
         logoDataUrl: null,
         lastBackupDate: new Date().toISOString().split('T')[0],
@@ -1837,9 +1983,9 @@
       },
       categories: {
         fincaExpense: ["Fertilizantes y Abonos", "Agroquímicos y Fumigación", "Mallas y Plásticos", "Herramientas y Riego", "Jornales y Mano de Obra", "Gasolina y Transporte", "Pago de Deuda Finca", "Otros Gastos Finca"],
-        fincaIncome: ["Venta de Flor Nacional", "Recorte / Liquidación Exportadora", "Aporte de Capital", "Otros Ingresos Finca"],
+        fincaIncome: ["Venta de Flor Nacional", "Recorte / Liquidación Exportadora", "Ingreso Extra ✨", "Aporte de Capital", "Otros Ingresos Finca"],
         personalExpense: ["Alimentación", "Vivienda / Servicios", "Transporte Propio", "Salud", "Educación", "Cuota de Deuda", "Ocio / Varios"],
-        personalIncome: ["Sueldo / Salario", "Comisiones", "Inversiones", "Otros Ingresos"]
+        personalIncome: ["Sueldo / Salario", "Ingreso Extra ✨", "Comisiones", "Inversiones", "Otros Ingresos"]
       },
       varieties: [
         { id: "v1", name: "Explorer", color: "Rojo Intenso", plantsCount: 3000 },
@@ -1893,9 +2039,9 @@
         content: "Al registrar cortes ingresa las mallas (25 tallos) y tallos sueltos. El sistema calcula al instante la <b>Exportación</b>, la <b>Flor Nacional</b> (para venta local) y la <b>Merma/Descarte</b> ($0)."
       },
       {
-        icon: "🔄",
-        title: "3. Retorno de Merma a Flor Nacional",
-        content: "Cuando una exportadora te regresa flor con detalle en su recorte, esa flor devuelta pasa automáticamente al <b>Stock de Flor Nacional</b> para que puedas comercializarla localmente."
+        icon: "✨",
+        title: "3. Ingresos Extras Registrados",
+        content: "Puedes registrar trabajos adicionales de la finca (fletes florales, asesorías, venta de esquejes) o particulares desde el botón <b>'+ Ingreso Extra'</b> y filtrarlos por mes o por todo el año."
       },
       {
         icon: "💳",
@@ -1945,42 +2091,110 @@
       }, 3000);
     }
 
+    function openModalExtraIncome(account = 'finca') {
+      document.getElementById('extraIncomeAccountSelect').value = account;
+      document.getElementById('extraIncomeDate').value = new Date().toISOString().split('T')[0];
+      document.getElementById('extraIncomeAmount').value = '';
+      document.getElementById('extraIncomeDetail').value = '';
+      document.getElementById('extraIncomeModalTitle').textContent = account === 'finca' ? 'Registrar Ingreso Extra (ROSSE CABS)' : 'Registrar Ingreso Extra (Personal)';
+      document.getElementById('modalExtraIncome').classList.remove('hidden');
+    }
+
+    function saveExtraIncome(e) {
+      e.preventDefault();
+      const account = document.getElementById('extraIncomeAccountSelect').value;
+      const date = document.getElementById('extraIncomeDate').value;
+      const amount = parseFloat(document.getElementById('extraIncomeAmount').value) || 0;
+      const detail = document.getElementById('extraIncomeDetail').value.trim();
+
+      const item = {
+        id: (account === 'finca' ? 'ft_ex_' : 'pt_ex_') + Date.now(),
+        date,
+        type: 'ingreso',
+        category: 'Ingreso Extra ✨',
+        detail: detail + ' (Extra)',
+        amount,
+        isExtra: true
+      };
+
+      if (account === 'finca') {
+        appState.fincaTransactions.push(item);
+      } else {
+        appState.personalTransactions.push(item);
+      }
+
+      saveState();
+      closeModal('modalExtraIncome');
+      if (window.confetti) confetti({ particleCount: 50, spread: 60 });
+      showToast(`¡Ingreso extra de $${amount.toFixed(2)} registrado con éxito!`, "✨");
+    }
+
     function calculateFinances() {
+      // Filtros de fecha del Dashboard General (Año y Mes o Todo el Año)
+      const dYear = document.getElementById('dashYearFilter')?.value || 'all';
+      const dMonth = document.getElementById('dashMonthFilter')?.value || 'all';
+
+      const filterByDate = (itemDate) => {
+        if (!itemDate) return true;
+        const parts = itemDate.split('-');
+        if (parts.length < 2) return true;
+        const y = parts[0];
+        const m = parts[1];
+        if (dYear !== 'all' && y !== dYear) return false;
+        if (dMonth !== 'all' && m !== dMonth) return false;
+        return true;
+      };
+
       // Ingresos Finca = Liquidaciones por flor + Ingresos manuales
-      const settlementIncome = (appState.settlements || []).reduce((sum, s) => sum + Number(s.totalPaid || 0), 0);
-      const fincaManualIncome = (appState.fincaTransactions || []).filter(t => t.type === 'ingreso').reduce((sum, t) => sum + Number(t.amount || 0), 0);
+      const filteredSettlements = (appState.settlements || []).filter(s => filterByDate(s.date));
+      const settlementIncome = filteredSettlements.reduce((sum, s) => sum + Number(s.totalPaid || 0), 0);
+
+      const filteredFincaTxs = (appState.fincaTransactions || []).filter(t => filterByDate(t.date));
+      const fincaManualIncome = filteredFincaTxs.filter(t => t.type === 'ingreso').reduce((sum, t) => sum + Number(t.amount || 0), 0);
       const fincaTotalIncome = settlementIncome + fincaManualIncome;
 
+      // Ingresos Extras Finca
+      const fincaExtraIncome = filteredFincaTxs.filter(t => t.type === 'ingreso' && t.isExtra).reduce((sum, t) => sum + Number(t.amount || 0), 0);
+
       // Egresos Finca = Gastos manuales + Jornales pagados
-      const fincaManualExpenses = (appState.fincaTransactions || []).filter(t => t.type === 'egreso').reduce((sum, t) => sum + Number(t.amount || 0), 0);
-      const laborPaidExpenses = (appState.labors || []).filter(l => l.paid).reduce((sum, l) => sum + Number(l.amount || 0), 0);
+      const fincaManualExpenses = filteredFincaTxs.filter(t => t.type === 'egreso').reduce((sum, t) => sum + Number(t.amount || 0), 0);
+      const filteredLabors = (appState.labors || []).filter(l => filterByDate(l.date));
+      const laborPaidExpenses = filteredLabors.filter(l => l.paid).reduce((sum, l) => sum + Number(l.amount || 0), 0);
       const fincaTotalExpenses = fincaManualExpenses + laborPaidExpenses;
 
       // Transferencias
-      const transferredToPersonal = (appState.transfers || []).filter(t => t.to === 'personal').reduce((sum, t) => sum + Number(t.amount || 0), 0);
-      const transferredFromPersonal = (appState.transfers || []).filter(t => t.from === 'personal').reduce((sum, t) => sum + Number(t.amount || 0), 0);
-      const transferredToFinca = (appState.transfers || []).filter(t => t.to === 'finca').reduce((sum, t) => sum + Number(t.amount || 0), 0);
-      const transferredFromFinca = (appState.transfers || []).filter(t => t.from === 'finca').reduce((sum, t) => sum + Number(t.amount || 0), 0);
+      const filteredTransfers = (appState.transfers || []).filter(t => filterByDate(t.date));
+      const transferredToPersonal = filteredTransfers.filter(t => t.to === 'personal').reduce((sum, t) => sum + Number(t.amount || 0), 0);
+      const transferredFromPersonal = filteredTransfers.filter(t => t.from === 'personal').reduce((sum, t) => sum + Number(t.amount || 0), 0);
+      const transferredToFinca = filteredTransfers.filter(t => t.to === 'finca').reduce((sum, t) => sum + Number(t.amount || 0), 0);
+      const transferredFromFinca = filteredTransfers.filter(t => t.from === 'finca').reduce((sum, t) => sum + Number(t.amount || 0), 0);
 
       const fincaFinalBalance = (fincaTotalIncome + transferredToFinca) - (fincaTotalExpenses + transferredFromFinca);
 
       // Finanzas Personales
-      const personalIncomeTotal = (appState.personalTransactions || []).filter(t => t.type === 'ingreso').reduce((sum, t) => sum + Number(t.amount || 0), 0);
-      const personalExpenseTotal = (appState.personalTransactions || []).filter(t => t.type === 'egreso').reduce((sum, t) => sum + Number(t.amount || 0), 0);
+      const filteredPersonalTxs = (appState.personalTransactions || []).filter(t => filterByDate(t.date));
+      const personalIncomeTotal = filteredPersonalTxs.filter(t => t.type === 'ingreso').reduce((sum, t) => sum + Number(t.amount || 0), 0);
+      const personalExpenseTotal = filteredPersonalTxs.filter(t => t.type === 'egreso').reduce((sum, t) => sum + Number(t.amount || 0), 0);
       const personalFinalBalance = (personalIncomeTotal + transferredToPersonal) - (personalExpenseTotal + transferredFromPersonal);
+
+      // Ingresos Extras Personales
+      const personalExtraIncome = filteredPersonalTxs.filter(t => t.type === 'ingreso' && t.isExtra).reduce((sum, t) => sum + Number(t.amount || 0), 0);
+
+      // Total Ingresos Extras Consolidados en Dashboard
+      const consolidatedExtraIncome = personalExtraIncome + fincaExtraIncome;
 
       // Cosecha acumulada
       let totalStemsHarvested = 0;
       let totalExportStems = 0;
       let totalNationalStems = 0;
-      (appState.harvests || []).forEach(h => {
+      (appState.harvests || []).filter(h => filterByDate(h.date)).forEach(h => {
         totalStemsHarvested += Number(h.grandTotalStems || 0);
         totalExportStems += Number(h.exportTotalStems || 0);
         totalNationalStems += Number(h.nationalStems || 0);
       });
 
       // Stock disponible de flor nacional = Flor nacional cosechada + devoluciones de clientes
-      const totalReturnedStems = (appState.settlements || []).reduce((sum, s) => sum + Number(s.stemsReturned || 0), 0);
+      const totalReturnedStems = filteredSettlements.reduce((sum, s) => sum + Number(s.stemsReturned || 0), 0);
       const availableNationalStock = totalNationalStems + totalReturnedStems;
 
       // Total plantas sembradas
@@ -1990,9 +2204,13 @@
         fincaTotalIncome,
         fincaTotalExpenses,
         fincaFinalBalance,
+        fincaExtraIncome,
+        settlementIncome,
         personalIncomeTotal,
         personalExpenseTotal,
         personalFinalBalance,
+        personalExtraIncome,
+        consolidatedExtraIncome,
         totalStemsHarvested,
         totalExportStems,
         totalNationalStems,
@@ -2030,6 +2248,7 @@
       document.getElementById('kpiNationalStems').textContent = f.totalNationalStems.toLocaleString();
       document.getElementById('kpiNationalStock').textContent = `${f.availableNationalStock.toLocaleString()} tallos`;
       document.getElementById('kpiTotalPlants').textContent = f.totalPlants.toLocaleString();
+      document.getElementById('kpiTotalExtraIncome').textContent = `$${f.consolidatedExtraIncome.toFixed(2)}`;
 
       document.getElementById('dashRosseIncome').textContent = `$${f.fincaTotalIncome.toFixed(2)}`;
       document.getElementById('dashRosseExpense').textContent = `$${f.fincaTotalExpenses.toFixed(2)}`;
@@ -2038,6 +2257,19 @@
       document.getElementById('dashPersonalIncome').textContent = `$${f.personalIncomeTotal.toFixed(2)}`;
       document.getElementById('dashPersonalExpense').textContent = `$${f.personalExpenseTotal.toFixed(2)}`;
       document.getElementById('dashPersonalDebt').textContent = `$${calculateTotalRemainingDebt().toFixed(2)}`;
+
+      // MINI-DASHBOARD ROSSE CABS
+      document.getElementById('rosseMiniCash').textContent = `$${f.fincaFinalBalance.toFixed(2)}`;
+      document.getElementById('rosseMiniSettlements').textContent = `$${f.settlementIncome.toFixed(2)}`;
+      document.getElementById('rosseMiniExtraIncome').textContent = `$${f.fincaExtraIncome.toFixed(2)}`;
+      document.getElementById('rosseMiniExpenses').textContent = `$${f.fincaTotalExpenses.toFixed(2)}`;
+
+      // MINI-DASHBOARD PERSONAL
+      const regularPersonalIncome = Math.max(0, f.personalIncomeTotal - f.personalExtraIncome);
+      document.getElementById('personalMiniIncome').textContent = `$${regularPersonalIncome.toFixed(2)}`;
+      document.getElementById('personalMiniExtraIncome').textContent = `$${f.personalExtraIncome.toFixed(2)}`;
+      document.getElementById('personalMiniExpense').textContent = `$${f.personalExpenseTotal.toFixed(2)}`;
+      document.getElementById('personalMiniBalance').textContent = `$${f.personalFinalBalance.toFixed(2)}`;
 
       updateLogoInUI();
       renderHarvestTable();
@@ -2489,7 +2721,7 @@
       // 2. APERTURA DE WHATSAPP CON RESUMEN AUDITADO
       const f = calculateFinances();
       const totalDebts = calculateTotalRemainingDebt();
-      const summary = `*RESPALDO ROSSE CABS*\nFecha: ${new Date().toLocaleDateString()}\nPropietario: ${appState.settings.ownerName}\nCaja ROSSE CABS: $${f.fincaFinalBalance.toFixed(2)}\nCaja Personal: $${f.personalFinalBalance.toFixed(2)}\nDeudas Pendientes: $${totalDebts.toFixed(2)}\nTallos Cosechados: ${f.totalStemsHarvested.toLocaleString()}\nStock Flor Nacional: ${f.availableNationalStock.toLocaleString()} tallos\nUbicación: Tupigachi - Ecuador 🇪🇨\n(El archivo .json fue descargado en tus Descargas para respaldo seguro)`;
+      const summary = `*RESPALDO ROSSE CABS*\nFecha: ${new Date().toLocaleDateString()}\nPropietario: ${appState.settings.ownerName}\nCaja ROSSE CABS: $${f.fincaFinalBalance.toFixed(2)}\nCaja Personal: $${f.personalFinalBalance.toFixed(2)}\nIngresos Extras: $${f.consolidatedExtraIncome.toFixed(2)}\nDeudas Pendientes: $${totalDebts.toFixed(2)}\nTallos Cosechados: ${f.totalStemsHarvested.toLocaleString()}\nStock Flor Nacional: ${f.availableNationalStock.toLocaleString()} tallos\nUbicación: Tupigachi - Ecuador 🇪🇨\n(El archivo .json fue descargado en tus Descargas para respaldo seguro)`;
 
       const url = `https://wa.me/593963923399?text=${encodeURIComponent(summary)}`;
       window.open(url, '_blank');
@@ -2819,7 +3051,8 @@
       const tbody = document.getElementById('rosseAccountingTableBody');
       tbody.innerHTML = '';
 
-      const month = document.getElementById('selectRosseMonth')?.value || 'all';
+      const rYear = document.getElementById('selectRosseYear')?.value || 'all';
+      const rMonth = document.getElementById('selectRosseMonth')?.value || 'all';
 
       let periodInc = 0;
       let periodExp = 0;
@@ -2856,9 +3089,11 @@
       combined.sort((a, b) => new Date(b.date) - new Date(a.date));
 
       const filtered = combined.filter(item => {
-        if (month === 'all') return true;
-        const m = parseInt(item.date.split('-')[1], 10);
-        return m === parseInt(month, 10);
+        if (!item.date) return true;
+        const parts = item.date.split('-');
+        if (rYear !== 'all' && parts[0] !== rYear) return false;
+        if (rMonth !== 'all' && parseInt(parts[1], 10) !== parseInt(rMonth, 10)) return false;
+        return true;
       });
 
       filtered.forEach(item => {
@@ -2869,8 +3104,8 @@
         tr.className = "hover:bg-slate-50 transition";
         tr.innerHTML = `
           <td class="py-2.5 px-2 font-mono text-slate-500">${item.date}</td>
-          <td class="py-2.5 px-2"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${item.type === 'ingreso' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${item.type.toUpperCase()}</span></td>
-          <td class="py-2.5 px-2 font-bold text-slate-700">${item.category}</td>
+          <td class="py-2.5 px-2"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${item.type === 'ingreso' ? (item.isExtra ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-emerald-100 text-emerald-800') : 'bg-rose-100 text-rose-800'}">${item.isExtra ? 'EXTRA ✨' : item.type.toUpperCase()}</span></td>
+          <td class="py-2.5 px-2 font-bold ${item.isExtra ? 'text-amber-800' : 'text-slate-700'}">${item.category}</td>
           <td class="py-2.5 px-2 text-slate-600">${item.detail}</td>
           <td class="py-2.5 px-2 text-right font-mono font-bold ${item.type === 'ingreso' ? 'text-emerald-700' : 'text-rose-700'}">${item.type === 'ingreso' ? '+' : '-'}$${Number(item.amount).toFixed(2)}</td>
           <td class="py-2.5 px-2 text-right">
@@ -2896,12 +3131,15 @@
       const tbody = document.getElementById('personalTransactionsTableBody');
       tbody.innerHTML = '';
 
-      const month = document.getElementById('selectPersonalMonth')?.value || 'all';
+      const pYear = document.getElementById('selectPersonalYear')?.value || 'all';
+      const pMonth = document.getElementById('selectPersonalMonth')?.value || 'all';
 
       const filtered = (appState.personalTransactions || []).filter(t => {
-        if (month === 'all') return true;
-        const m = parseInt(t.date.split('-')[1], 10);
-        return m === parseInt(month, 10);
+        if (!t.date) return true;
+        const parts = t.date.split('-');
+        if (pYear !== 'all' && parts[0] !== pYear) return false;
+        if (pMonth !== 'all' && parseInt(parts[1], 10) !== parseInt(pMonth, 10)) return false;
+        return true;
       });
 
       if (filtered.length === 0) {
@@ -2914,8 +3152,8 @@
         tr.className = "hover:bg-slate-50 transition";
         tr.innerHTML = `
           <td class="py-2.5 px-2 font-mono text-slate-500">${t.date}</td>
-          <td class="py-2.5 px-2"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${t.type === 'ingreso' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${t.type.toUpperCase()}</span></td>
-          <td class="py-2.5 px-2 font-bold text-slate-700">${t.category}</td>
+          <td class="py-2.5 px-2"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${t.type === 'ingreso' ? (t.isExtra ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-emerald-100 text-emerald-800') : 'bg-rose-100 text-rose-800'}">${t.isExtra ? 'EXTRA ✨' : t.type.toUpperCase()}</span></td>
+          <td class="py-2.5 px-2 font-bold ${t.isExtra ? 'text-amber-800' : 'text-slate-700'}">${t.category}</td>
           <td class="py-2.5 px-2 text-slate-600">${t.detail}</td>
           <td class="py-2.5 px-2 text-right font-mono font-bold ${t.type === 'ingreso' ? 'text-emerald-700' : 'text-rose-700'}">${t.type === 'ingreso' ? '+' : '-'}$${Number(t.amount).toFixed(2)}</td>
           <td class="py-2.5 px-2 text-right">
@@ -3116,7 +3354,7 @@
       }
     }
 
-    // NOTIFICACIONES DEL SISTEMA (SOLO RECORDATORIO DE RESPALDO TRAS 7 DÍAS)
+    // NOTIFICACIONES DEL SISTEMA (RECORDATORIO SEMANAL DE RESPALDO)
     function requestSystemNotifications() {
       if (!("Notification" in window)) {
         showToast("Tu dispositivo no soporta notificaciones", "⚠️");
@@ -3180,11 +3418,6 @@
     function closeModal(modalId) {
       const el = document.getElementById(modalId);
       if (el) el.classList.add('hidden');
-    }
-
-    function changeGlobalYear(val) {
-      appState.settings.activeYear = val;
-      saveState();
     }
 
     function toggleTheme() {
