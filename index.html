@@ -281,7 +281,7 @@
             <span class="text-base sm:text-lg">🏪</span>
           </div>
           <span id="kpiNationalStock" class="font-mono text-xl sm:text-2xl font-black text-amber-300 block mt-1.5">0 tallos</span>
-          <p class="text-[11px] text-rose-200 mt-1">Cosecha nacional + Devoluciones recibidas</p>
+          <p class="text-[11px] text-rose-200 mt-1">Cosecha nacional + Devoluciones − Vendido</p>
         </div>
 
         <div class="bg-gradient-to-br from-amber-500 via-amber-600 to-orange-600 text-slate-950 rounded-3xl p-4 sm:p-5 border border-amber-300 shadow-lg">
@@ -463,6 +463,7 @@
         <div class="flex items-center gap-1.5 overflow-x-auto pt-2 border-t border-rose-900/80 text-xs whitespace-nowrap">
           <button onclick="switchBusinessSubTab('subBusinessDashboard')" id="bSubBtnDashboard" class="bsub-btn px-3 py-1.5 rounded-xl font-bold bg-white text-rose-950 transition">📊 Dashboard Finca</button>
           <button onclick="switchBusinessSubTab('subHarvest')" id="bSubBtnHarvest" class="bsub-btn px-3 py-1.5 rounded-xl font-bold text-rose-200 hover:bg-rose-900/60 transition">🌿 Cosecha & Mallas</button>
+          <button onclick="switchBusinessSubTab('subShipments')" id="bSubBtnShipments" class="bsub-btn px-3 py-1.5 rounded-xl font-bold text-rose-200 hover:bg-rose-900/60 transition">🚚 Envíos</button>
           <button onclick="switchBusinessSubTab('subSettlements')" id="bSubBtnSettlements" class="bsub-btn px-3 py-1.5 rounded-xl font-bold text-rose-200 hover:bg-rose-900/60 transition">📄 Recortes & Liquidaciones</button>
           <button onclick="switchBusinessSubTab('subAccounting')" id="bSubBtnAccounting" class="bsub-btn px-3 py-1.5 rounded-xl font-bold text-rose-200 hover:bg-rose-900/60 transition">💰 Contabilidad Finca</button>
           <button onclick="switchBusinessSubTab('subProfitability')" id="bSubBtnProfitability" class="bsub-btn px-3 py-1.5 rounded-xl font-bold text-rose-200 hover:bg-rose-900/60 transition">📈 Rentabilidad por Plantas</button>
@@ -536,11 +537,54 @@
         </div>
       </div>
 
+      <div id="subShipments" class="bsub-content hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+          <div>
+            <h4 class="font-extrabold text-sm text-slate-900">Envíos de Flor (Cosecha ➔ Envío ➔ Liquidación)</h4>
+            <span class="text-xs text-slate-500">Registra qué se envió como Exportación (queda pendiente de Recorte/Liquidación) o qué se vendió directo como Flor Nacional (a cualquier precio y cantidad de tallos).</span>
+          </div>
+          <button onclick="openModalShipment()" class="bg-cyan-600 hover:bg-cyan-500 text-white font-bold px-3.5 py-2 rounded-2xl text-xs shadow flex items-center gap-1.5 transition">
+            <i data-lucide="truck" class="w-4 h-4"></i>
+            <span>+ Registrar Envío</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+          <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+            <span class="text-[10px] font-black uppercase text-rose-600 block">Stock Exportación Pendiente de Liquidar</span>
+            <span id="shipmentKpiExportPending" class="font-mono text-xl font-black text-rose-600 block mt-1">0 tallos</span>
+            <span class="text-[10px] text-slate-400 mt-0.5 block">Cosechado para exportación − Ya enviado a liquidar</span>
+          </div>
+          <div class="bg-white p-4 rounded-3xl border border-amber-300 bg-amber-50/40 shadow-sm">
+            <span class="text-[10px] font-black uppercase text-amber-800 block">Stock Flor Nacional Disponible</span>
+            <span id="shipmentKpiNationalStock" class="font-mono text-xl font-black text-amber-700 block mt-1">0 tallos</span>
+            <span class="text-[10px] text-amber-900/80 mt-0.5 block">Se puede vender a cualquier precio y cantidad</span>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-3xl p-4 sm:p-5 border border-slate-200 shadow-sm overflow-x-auto -mx-1 sm:mx-0">
+          <table class="w-full text-left text-xs min-w-[600px]">
+            <thead>
+              <tr class="bg-slate-50 text-slate-600 uppercase text-[10px] font-black border-y border-slate-200">
+                <th class="py-2.5 px-3">Fecha</th>
+                <th class="py-2.5 px-3">Tipo</th>
+                <th class="py-2.5 px-3">Variedad</th>
+                <th class="py-2.5 px-3 text-right">Tallos</th>
+                <th class="py-2.5 px-3 text-right">Monto Vendido</th>
+                <th class="py-2.5 px-3 text-center">Estado</th>
+                <th class="py-2.5 px-3 text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="shipmentsTableBody" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+
       <div id="subSettlements" class="bsub-content hidden space-y-4">
         <div class="flex items-center justify-between bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
           <div>
             <h4 class="font-extrabold text-sm text-slate-900">Historial de Liquidaciones por Cliente</h4>
-            <span class="text-xs text-slate-500">Cálculo de precio real neto por tallo y por malla 25 tras retornos a Flor Nacional</span>
+            <span class="text-xs text-slate-500">Elige los envíos de exportación pendientes, la fecha, el cliente y cuánto te pagaron en total: el sistema calcula el precio real por tallo y por malla, y alimenta la rentabilidad.</span>
           </div>
           <button onclick="openModalSettlement()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3.5 py-2 rounded-2xl text-xs shadow flex items-center gap-1.5 transition">
             <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
@@ -1148,6 +1192,59 @@
     </div>
   </div>
 
+  <!-- MODAL: ENVÍO (EXPORTACIÓN PENDIENTE DE LIQUIDAR O VENTA NACIONAL DIRECTA) -->
+  <div id="modalShipment" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+    <div class="bg-white rounded-3xl p-5 sm:p-6 max-w-lg w-full shadow-2xl space-y-4 border border-slate-200 max-h-[92vh] overflow-y-auto text-xs">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="font-extrabold text-base text-slate-900 flex items-center gap-2">
+          <i data-lucide="truck" class="w-5 h-5 text-cyan-600"></i>
+          <span id="shipmentModalTitle">Registrar Envío</span>
+        </h3>
+        <button onclick="closeModal('modalShipment')" class="text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form onsubmit="saveShipmentEntry(event)" class="space-y-3.5">
+        <input type="hidden" id="editShipmentId" value="">
+
+        <div>
+          <label class="block font-black text-slate-700 mb-1">Tipo de Envío</label>
+          <select id="shipmentType" onchange="onShipmentTypeChanged()" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold bg-white">
+            <option value="export">🌍 Exportación (queda pendiente de Recorte/Liquidación)</option>
+            <option value="national">🏪 Flor Nacional (venta directa, cualquier precio y cantidad)</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Fecha</label>
+            <input type="date" id="shipmentDate" required class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Variedad (de Catálogo)</label>
+            <select id="shipmentVariety" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold bg-white"></select>
+          </div>
+        </div>
+
+        <div id="shipmentStockNotice" class="p-2.5 rounded-xl bg-slate-50 text-slate-600 border border-slate-200 font-bold text-[11px]"></div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Cantidad de Tallos a Enviar</label>
+          <input type="number" min="1" id="shipmentStems" required placeholder="Ej. 1000" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-mono font-bold text-base">
+        </div>
+
+        <div id="shipmentNationalPriceBox" class="hidden">
+          <label class="block font-bold text-amber-800 mb-1">Precio Total Cobrado ($ USD) — a cualquier precio</label>
+          <input type="number" step="0.01" min="0" id="shipmentNationalPrice" placeholder="0.00" class="w-full px-3 py-2 rounded-xl border border-amber-400 font-mono font-black text-base text-amber-900 bg-amber-50/30">
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="closeModal('modalShipment')" class="px-4 py-2 font-bold text-slate-500">Cancelar</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold shadow">Guardar Envío</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- MODAL: LIQUIDACIÓN -->
   <div id="modalSettlement" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
     <div class="bg-white rounded-3xl p-5 sm:p-6 max-w-lg w-full shadow-2xl space-y-4 border border-slate-200 max-h-[92vh] overflow-y-auto text-xs">
@@ -1172,6 +1269,11 @@
           </div>
         </div>
 
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Envíos de Exportación Pendientes <span class="font-normal text-slate-400">(marca los que se liquidan en este recorte)</span></label>
+          <div id="settlementHarvestLinks" class="max-h-32 overflow-y-auto border border-slate-200 rounded-xl p-2 space-y-1 bg-slate-50"></div>
+        </div>
+
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block font-bold text-slate-700 mb-1">Tallos Enviados (Total)</label>
@@ -1192,11 +1294,6 @@
           <div class="flex justify-between"><span>Tallos Netos Aprobados:</span><span id="settlementNetStems" class="font-mono text-sm">0</span></div>
           <div class="flex justify-between"><span>Precio Real por Tallo:</span><span id="settlementPricePerStem" class="font-mono text-sm text-emerald-700">$0.00</span></div>
           <div class="flex justify-between"><span>Precio Real por Malla (25):</span><span id="settlementPricePerMalla" class="font-mono text-sm text-emerald-700">$0.00</span></div>
-        </div>
-
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Cosechas Relacionadas <span class="font-normal text-slate-400">(opcional, para trazabilidad)</span></label>
-          <div id="settlementHarvestLinks" class="max-h-32 overflow-y-auto border border-slate-200 rounded-xl p-2 space-y-1 bg-slate-50"></div>
         </div>
 
         <div class="pt-2 flex justify-end gap-2">
@@ -1822,6 +1919,7 @@
         { id: "h1", date: "2026-09-20", varietyName: "Explorer", exportMallas: 40, exportSueltos: 0, exportTotalStems: 1000, nationalStems: 80, discardStems: 20, grandTotalStems: 1100 },
         { id: "h2", date: "2026-09-22", varietyName: "Mondial", exportMallas: 30, exportSueltos: 15, exportTotalStems: 765, nationalStems: 60, discardStems: 15, grandTotalStems: 840 }
       ],
+      shipments: [],
       settlements: [
         { id: "st1", date: "2026-09-23", clientName: "Florícola Exportadora S.A.", stemsSent: 1765, stemsReturned: 40, netStems: 1725, totalPaid: 776.25, pricePerStem: 0.45, pricePerMalla: 11.25 }
       ],
@@ -1861,6 +1959,7 @@
           if (parsed.settings?.invoice) appState.settings.invoice = { ...appState.settings.invoice, ...parsed.settings.invoice };
           if (parsed.catalog) appState.catalog = { ...appState.catalog, ...parsed.catalog };
           if (parsed.catalog?.categories) appState.catalog.categories = { ...appState.catalog.categories, ...parsed.catalog.categories };
+          if (!Array.isArray(appState.shipments)) appState.shipments = [];
         }
       } catch(e) {}
     }
@@ -1884,6 +1983,21 @@
         toast.classList.remove('opacity-100', 'translate-y-0');
         toast.classList.add('opacity-0', 'translate-y-[-20px]', 'pointer-events-none');
       }, 3000);
+    }
+
+    // ===== STOCK DE ENVÍOS (Cosecha -> Envío -> Liquidación) =====
+    function computeShipmentStock() {
+      const totalExportHarvested = (appState.harvests || []).reduce((s, h) => s + Number(h.exportTotalStems || 0), 0);
+      const totalNationalHarvested = (appState.harvests || []).reduce((s, h) => s + Number(h.nationalStems || 0), 0);
+      const totalReturnedFromSettlements = (appState.settlements || []).reduce((s, x) => s + Number(x.stemsReturned || 0), 0);
+
+      const exportShipped = (appState.shipments || []).filter(s => s.type === 'export').reduce((s, x) => s + Number(x.stems || 0), 0);
+      const nationalSold = (appState.shipments || []).filter(s => s.type === 'national').reduce((s, x) => s + Number(x.stems || 0), 0);
+
+      const exportPendingStock = Math.max(0, totalExportHarvested - exportShipped);
+      const nationalAvailableStock = Math.max(0, totalNationalHarvested + totalReturnedFromSettlements - nationalSold);
+
+      return { totalExportHarvested, totalNationalHarvested, totalReturnedFromSettlements, exportShipped, nationalSold, exportPendingStock, nationalAvailableStock };
     }
 
     function calculateFinances(ignorePeriodFilter = false) {
@@ -1939,14 +2053,15 @@
         totalNationalStems += Number(h.nationalStems || 0);
       });
 
-      const totalReturnedStems = filteredSettlements.reduce((sum, s) => sum + Number(s.stemsReturned || 0), 0);
-      const availableNationalStock = totalNationalStems + totalReturnedStems;
+      const stock = computeShipmentStock();
+      const availableNationalStock = stock.nationalAvailableStock;
+      const exportPendingStock = stock.exportPendingStock;
       const totalPlants = (appState.catalog?.varieties || []).reduce((sum, v) => sum + Number(v.plantsCount || 0), 0);
 
       return {
         fincaTotalIncome, fincaTotalExpenses, fincaFinalBalance, fincaExtraIncome, settlementIncome,
         personalIncomeTotal, personalExpenseTotal, personalFinalBalance, personalExtraIncome, consolidatedExtraIncome,
-        totalStemsHarvested, totalExportStems, totalNationalStems, availableNationalStock, totalPlants
+        totalStemsHarvested, totalExportStems, totalNationalStems, availableNationalStock, exportPendingStock, totalPlants
       };
     }
 
@@ -1990,6 +2105,9 @@
       setText('kpiTotalPlants', f.totalPlants.toLocaleString());
       setText('kpiTotalExtraIncome', `$${f.consolidatedExtraIncome.toFixed(2)}`);
 
+      setText('shipmentKpiExportPending', `${f.exportPendingStock.toLocaleString()} tallos`);
+      setText('shipmentKpiNationalStock', `${f.availableNationalStock.toLocaleString()} tallos`);
+
       setText('rosseMiniCash', `$${f.fincaFinalBalance.toFixed(2)}`);
       setText('rosseMiniSettlements', `$${f.settlementIncome.toFixed(2)}`);
       setText('rosseMiniExtraIncome', `$${f.fincaExtraIncome.toFixed(2)}`);
@@ -2003,6 +2121,7 @@
 
       updateLogoInUI();
       renderHarvestTable();
+      renderShipmentsTable();
       renderSettlementsTable();
       renderRosseAccounting();
       renderProfitabilityCards();
@@ -2111,6 +2230,19 @@
           selVar.appendChild(opt);
         });
         if (cur) selVar.value = cur;
+      }
+
+      const selShipVar = document.getElementById('shipmentVariety');
+      if (selShipVar) {
+        const cur = selShipVar.value;
+        selShipVar.innerHTML = '<option value="">-- Cualquier Variedad --</option>';
+        (appState.catalog?.varieties || []).forEach(v => {
+          const opt = document.createElement('option');
+          opt.value = v.name;
+          opt.textContent = `${v.name} (${v.color || 'Rosas'})`;
+          selShipVar.appendChild(opt);
+        });
+        if (cur) selShipVar.value = cur;
       }
 
       const selClient = document.getElementById('settlementClient');
@@ -2589,6 +2721,168 @@
       showToast("Registro de cosecha eliminado");
     }
 
+    // ===== ENVÍOS (Exportación pendiente de liquidar / Venta directa Nacional) =====
+    function openModalShipment(editId = null) {
+      document.getElementById('editShipmentId').value = editId || '';
+      document.getElementById('shipmentModalTitle').textContent = editId ? 'Editar Envío' : 'Registrar Envío';
+      populateFormDropdowns();
+
+      if (editId) {
+        const s = (appState.shipments || []).find(x => x.id === editId);
+        if (s) {
+          document.getElementById('shipmentType').value = s.type;
+          document.getElementById('shipmentDate').value = s.date;
+          document.getElementById('shipmentVariety').value = s.varietyName || '';
+          document.getElementById('shipmentStems').value = s.stems;
+          document.getElementById('shipmentNationalPrice').value = s.priceTotal ? Number(s.priceTotal).toFixed(2) : '';
+        }
+      } else {
+        document.getElementById('shipmentType').value = 'export';
+        document.getElementById('shipmentDate').value = new Date().toISOString().split('T')[0];
+        document.getElementById('shipmentVariety').value = '';
+        document.getElementById('shipmentStems').value = '';
+        document.getElementById('shipmentNationalPrice').value = '';
+      }
+      onShipmentTypeChanged();
+      const modal = document.getElementById('modalShipment');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function onShipmentTypeChanged() {
+      const type = document.getElementById('shipmentType')?.value;
+      const priceBox = document.getElementById('shipmentNationalPriceBox');
+      const priceInput = document.getElementById('shipmentNationalPrice');
+      const notice = document.getElementById('shipmentStockNotice');
+      const stock = computeShipmentStock();
+
+      if (type === 'national') {
+        if (priceBox) priceBox.classList.remove('hidden');
+        if (priceInput) priceInput.required = true;
+        if (notice) notice.innerHTML = `Stock disponible de flor nacional: <span class="font-mono font-black text-amber-700">${stock.nationalAvailableStock.toLocaleString()} tallos</span>. Puedes vender cualquier cantidad y a cualquier precio.`;
+      } else {
+        if (priceBox) priceBox.classList.add('hidden');
+        if (priceInput) priceInput.required = false;
+        if (notice) notice.innerHTML = `Stock cosechado para exportación aún sin enviar: <span class="font-mono font-black text-rose-700">${stock.exportPendingStock.toLocaleString()} tallos</span>. Este envío quedará pendiente hasta que hagas el Recorte/Liquidación.`;
+      }
+    }
+
+    function saveShipmentEntry(e) {
+      e.preventDefault();
+      const editId = document.getElementById('editShipmentId').value;
+      const type = document.getElementById('shipmentType').value;
+      const date = document.getElementById('shipmentDate').value;
+      const varietyName = document.getElementById('shipmentVariety').value || '';
+      const stems = parseInt(document.getElementById('shipmentStems').value, 10) || 0;
+      const priceTotal = type === 'national' ? (parseFloat(document.getElementById('shipmentNationalPrice').value) || 0) : 0;
+
+      if (!appState.shipments) appState.shipments = [];
+
+      if (editId) {
+        const s = appState.shipments.find(x => x.id === editId);
+        if (s) {
+          const wasNational = s.type === 'national';
+          s.type = type; s.date = date; s.varietyName = varietyName; s.stems = stems;
+          s.priceTotal = type === 'national' ? priceTotal : 0;
+          // Si era venta nacional y tenía un ingreso vinculado, lo actualizamos
+          if (s.fincaTxId) {
+            const tx = (appState.fincaTransactions || []).find(t => t.id === s.fincaTxId);
+            if (tx && type === 'national') {
+              tx.date = date; tx.amount = priceTotal;
+              tx.detail = `Venta flor nacional${varietyName ? ' - ' + varietyName : ''} (${stems.toLocaleString()} tallos)`;
+            } else if (tx && type !== 'national') {
+              appState.fincaTransactions = appState.fincaTransactions.filter(t => t.id !== s.fincaTxId);
+              s.fincaTxId = null;
+            }
+          } else if (type === 'national' && priceTotal > 0) {
+            const txId = 'ft_ship_' + Date.now();
+            appState.fincaTransactions.push({
+              id: txId, date, type: 'ingreso', category: 'Venta de Flor Nacional',
+              detail: `Venta flor nacional${varietyName ? ' - ' + varietyName : ''} (${stems.toLocaleString()} tallos)`,
+              amount: priceTotal
+            });
+            s.fincaTxId = txId;
+          }
+        }
+        saveState();
+        closeModal('modalShipment');
+        showToast("Envío editado");
+        return;
+      }
+
+      const newShipment = {
+        id: 's_' + Date.now(),
+        type, date, varietyName, stems,
+        priceTotal: type === 'national' ? priceTotal : 0,
+        settled: false,
+        fincaTxId: null
+      };
+
+      if (type === 'national') {
+        const txId = 'ft_ship_' + Date.now();
+        appState.fincaTransactions.push({
+          id: txId, date, type: 'ingreso', category: 'Venta de Flor Nacional',
+          detail: `Venta flor nacional${varietyName ? ' - ' + varietyName : ''} (${stems.toLocaleString()} tallos)`,
+          amount: priceTotal
+        });
+        newShipment.fincaTxId = txId;
+      }
+
+      appState.shipments.push(newShipment);
+      saveState();
+      closeModal('modalShipment');
+      if (window.confetti) confetti({ particleCount: 50, spread: 60 });
+      showToast(type === 'national' ? `¡Venta nacional de ${stems.toLocaleString()} tallos registrada!` : `Envío de exportación registrado, pendiente de liquidación`);
+    }
+
+    function deleteShipment(id) {
+      if (!confirm('¿Seguro que quieres eliminar este envío? Esta acción no se puede deshacer.')) return;
+      const s = (appState.shipments || []).find(x => x.id === id);
+      if (s && s.fincaTxId) {
+        appState.fincaTransactions = (appState.fincaTransactions || []).filter(t => t.id !== s.fincaTxId);
+      }
+      appState.shipments = (appState.shipments || []).filter(x => x.id !== id);
+      saveState();
+      showToast("Envío eliminado");
+    }
+
+    function renderShipmentsTable() {
+      const tbody = document.getElementById('shipmentsTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      if (!appState.shipments || appState.shipments.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">No hay envíos registrados todavía. Registra un envío desde la cosecha disponible.</td></tr>`;
+        return;
+      }
+
+      [...appState.shipments].reverse().forEach(s => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 transition";
+        const isExport = s.type === 'export';
+        let statusBadge;
+        if (isExport) {
+          statusBadge = s.settled
+            ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">✓ Liquidado</span>`
+            : `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800">⏳ Pendiente</span>`;
+        } else {
+          statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-100 text-cyan-800">🏪 Vendido Nacional</span>`;
+        }
+        tr.innerHTML = `
+          <td class="py-2.5 px-3 font-mono text-slate-500">${s.date}</td>
+          <td class="py-2.5 px-3 font-bold ${isExport ? 'text-rose-700' : 'text-amber-700'}">${isExport ? '🌍 Exportación' : '🏪 Nacional'}</td>
+          <td class="py-2.5 px-3 text-slate-700">${s.varietyName || 'Sin especificar'}</td>
+          <td class="py-2.5 px-3 text-right font-mono font-bold text-slate-900">${Number(s.stems).toLocaleString()}</td>
+          <td class="py-2.5 px-3 text-right font-mono font-bold text-emerald-700">${isExport ? '—' : '$' + Number(s.priceTotal || 0).toFixed(2)}</td>
+          <td class="py-2.5 px-3 text-center">${statusBadge}</td>
+          <td class="py-2.5 px-3 text-center">
+            <button onclick="openModalShipment('${s.id}')" class="text-blue-600 hover:text-blue-700 p-1" title="Editar envío"><i data-lucide="edit" class="w-3.5 h-3.5"></i></button>
+            <button onclick="deleteShipment('${s.id}')" class="text-slate-300 hover:text-rose-600 p-1" title="Eliminar envío"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+      if (window.lucide) lucide.createIcons();
+    }
+
     function openModalSettlement(editId = null) {
       document.getElementById('editSettlementId').value = editId || '';
       document.getElementById('settlementModalTitle').textContent = editId ? 'Editar Liquidación' : 'Nuevo Recorte / Liquidación de Venta';
@@ -2603,7 +2897,7 @@
           document.getElementById('settlementStemsReturned').value = s.stemsReturned;
           document.getElementById('settlementPaid').value = Number(s.totalPaid).toFixed(2);
         }
-        populateSettlementHarvestLinks(s?.harvestIds || []);
+        populateSettlementShipmentLinks(s?.shipmentIds || [], editId);
       } else {
         const d = document.getElementById('settlementDate');
         if (d) d.value = new Date().toISOString().split('T')[0];
@@ -2613,29 +2907,45 @@
         if (ret) ret.value = 0;
         const paid = document.getElementById('settlementPaid');
         if (paid) paid.value = '';
-        populateSettlementHarvestLinks([]);
+        populateSettlementShipmentLinks([], null);
       }
       recalcSettlementPrices();
       const modal = document.getElementById('modalSettlement');
       if (modal) modal.classList.remove('hidden');
     }
 
-    function populateSettlementHarvestLinks(selectedIds = []) {
+    function populateSettlementShipmentLinks(selectedIds = [], currentSettlementId = null) {
       const box = document.getElementById('settlementHarvestLinks');
       if (!box) return;
-      const harvests = [...(appState.harvests || [])].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
-      if (!harvests.length) {
-        box.innerHTML = `<p class="text-[11px] text-slate-400 text-center py-2">No hay cosechas registradas aún.</p>`;
+      // Envíos de exportación disponibles: no liquidados aún, o liquidados por ESTA misma liquidación (al editar)
+      const pending = [...(appState.shipments || [])]
+        .filter(s => s.type === 'export' && (!s.settled || selectedIds.includes(s.id)))
+        .sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+
+      if (!pending.length) {
+        box.innerHTML = `<p class="text-[11px] text-slate-400 text-center py-2">No hay envíos de exportación pendientes. Ve a "Envíos" y registra uno primero.</p>`;
         return;
       }
-      box.innerHTML = harvests.map(h => `
+      box.innerHTML = pending.map(s => `
         <label class="flex items-center gap-2 text-[11px] py-1 px-1.5 rounded-lg hover:bg-white cursor-pointer">
-          <input type="checkbox" value="${h.id}" class="settlementHarvestCheckbox w-3.5 h-3.5 accent-emerald-600" ${selectedIds.includes(h.id) ? 'checked' : ''}>
-          <span class="font-bold text-slate-700">${h.date}</span>
-          <span class="text-slate-500 truncate">${h.varietyName || 'Sin variedad'}</span>
-          <span class="ml-auto font-mono text-slate-600">${Number(h.grandTotalStems || 0).toLocaleString()} tallos</span>
+          <input type="checkbox" value="${s.id}" class="settlementShipmentCheckbox w-3.5 h-3.5 accent-emerald-600" onchange="onSettlementShipmentToggled()" ${selectedIds.includes(s.id) ? 'checked' : ''}>
+          <span class="font-bold text-slate-700">${s.date}</span>
+          <span class="text-slate-500 truncate">${s.varietyName || 'Sin variedad'}</span>
+          <span class="ml-auto font-mono text-slate-600">${Number(s.stems || 0).toLocaleString()} tallos</span>
         </label>
       `).join('');
+    }
+
+    function onSettlementShipmentToggled() {
+      const checked = Array.from(document.querySelectorAll('.settlementShipmentCheckbox:checked'));
+      if (checked.length === 0) return;
+      const total = checked.reduce((sum, cb) => {
+        const s = (appState.shipments || []).find(x => x.id === cb.value);
+        return sum + (s ? Number(s.stems || 0) : 0);
+      }, 0);
+      const sentInput = document.getElementById('settlementStemsSent');
+      if (sentInput) sentInput.value = total;
+      recalcSettlementPrices();
     }
 
     function recalcSettlementPrices() {
@@ -2664,19 +2974,34 @@
       const stemsReturned = parseInt(document.getElementById('settlementStemsReturned').value, 10) || 0;
       const paid = parseFloat(document.getElementById('settlementPaid').value) || 0;
       const netStems = Math.max(0, stemsSent - stemsReturned);
-      const harvestIds = Array.from(document.querySelectorAll('.settlementHarvestCheckbox:checked')).map(cb => cb.value);
+      const shipmentIds = Array.from(document.querySelectorAll('.settlementShipmentCheckbox:checked')).map(cb => cb.value);
 
       const pricePerStem = netStems > 0 ? (paid / netStems) : 0;
       const pricePerMalla = pricePerStem * 25;
 
       if (!appState.settlements) appState.settlements = [];
 
+      // Liberar envíos previamente vinculados (si estamos editando) antes de re-marcar
+      if (editId) {
+        (appState.shipments || []).forEach(s => {
+          if ((appState.settlements.find(x => x.id === editId)?.shipmentIds || []).includes(s.id)) {
+            s.settled = false;
+          }
+        });
+      }
+
+      // Marcar los envíos seleccionados como liquidados
+      shipmentIds.forEach(sid => {
+        const s = (appState.shipments || []).find(x => x.id === sid);
+        if (s) s.settled = true;
+      });
+
       if (editId) {
         const s = appState.settlements.find(x => x.id === editId);
         if (s) {
           s.date = date; s.clientName = clientName; s.stemsSent = stemsSent; s.stemsReturned = stemsReturned;
           s.netStems = netStems; s.totalPaid = paid; s.pricePerStem = pricePerStem; s.pricePerMalla = pricePerMalla;
-          s.harvestIds = harvestIds;
+          s.shipmentIds = shipmentIds;
         }
         saveState();
         closeModal('modalSettlement');
@@ -2694,7 +3019,7 @@
         totalPaid: paid,
         pricePerStem,
         pricePerMalla,
-        harvestIds
+        shipmentIds
       });
 
       saveState();
@@ -2715,9 +3040,9 @@
       [...appState.settlements].reverse().forEach(s => {
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50 transition";
-        const linkedHarvests = (s.harvestIds || []).map(hid => (appState.harvests || []).find(h => h.id === hid)).filter(Boolean);
-        const linkBadge = linkedHarvests.length
-          ? `<span class="block text-[9px] font-bold text-emerald-600 mt-0.5" title="${linkedHarvests.map(h => `${h.date} · ${h.varietyName || ''}`).join(' | ')}">🔗 ${linkedHarvests.length} cosecha${linkedHarvests.length === 1 ? '' : 's'} vinculada${linkedHarvests.length === 1 ? '' : 's'}</span>`
+        const linkedShipments = (s.shipmentIds || []).map(sid => (appState.shipments || []).find(x => x.id === sid)).filter(Boolean);
+        const linkBadge = linkedShipments.length
+          ? `<span class="block text-[9px] font-bold text-emerald-600 mt-0.5" title="${linkedShipments.map(x => `${x.date} · ${x.varietyName || ''}`).join(' | ')}">🔗 ${linkedShipments.length} envío${linkedShipments.length === 1 ? '' : 's'} vinculado${linkedShipments.length === 1 ? '' : 's'}</span>`
           : '';
         tr.innerHTML = `
           <td class="py-2.5 px-3 font-mono text-slate-500">${s.date}</td>
@@ -2744,6 +3069,13 @@
 
     function deleteSettlement(id) {
       if (!confirm('¿Seguro que quieres eliminar esta liquidación? Esta acción no se puede deshacer.')) return;
+      const s = (appState.settlements || []).find(x => x.id === id);
+      if (s) {
+        (s.shipmentIds || []).forEach(sid => {
+          const ship = (appState.shipments || []).find(x => x.id === sid);
+          if (ship) ship.settled = false;
+        });
+      }
       appState.settlements = (appState.settlements || []).filter(s => s.id !== id);
       saveState();
       showToast("Liquidación eliminada");
@@ -2999,6 +3331,43 @@
     }
 
     // CONTROL DE DEUDAS
+    function openModalDebt() {
+      document.getElementById('debtName').value = '';
+      document.getElementById('debtInitial').value = '';
+      document.getElementById('debtQuota').value = '';
+      document.getElementById('debtStart').value = new Date().toISOString().split('T')[0];
+      document.getElementById('debtEnd').value = '';
+      const fincaRadio = document.querySelector('input[name="debtAccountChoice"][value="finca"]');
+      if (fincaRadio) fincaRadio.checked = true;
+      const modal = document.getElementById('modalDebt');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function saveUnifiedDebt(e) {
+      e.preventDefault();
+      const account = document.querySelector('input[name="debtAccountChoice"]:checked')?.value || 'finca';
+      const name = document.getElementById('debtName').value.trim();
+      const initialAmount = parseFloat(document.getElementById('debtInitial').value) || 0;
+      const monthlyPayment = parseFloat(document.getElementById('debtQuota').value) || 0;
+      const startDate = document.getElementById('debtStart').value;
+      const endDate = document.getElementById('debtEnd').value;
+
+      if (!name || initialAmount <= 0) {
+        showToast("Completa el nombre y el monto inicial de la deuda", "❌");
+        return;
+      }
+
+      if (!appState.debts) appState.debts = [];
+      appState.debts.push({
+        id: 'd_' + Date.now(),
+        account, name, initialAmount, monthlyPayment, startDate, endDate
+      });
+
+      saveState();
+      closeModal('modalDebt');
+      showToast("Deuda registrada con éxito");
+    }
+
     function renderUnifiedDebts() {
       const container = document.getElementById('unifiedDebtsCardsContainer');
       if (!container) return;
@@ -3658,6 +4027,7 @@
         const imported = JSON.parse(jsonString);
         if (imported && (imported.settings || imported.harvests || imported.fincaTransactions)) {
           appState = imported;
+          if (!Array.isArray(appState.shipments)) appState.shipments = [];
           saveState();
           closeModal('modalRestoreBackup');
           closeModal('modalSettings');
@@ -3760,6 +4130,7 @@
         return;
       }
       appState.harvests = [];
+      appState.shipments = [];
       appState.settlements = [];
       appState.labors = [];
       appState.fincaTransactions = [];
