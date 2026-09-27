@@ -31,7 +31,7 @@
   </script>
 
   <!-- Lucide Icons CDN -->
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
   <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Canvas Confetti CDN -->
@@ -69,10 +69,22 @@
     #printableInvoiceArea .border-slate-200, #printableInvoiceArea .border-slate-300 { border-color: #cbd5e1 !important; }
     #printableInvoiceArea .text-slate-900, #printableInvoiceArea .text-slate-800 { color: #0f172a !important; }
 
+    #printableMonthlyReport { background-color: #ffffff !important; color: #0f172a !important; }
+    #printableMonthlyReport .bg-slate-50 { background-color: #f8fafc !important; color: #0f172a !important; }
+    #printableMonthlyReport .border-slate-200, #printableMonthlyReport .border-slate-300 { border-color: #cbd5e1 !important; }
+    #printableMonthlyReport .text-slate-900, #printableMonthlyReport .text-slate-800 { color: #0f172a !important; }
+
     @media print {
       body * { visibility: hidden !important; }
       #printableInvoiceArea, #printableInvoiceArea * { visibility: visible !important; }
       #printableInvoiceArea {
+        position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 15px;
+        background: white !important; color: black !important;
+      }
+      body.printing-monthly-report #printableInvoiceArea { visibility: hidden !important; }
+      body.printing-monthly-report #printableMonthlyReport,
+      body.printing-monthly-report #printableMonthlyReport * { visibility: visible !important; }
+      body.printing-monthly-report #printableMonthlyReport {
         position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 15px;
         background: white !important; color: black !important;
       }
@@ -126,6 +138,7 @@
           </svg>
           <span class="whitespace-nowrap">Presiona aquí para hacer respaldo</span>
         </button>
+        <span id="backupReminderBadgeHeader" class="hidden text-[9px] sm:text-[10px] font-black px-2 py-1 rounded-lg flex-shrink-0 border"></span>
       </div>
 
       <div class="flex items-center justify-between sm:justify-end gap-1.5 sm:gap-2 flex-wrap sm:flex-nowrap w-full sm:w-auto">
@@ -145,7 +158,7 @@
           </div>
         </div>
 
-        <button onclick="openModalCatalogManager()" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-200 border border-indigo-500/40 p-1.5 rounded-xl transition text-xs flex items-center gap-1" title="Gestionar Catálogos de Formularios">
+        <button onclick="switchMainTab('tabCategories')" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-200 border border-indigo-500/40 p-1.5 rounded-xl transition text-xs flex items-center gap-1" title="Ir a Categorías">
           <i data-lucide="database" class="w-3.5 h-3.5"></i>
           <span class="hidden sm:inline">Catálogo</span>
         </button>
@@ -175,6 +188,10 @@
           <button onclick="switchMainTab('tabBusiness')" id="navTabBusiness" class="nav-tab px-3.5 py-2 rounded-lg font-bold text-slate-400 hover:text-white hover:bg-slate-800/60 flex items-center gap-1.5 transition whitespace-nowrap">
             <i data-lucide="sprout" class="w-3.5 h-3.5 text-emerald-400"></i>
             <span id="navBusinessName">Negocio (ROSSE CABS)</span>
+          </button>
+          <button onclick="switchMainTab('tabCategories')" id="navTabCategories" class="nav-tab px-3.5 py-2 rounded-lg font-bold text-slate-400 hover:text-white hover:bg-slate-800/60 flex items-center gap-1.5 transition whitespace-nowrap">
+            <i data-lucide="tags" class="w-3.5 h-3.5 text-indigo-400"></i>
+            <span>Categorías</span>
           </button>
           <button onclick="switchMainTab('tabTransfers')" id="navTabTransfers" class="nav-tab px-3.5 py-2 rounded-lg font-bold text-slate-400 hover:text-white hover:bg-slate-800/60 flex items-center gap-1.5 transition whitespace-nowrap">
             <i data-lucide="repeat" class="w-3.5 h-3.5 text-amber-400"></i>
@@ -573,6 +590,10 @@
                 <option value="7">Jul</option><option value="8">Ago</option><option value="9" selected>Sep</option>
                 <option value="10">Oct</option><option value="11">Nov</option><option value="12">Dic</option>
               </select>
+              <button onclick="openMonthlyReport()" class="bg-rose-600 hover:bg-rose-500 text-white font-black px-3 py-1.5 rounded-xl text-[11px] shadow flex items-center gap-1.5 transition active:scale-95">
+                <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                <span>Reporte del Período</span>
+              </button>
             </div>
           </div>
 
@@ -603,7 +624,7 @@
               </h4>
               <p class="text-xs text-slate-500">Cálculo agronómico: ingresas la cantidad de plantas en catálogo y el sistema determina tallos/planta y margen de ganancia.</p>
             </div>
-            <button onclick="openModalAddVariety()" class="bg-finca-600 hover:bg-finca-500 text-white font-bold px-3 py-1.5 rounded-xl text-xs shadow flex items-center gap-1">
+            <button onclick="switchMainTab('tabCategories')" class="bg-finca-600 hover:bg-finca-500 text-white font-bold px-3 py-1.5 rounded-xl text-xs shadow flex items-center gap-1">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i>
               <span>Ajustar Plantas en Catálogo</span>
             </button>
@@ -643,7 +664,56 @@
       </div>
     </section>
 
-    <!-- 4. TRASPASOS -->
+    <!-- 4. CATEGORÍAS (Catálogo central de formularios) -->
+    <section id="tabCategories" class="tab-content hidden space-y-6">
+      <div class="bg-indigo-950 text-white p-4 sm:p-5 rounded-3xl shadow-lg border border-indigo-900 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <span class="text-[10px] uppercase font-bold tracking-wider text-indigo-300">Padrón Central de Catálogos</span>
+          <h2 class="text-xl sm:text-2xl font-black">Categorías</h2>
+          <p class="text-xs text-indigo-200 mt-0.5">Todo lo que aparece dentro de tus formularios (variedades, clientes, trabajadores y categorías contables) se define aquí.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-sm space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="font-extrabold text-rose-800 flex items-center gap-1.5"><span>🌹</span><span>Variedades de Rosas</span></span>
+            <button onclick="openModalAddVariety()" class="bg-rose-600 hover:bg-rose-500 text-white font-bold px-2.5 py-1 rounded-lg text-[11px] transition">+ Añadir</button>
+          </div>
+          <p class="text-[11px] text-slate-400">Aparecen en el formulario de Cosecha y en Rentabilidad por Plantas.</p>
+          <div id="catListVarieties" class="space-y-1.5 max-h-72 overflow-y-auto pt-1"></div>
+        </div>
+
+        <div class="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-sm space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="font-extrabold text-emerald-800 flex items-center gap-1.5"><span>🏢</span><span>Clientes / Exportadoras</span></span>
+            <button onclick="openModalAddClient()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2.5 py-1 rounded-lg text-[11px] transition">+ Añadir</button>
+          </div>
+          <p class="text-[11px] text-slate-400">Aparecen en el formulario de Liquidaciones / Recortes.</p>
+          <div id="catListClients" class="space-y-1.5 max-h-72 overflow-y-auto pt-1"></div>
+        </div>
+
+        <div class="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-sm space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="font-extrabold text-cyan-800 flex items-center gap-1.5"><span>👷</span><span>Trabajadores Agrícolas</span></span>
+            <button onclick="openModalAddWorker()" class="bg-cyan-600 hover:bg-cyan-500 text-white font-bold px-2.5 py-1 rounded-lg text-[11px] transition">+ Añadir</button>
+          </div>
+          <p class="text-[11px] text-slate-400">Aparecen en el formulario de Jornales & Labores.</p>
+          <div id="catListWorkers" class="space-y-1.5 max-h-72 overflow-y-auto pt-1"></div>
+        </div>
+
+        <div class="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-sm space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="font-extrabold text-indigo-800 flex items-center gap-1.5"><span>💵</span><span>Categorías Contables</span></span>
+            <button onclick="openModalAddFinancialCat()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-2.5 py-1 rounded-lg text-[11px] transition">+ Añadir</button>
+          </div>
+          <p class="text-[11px] text-slate-400">Aparecen en los formularios de Ingreso/Gasto de Negocio y Personal.</p>
+          <div id="catListFinancial" class="space-y-1.5 max-h-72 overflow-y-auto pt-1"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. TRASPASOS -->
     <section id="tabTransfers" class="tab-content hidden space-y-6">
       <div class="bg-amber-500 text-slate-950 p-4 sm:p-5 rounded-3xl shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
@@ -680,6 +750,7 @@
                 <th class="py-2 px-2">Destino</th>
                 <th class="py-2 px-2">Detalle / Motivo</th>
                 <th class="py-2 px-2 text-right">Monto</th>
+                <th class="py-2 px-2 text-center">Acciones</th>
               </tr>
             </thead>
             <tbody id="transfersHistoryTableBody" class="divide-y divide-slate-100"></tbody>
@@ -688,7 +759,7 @@
       </div>
     </section>
 
-    <!-- 5. DEUDAS -->
+    <!-- 6. DEUDAS -->
     <section id="tabDebts" class="tab-content hidden space-y-6">
       <div class="bg-rose-950 text-white p-4 sm:p-5 rounded-3xl shadow-lg border border-rose-900 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
@@ -717,7 +788,7 @@
       </div>
     </section>
 
-    <!-- 6. FACTURAS SRI -->
+    <!-- 7. FACTURAS SRI -->
     <section id="tabInvoiceView" class="tab-content hidden space-y-6">
       <div class="no-print bg-slate-900 text-white p-4 sm:p-5 rounded-3xl shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
@@ -747,6 +818,14 @@
             <span>Imprimir / Guardar PDF</span>
           </button>
         </div>
+      </div>
+
+      <div class="no-print bg-amber-50 border-2 border-amber-300 text-amber-800 rounded-2xl p-3 sm:p-4 flex items-start gap-2.5 max-w-4xl mx-auto">
+        <span class="text-lg leading-none">⚠️</span>
+        <p class="text-[11px] sm:text-xs font-semibold leading-snug">
+          <span class="font-black block mb-0.5">Este documento NO es una factura electrónica autorizada por el SRI.</span>
+          Tiene el mismo formato visual (RUC, clave de acceso, código de barras), pero la clave de acceso no está generada ni validada por el SRI. Sirve como recibo interno para tus clientes o registro propio. Si necesitas facturar formalmente dentro del régimen RIMPE, debes emitir el comprobante desde un sistema de facturación electrónica autorizado por el SRI.
+        </p>
       </div>
 
       <div id="printableInvoiceArea" class="bg-white p-5 sm:p-10 rounded-3xl border border-slate-300 shadow-lg text-slate-900 max-w-4xl mx-auto space-y-6">
@@ -854,6 +933,8 @@
             </div>
           </div>
         </div>
+
+        <p class="text-[9px] text-slate-400 text-center pt-2 border-t border-slate-100">Documento generado con fines de registro interno. No constituye un comprobante electrónico autorizado por el SRI.</p>
       </div>
     </section>
 
@@ -884,6 +965,10 @@
       <i data-lucide="file-check" class="w-4 h-4 shrink-0"></i>
       <span class="truncate">Facturas</span>
     </button>
+    <button onclick="switchMainTab('tabCategories')" id="mobTabCategories" class="mob-tab-btn flex-1 min-w-0 flex flex-col items-center gap-0.5 px-1 py-1 rounded-xl text-slate-400">
+      <i data-lucide="tags" class="w-4 h-4 shrink-0"></i>
+      <span class="truncate">Categ.</span>
+    </button>
   </nav>
 
   <footer class="no-print mt-auto bg-slate-950 text-slate-400 border-t border-slate-800 py-6 px-4">
@@ -898,7 +983,7 @@
       </div>
 
       <div class="flex items-center gap-4 text-xs font-bold flex-wrap justify-center">
-        <a href="https://www.tiktok.com/@mr_jhordy21?_r=1&_t=ZS-9A039casma0" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-slate-300 hover:text-purple-400 transition" title="TikTok @mr_jhordy21">
+        <a href="https://www.tiktok.com/@Mr_Jhordy" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-slate-300 hover:text-purple-400 transition" title="TikTok @Mr_Jhordy">
           <svg class="w-4 h-4 fill-current shrink-0" style="width:16px;height:16px;min-width:16px;" viewBox="0 0 24 24">
             <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298-.002.595.042.88.13V9.4a6.33 6.33 0 0 0-1-.08A6.34 6.34 0 0 0 3 15.66a6.34 6.34 0 0 0 10.81 4.48 6.3 6.3 0 0 0 1.86-4.48V8.72a8.18 8.18 0 0 0 4.92 1.63V6.9a4.85 4.85 0 0 1-1-.21z"/>
           </svg>
@@ -911,59 +996,6 @@
       </div>
     </div>
   </footer>
-
-  <!-- MODAL: GESTOR CENTRAL DE CATÁLOGOS -->
-  <div id="modalCatalogManager" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
-    <div class="bg-white rounded-3xl p-5 sm:p-6 max-w-3xl w-full shadow-2xl space-y-4 border border-slate-200 max-h-[92vh] overflow-y-auto text-xs">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-        <div>
-          <h3 class="font-black text-sm sm:text-base text-slate-900 flex items-center gap-2">
-            <span>📋</span><span>Padrón Central de Catálogos (Crear & Editar)</span>
-          </h3>
-          <p class="text-slate-500 text-[11px]">Define categorías de dinero, variedades, clientes y trabajadores.</p>
-        </div>
-        <button onclick="closeModal('modalCatalogManager')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
-          <div class="flex justify-between items-center">
-            <span class="font-extrabold text-rose-800">🌹 Variedades de Rosas</span>
-            <button onclick="openModalAddVariety()" class="bg-rose-600 text-white font-bold px-2 py-0.5 rounded-lg text-[10px]">+ Añadir</button>
-          </div>
-          <div id="catListVarieties" class="space-y-1.5 max-h-40 overflow-y-auto"></div>
-        </div>
-
-        <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
-          <div class="flex justify-between items-center">
-            <span class="font-extrabold text-emerald-800">🏢 Clientes / Exportadoras</span>
-            <button onclick="openModalAddClient()" class="bg-emerald-600 text-white font-bold px-2 py-0.5 rounded-lg text-[10px]">+ Añadir</button>
-          </div>
-          <div id="catListClients" class="space-y-1.5 max-h-40 overflow-y-auto"></div>
-        </div>
-
-        <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
-          <div class="flex justify-between items-center">
-            <span class="font-extrabold text-cyan-800">👷 Trabajadores Agrícolas</span>
-            <button onclick="openModalAddWorker()" class="bg-cyan-600 text-white font-bold px-2 py-0.5 rounded-lg text-[10px]">+ Añadir</button>
-          </div>
-          <div id="catListWorkers" class="space-y-1.5 max-h-40 overflow-y-auto"></div>
-        </div>
-
-        <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
-          <div class="flex justify-between items-center">
-            <span class="font-extrabold text-indigo-800">💵 Categorías Contables</span>
-            <button onclick="openModalAddFinancialCat()" class="bg-indigo-600 text-white font-bold px-2 py-0.5 rounded-lg text-[10px]">+ Añadir</button>
-          </div>
-          <div id="catListFinancial" class="space-y-1.5 max-h-40 overflow-y-auto"></div>
-        </div>
-      </div>
-
-      <div class="pt-2 flex justify-end">
-        <button onclick="closeModal('modalCatalogManager')" class="px-4 py-2 font-bold text-slate-500">Cerrar</button>
-      </div>
-    </div>
-  </div>
 
   <!-- MODAL: REGISTRAR O EDITAR INGRESO / GASTO MANUAL -->
   <div id="modalUniversalTransaction" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
@@ -1057,12 +1089,13 @@
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <h3 class="font-extrabold text-base text-slate-900 flex items-center gap-2">
           <i data-lucide="calculator" class="w-5 h-5 text-rose-600"></i>
-          <span>Registrar Cosecha (Calculadora de Mallas)</span>
+          <span id="harvestModalTitle">Registrar Cosecha (Calculadora de Mallas)</span>
         </h3>
         <button onclick="closeModal('modalHarvest')" class="text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
 
       <form onsubmit="saveHarvestEntry(event)" class="space-y-3.5">
+        <input type="hidden" id="editHarvestId" value="">
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block font-bold text-slate-700 mb-1">Fecha de Corte</label>
@@ -1121,12 +1154,13 @@
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <h3 class="font-extrabold text-base text-slate-900 flex items-center gap-2">
           <i data-lucide="file-spreadsheet" class="w-5 h-5 text-emerald-600"></i>
-          <span>Nuevo Recorte / Liquidación de Venta</span>
+          <span id="settlementModalTitle">Nuevo Recorte / Liquidación de Venta</span>
         </h3>
         <button onclick="closeModal('modalSettlement')" class="text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
 
       <form onsubmit="saveSettlementEntry(event)" class="space-y-3">
+        <input type="hidden" id="editSettlementId" value="">
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block font-bold text-slate-700 mb-1">Fecha</label>
@@ -1160,6 +1194,11 @@
           <div class="flex justify-between"><span>Precio Real por Malla (25):</span><span id="settlementPricePerMalla" class="font-mono text-sm text-emerald-700">$0.00</span></div>
         </div>
 
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Cosechas Relacionadas <span class="font-normal text-slate-400">(opcional, para trazabilidad)</span></label>
+          <div id="settlementHarvestLinks" class="max-h-32 overflow-y-auto border border-slate-200 rounded-xl p-2 space-y-1 bg-slate-50"></div>
+        </div>
+
         <div class="pt-2 flex justify-end gap-2">
           <button type="button" onclick="closeModal('modalSettlement')" class="px-4 py-2 font-bold text-slate-500">Cancelar</button>
           <button type="submit" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold shadow transition">Acreditar a Negocio</button>
@@ -1174,12 +1213,13 @@
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <h3 class="font-extrabold text-base text-slate-900 flex items-center gap-2">
           <i data-lucide="users" class="w-5 h-5 text-cyan-600"></i>
-          <span>Registrar Jornal de Finca</span>
+          <span id="laborModalTitle">Registrar Jornal de Finca</span>
         </h3>
         <button onclick="closeModal('modalLabor')" class="text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
 
       <form onsubmit="saveLaborEntry(event)" class="space-y-3">
+        <input type="hidden" id="editLaborId" value="">
         <div>
           <label class="block font-bold text-slate-700 mb-1">Fecha</label>
           <input type="date" id="laborDate" required class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold">
@@ -1435,12 +1475,13 @@
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <h3 class="font-extrabold text-base text-slate-900 flex items-center gap-2">
           <i data-lucide="arrow-left-right" class="w-4 h-4 text-amber-500"></i>
-          <span>Traspasar entre Cuentas</span>
+          <span id="transferModalTitle">Traspasar entre Cuentas</span>
         </h3>
         <button onclick="closeModal('modalTransfer')" class="text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
 
       <form onsubmit="executeTransfer(event)" class="space-y-3">
+        <input type="hidden" id="editTransferId" value="">
         <div>
           <label class="block font-bold text-slate-700 mb-1">Dirección del Traspaso</label>
           <select id="transferDirection" onchange="updateTransferMaxNotice()" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold bg-slate-50">
@@ -1472,6 +1513,125 @@
         <div class="pt-2 flex justify-end gap-2">
           <button type="button" onclick="closeModal('modalTransfer')" class="px-4 py-2 font-bold text-slate-500">Cancelar</button>
           <button type="submit" class="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold shadow">Transferir Dinero</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: EDITAR DATOS EMISOR FACTURA -->
+  <div id="modalInvoiceEditor" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4 border border-slate-200 max-h-[92vh] overflow-y-auto text-xs">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="font-extrabold text-base text-slate-900 flex items-center gap-2">
+          <i data-lucide="edit" class="w-4 h-4 text-blue-600"></i>
+          <span>Editar Datos del Emisor</span>
+        </h3>
+        <button onclick="closeModal('modalInvoiceEditor')" class="text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form onsubmit="saveInvoiceCustomData(event)" class="space-y-3">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Nombre Comercial</label>
+          <input type="text" id="editInvTradeName" required class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Razón Social</label>
+          <input type="text" id="editInvName" required class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">R.U.C.</label>
+          <input type="text" id="editInvRuc" required class="w-full px-3 py-2 rounded-xl border border-slate-300 font-mono font-bold">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Dirección Matriz</label>
+          <input type="text" id="editInvAddress" required class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Número de Factura (000-000-000000000)</label>
+          <input type="text" id="editInvNumber" required class="w-full px-3 py-2 rounded-xl border border-slate-300 font-mono font-bold">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Clave de Acceso (49 dígitos)</label>
+          <input type="text" id="editInvAccessKey" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-mono font-bold text-[10px]">
+        </div>
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="closeModal('modalInvoiceEditor')" class="px-4 py-2 font-bold text-slate-500">Cancelar</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold shadow">Guardar Datos</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: EDITAR CLIENTE DE FACTURA -->
+  <div id="modalInvoiceClientEditor" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4 border border-slate-200 text-xs">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="font-extrabold text-base text-slate-900 flex items-center gap-2">
+          <i data-lucide="user-check" class="w-4 h-4 text-indigo-600"></i>
+          <span>Editar Cliente de la Factura</span>
+        </h3>
+        <button onclick="closeModal('modalInvoiceClientEditor')" class="text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form onsubmit="saveInvoiceClientData(event)" class="space-y-3">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Razón Social / Comprador</label>
+          <input type="text" id="editInvClientName" required class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">RUC / Cédula</label>
+          <input type="text" id="editInvClientRuc" required class="w-full px-3 py-2 rounded-xl border border-slate-300 font-mono font-bold">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Fecha de Emisión (DD/MM/AAAA)</label>
+          <input type="text" id="editInvClientDate" required placeholder="25/09/2026" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Dirección</label>
+          <input type="text" id="editInvClientAddress" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Email</label>
+          <input type="email" id="editInvClientEmail" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold">
+        </div>
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="closeModal('modalInvoiceClientEditor')" class="px-4 py-2 font-bold text-slate-500">Cancelar</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold shadow">Guardar Cliente</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: AGREGAR ÍTEM A FACTURA -->
+  <div id="modalInvoiceAddItem" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4 border border-slate-200 text-xs">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="font-extrabold text-base text-slate-900 flex items-center gap-2">
+          <i data-lucide="plus" class="w-4 h-4 text-amber-600"></i>
+          <span>Agregar Ítem a la Factura</span>
+        </h3>
+        <button onclick="closeModal('modalInvoiceAddItem')" class="text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form onsubmit="addInvoiceItem(event)" class="space-y-3">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Código</label>
+          <input type="text" id="invItemCode" placeholder="EXP-01" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-mono font-bold">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Descripción / Variedad</label>
+          <input type="text" id="invItemDesc" required placeholder="Rosas Variedad Explorer..." class="w-full px-3 py-2 rounded-xl border border-slate-300 font-bold">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Cantidad</label>
+            <input type="number" min="1" id="invItemQty" required value="1" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-mono font-bold">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Precio Unitario ($)</label>
+            <input type="number" step="0.001" min="0" id="invItemPrice" required placeholder="0.45" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-mono font-bold">
+          </div>
+        </div>
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="closeModal('modalInvoiceAddItem')" class="px-4 py-2 font-bold text-slate-500">Cancelar</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold shadow">Agregar Ítem</button>
         </div>
       </form>
     </div>
@@ -1510,6 +1670,7 @@
 
         <div class="pt-3 border-t border-slate-100 space-y-2">
           <span class="font-black text-slate-800 block">Copias de Seguridad (Privadas en tu Teléfono)</span>
+          <div id="backupReminderBox" class="text-[11px] font-bold px-3 py-2 rounded-xl border flex items-center gap-1.5"></div>
           <div class="grid grid-cols-2 gap-2">
             <button onclick="shareBackupDataWhatsApp()" class="p-2.5 rounded-xl bg-amber-500 text-slate-950 font-black flex items-center justify-center gap-1.5 shadow active:scale-95 transition">WhatsApp (.json)</button>
             <button onclick="openModalRestoreBackup()" class="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold flex items-center justify-center gap-1.5">Restaurar Copia</button>
@@ -1541,6 +1702,25 @@
     </div>
   </div>
 
+  <!-- MODAL: REPORTE MENSUAL -->
+  <div id="modalMonthlyReport" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 hidden">
+    <div class="bg-white rounded-3xl w-full max-w-3xl shadow-2xl border border-slate-200 max-h-[92vh] flex flex-col overflow-hidden">
+      <div class="no-print flex items-center justify-between border-b border-slate-100 px-4 sm:px-6 py-3 flex-shrink-0">
+        <h4 class="font-black text-slate-900 text-sm sm:text-base">📄 Reporte del Período</h4>
+        <div class="flex items-center gap-2">
+          <button onclick="printMonthlyReport()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-black px-3 py-1.5 rounded-xl text-xs shadow flex items-center gap-1.5 transition active:scale-95">
+            <i data-lucide="printer" class="w-4 h-4"></i>
+            <span>Imprimir / Guardar PDF</span>
+          </button>
+          <button onclick="closeModal('modalMonthlyReport')" class="text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+      </div>
+      <div class="overflow-y-auto px-4 sm:px-6 py-5">
+        <div id="printableMonthlyReport" class="text-slate-900 space-y-5"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: RESET TOTAL -->
   <div id="modalSecurityReset" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl space-y-3.5 border border-slate-200 text-xs">
@@ -1558,7 +1738,7 @@
   </div>
 
   <script>
-    const MASTER_RESCUE_KEY = "I´M_JHORDY";
+    const MASTER_RESCUE_KEY = "Mr_Jhordy";
     const STORAGE_KEY = "rosse_cabs_agrocontable_v8";
 
     function registerOfflinePWA() {
@@ -1706,9 +1886,9 @@
       }, 3000);
     }
 
-    function calculateFinances() {
-      const dYear = document.getElementById('dashYearFilter')?.value || 'all';
-      const dMonth = document.getElementById('dashMonthFilter')?.value || 'all';
+    function calculateFinances(ignorePeriodFilter = false) {
+      const dYear = ignorePeriodFilter ? 'all' : (document.getElementById('dashYearFilter')?.value || 'all');
+      const dMonth = ignorePeriodFilter ? 'all' : (document.getElementById('dashMonthFilter')?.value || 'all');
 
       const filterByDate = (itemDate) => {
         if (!itemDate) return true;
@@ -1782,6 +1962,7 @@
     function refreshAllUI() {
       const f = calculateFinances();
       const storeName = appState.settings.storeName;
+      updateBackupReminder();
 
       const setText = (id, txt) => {
         const el = document.getElementById(id);
@@ -1830,14 +2011,9 @@
       renderUnifiedDebts();
       renderTransfersHistory();
       renderInvoicePreview();
+      renderCatalogLists();
       updateCharts();
       if (window.lucide) lucide.createIcons();
-    }
-
-    // GESTIÓN DE CATÁLOGO CENTRAL
-    function openModalCatalogManager() {
-      renderCatalogLists();
-      document.getElementById('modalCatalogManager').classList.remove('hidden');
     }
 
     function renderCatalogLists() {
@@ -2016,14 +2192,13 @@
       }
       saveState();
       closeModal('modalAddVariety');
-      renderCatalogLists();
       showToast("Variedad guardada");
     }
 
     function deleteVariety(id) {
+      if (!confirm('¿Seguro que quieres eliminar esta variedad? Esta acción no se puede deshacer.')) return;
       appState.catalog.varieties = (appState.catalog.varieties || []).filter(v => v.id !== id);
       saveState();
-      renderCatalogLists();
       showToast("Variedad eliminada");
     }
 
@@ -2064,14 +2239,13 @@
       }
       saveState();
       closeModal('modalAddClient');
-      renderCatalogLists();
       showToast("Cliente guardado");
     }
 
     function deleteClient(id) {
+      if (!confirm('¿Seguro que quieres eliminar este cliente? Esta acción no se puede deshacer.')) return;
       appState.catalog.clients = (appState.catalog.clients || []).filter(c => c.id !== id);
       saveState();
-      renderCatalogLists();
       showToast("Cliente eliminado");
     }
 
@@ -2113,14 +2287,13 @@
       }
       saveState();
       closeModal('modalAddWorker');
-      renderCatalogLists();
       showToast("Trabajador guardado");
     }
 
     function deleteWorker(id) {
+      if (!confirm('¿Seguro que quieres eliminar este trabajador? Esta acción no se puede deshacer.')) return;
       appState.catalog.workers = (appState.catalog.workers || []).filter(w => w.id !== id);
       saveState();
-      renderCatalogLists();
       showToast("Trabajador eliminado");
     }
 
@@ -2141,17 +2314,16 @@
       if (!appState.catalog.categories[group].includes(name)) {
         appState.catalog.categories[group].push(name);
         saveState();
-        renderCatalogLists();
         showToast("Categoría añadida");
       }
       closeModal('modalAddFinancialCat');
     }
 
     function deleteFinancialCategory(group, idx) {
+      if (!confirm('¿Seguro que quieres eliminar esta categoría? Esta acción no se puede deshacer.')) return;
       if (appState.catalog?.categories?.[group]) {
         appState.catalog.categories[group].splice(idx, 1);
         saveState();
-        renderCatalogLists();
         showToast("Categoría eliminada");
       }
     }
@@ -2282,18 +2454,33 @@
       showToast(`¡Ingreso extra de $${amount.toFixed(2)} registrado!`, "✨");
     }
 
-    function openModalHarvest() {
-      const d = document.getElementById('harvestDate');
-      if (d) d.value = new Date().toISOString().split('T')[0];
+    function openModalHarvest(editId = null) {
+      document.getElementById('editHarvestId').value = editId || '';
+      document.getElementById('harvestModalTitle').textContent = editId ? 'Editar Cosecha' : 'Registrar Cosecha (Calculadora de Mallas)';
       populateFormDropdowns();
-      const m = document.getElementById('calcExportMallas');
-      if (m) m.value = 0;
-      const s = document.getElementById('calcExportSueltos');
-      if (s) s.value = 0;
-      const n = document.getElementById('calcNationalStems');
-      if (n) n.value = 0;
-      const disc = document.getElementById('calcDiscardStems');
-      if (disc) disc.value = 0;
+
+      if (editId) {
+        const h = (appState.harvests || []).find(x => x.id === editId);
+        if (h) {
+          document.getElementById('harvestDate').value = h.date;
+          document.getElementById('harvestVariety').value = h.varietyName;
+          document.getElementById('calcExportMallas').value = h.exportMallas;
+          document.getElementById('calcExportSueltos').value = h.exportSueltos;
+          document.getElementById('calcNationalStems').value = h.nationalStems;
+          document.getElementById('calcDiscardStems').value = h.discardStems;
+        }
+      } else {
+        const d = document.getElementById('harvestDate');
+        if (d) d.value = new Date().toISOString().split('T')[0];
+        const m = document.getElementById('calcExportMallas');
+        if (m) m.value = 0;
+        const s = document.getElementById('calcExportSueltos');
+        if (s) s.value = 0;
+        const n = document.getElementById('calcNationalStems');
+        if (n) n.value = 0;
+        const disc = document.getElementById('calcDiscardStems');
+        if (disc) disc.value = 0;
+      }
       recalcHarvestStems();
       const modal = document.getElementById('modalHarvest');
       if (modal) modal.classList.remove('hidden');
@@ -2314,6 +2501,7 @@
 
     function saveHarvestEntry(e) {
       e.preventDefault();
+      const editId = document.getElementById('editHarvestId').value;
       const date = document.getElementById('harvestDate').value;
       const varietyName = document.getElementById('harvestVariety').value;
       const mallas = parseInt(document.getElementById('calcExportMallas').value, 10) || 0;
@@ -2324,6 +2512,20 @@
       const grandTotalStems = exportTotalStems + nationalStems + discardStems;
 
       if (!appState.harvests) appState.harvests = [];
+
+      if (editId) {
+        const h = appState.harvests.find(x => x.id === editId);
+        if (h) {
+          h.date = date; h.varietyName = varietyName; h.exportMallas = mallas; h.exportSueltos = sueltos;
+          h.exportTotalStems = exportTotalStems; h.nationalStems = nationalStems; h.discardStems = discardStems;
+          h.grandTotalStems = grandTotalStems;
+        }
+        saveState();
+        closeModal('modalHarvest');
+        showToast("Cosecha editada con éxito");
+        return;
+      }
+
       appState.harvests.push({
         id: 'h_' + Date.now(),
         date,
@@ -2354,15 +2556,22 @@
       [...appState.harvests].reverse().forEach(h => {
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50 transition";
+        const linkedSettlement = (appState.settlements || []).find(s => (s.harvestIds || []).includes(h.id));
+        const varietyBadge = linkedSettlement
+          ? `<span class="block text-[9px] font-bold text-emerald-600 mt-0.5" title="Vendida a ${linkedSettlement.clientName} el ${linkedSettlement.date}">🔗 Vinculada a liquidación de ${linkedSettlement.clientName}</span>`
+          : '';
         tr.innerHTML = `
           <td class="py-2.5 px-3 font-mono text-slate-500">${h.date}</td>
-          <td class="py-2.5 px-3 font-bold text-slate-900">${h.varietyName}</td>
+          <td class="py-2.5 px-3 font-bold text-slate-900">${h.varietyName}${varietyBadge}</td>
           <td class="py-2.5 px-3 text-right font-mono font-bold text-slate-700">${h.exportMallas}</td>
           <td class="py-2.5 px-3 text-right font-mono font-bold text-rose-700">${Number(h.exportTotalStems).toLocaleString()}</td>
           <td class="py-2.5 px-3 text-right font-mono font-bold text-amber-700">${Number(h.nationalStems).toLocaleString()}</td>
           <td class="py-2.5 px-3 text-right font-mono text-slate-400">${Number(h.discardStems).toLocaleString()}</td>
           <td class="py-2.5 px-3 text-right font-mono font-black text-slate-900">${Number(h.grandTotalStems).toLocaleString()}</td>
           <td class="py-2.5 px-3 text-center">
+            <button onclick="openModalHarvest('${h.id}')" class="text-blue-600 hover:text-blue-700 p-1" title="Editar registro">
+              <i data-lucide="edit" class="w-3.5 h-3.5"></i>
+            </button>
             <button onclick="deleteHarvest('${h.id}')" class="text-slate-300 hover:text-rose-600 p-1" title="Eliminar registro">
               <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
             </button>
@@ -2374,24 +2583,59 @@
     }
 
     function deleteHarvest(id) {
+      if (!confirm('¿Seguro que quieres eliminar este registro de cosecha? Esta acción no se puede deshacer.')) return;
       appState.harvests = (appState.harvests || []).filter(h => h.id !== id);
       saveState();
       showToast("Registro de cosecha eliminado");
     }
 
-    function openModalSettlement() {
-      const d = document.getElementById('settlementDate');
-      if (d) d.value = new Date().toISOString().split('T')[0];
+    function openModalSettlement(editId = null) {
+      document.getElementById('editSettlementId').value = editId || '';
+      document.getElementById('settlementModalTitle').textContent = editId ? 'Editar Liquidación' : 'Nuevo Recorte / Liquidación de Venta';
       populateFormDropdowns();
-      const sent = document.getElementById('settlementStemsSent');
-      if (sent) sent.value = '';
-      const ret = document.getElementById('settlementStemsReturned');
-      if (ret) ret.value = 0;
-      const paid = document.getElementById('settlementPaid');
-      if (paid) paid.value = '';
+
+      if (editId) {
+        const s = (appState.settlements || []).find(x => x.id === editId);
+        if (s) {
+          document.getElementById('settlementDate').value = s.date;
+          document.getElementById('settlementClient').value = s.clientName;
+          document.getElementById('settlementStemsSent').value = s.stemsSent;
+          document.getElementById('settlementStemsReturned').value = s.stemsReturned;
+          document.getElementById('settlementPaid').value = Number(s.totalPaid).toFixed(2);
+        }
+        populateSettlementHarvestLinks(s?.harvestIds || []);
+      } else {
+        const d = document.getElementById('settlementDate');
+        if (d) d.value = new Date().toISOString().split('T')[0];
+        const sent = document.getElementById('settlementStemsSent');
+        if (sent) sent.value = '';
+        const ret = document.getElementById('settlementStemsReturned');
+        if (ret) ret.value = 0;
+        const paid = document.getElementById('settlementPaid');
+        if (paid) paid.value = '';
+        populateSettlementHarvestLinks([]);
+      }
       recalcSettlementPrices();
       const modal = document.getElementById('modalSettlement');
       if (modal) modal.classList.remove('hidden');
+    }
+
+    function populateSettlementHarvestLinks(selectedIds = []) {
+      const box = document.getElementById('settlementHarvestLinks');
+      if (!box) return;
+      const harvests = [...(appState.harvests || [])].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+      if (!harvests.length) {
+        box.innerHTML = `<p class="text-[11px] text-slate-400 text-center py-2">No hay cosechas registradas aún.</p>`;
+        return;
+      }
+      box.innerHTML = harvests.map(h => `
+        <label class="flex items-center gap-2 text-[11px] py-1 px-1.5 rounded-lg hover:bg-white cursor-pointer">
+          <input type="checkbox" value="${h.id}" class="settlementHarvestCheckbox w-3.5 h-3.5 accent-emerald-600" ${selectedIds.includes(h.id) ? 'checked' : ''}>
+          <span class="font-bold text-slate-700">${h.date}</span>
+          <span class="text-slate-500 truncate">${h.varietyName || 'Sin variedad'}</span>
+          <span class="ml-auto font-mono text-slate-600">${Number(h.grandTotalStems || 0).toLocaleString()} tallos</span>
+        </label>
+      `).join('');
     }
 
     function recalcSettlementPrices() {
@@ -2413,17 +2657,33 @@
 
     function saveSettlementEntry(e) {
       e.preventDefault();
+      const editId = document.getElementById('editSettlementId').value;
       const date = document.getElementById('settlementDate').value;
       const clientName = document.getElementById('settlementClient').value.trim();
       const stemsSent = parseInt(document.getElementById('settlementStemsSent').value, 10) || 0;
       const stemsReturned = parseInt(document.getElementById('settlementStemsReturned').value, 10) || 0;
       const paid = parseFloat(document.getElementById('settlementPaid').value) || 0;
       const netStems = Math.max(0, stemsSent - stemsReturned);
+      const harvestIds = Array.from(document.querySelectorAll('.settlementHarvestCheckbox:checked')).map(cb => cb.value);
 
       const pricePerStem = netStems > 0 ? (paid / netStems) : 0;
       const pricePerMalla = pricePerStem * 25;
 
       if (!appState.settlements) appState.settlements = [];
+
+      if (editId) {
+        const s = appState.settlements.find(x => x.id === editId);
+        if (s) {
+          s.date = date; s.clientName = clientName; s.stemsSent = stemsSent; s.stemsReturned = stemsReturned;
+          s.netStems = netStems; s.totalPaid = paid; s.pricePerStem = pricePerStem; s.pricePerMalla = pricePerMalla;
+          s.harvestIds = harvestIds;
+        }
+        saveState();
+        closeModal('modalSettlement');
+        showToast(`Liquidación de ${clientName} editada`);
+        return;
+      }
+
       appState.settlements.push({
         id: 'st_' + Date.now(),
         date,
@@ -2433,7 +2693,8 @@
         netStems,
         totalPaid: paid,
         pricePerStem,
-        pricePerMalla
+        pricePerMalla,
+        harvestIds
       });
 
       saveState();
@@ -2454,9 +2715,13 @@
       [...appState.settlements].reverse().forEach(s => {
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50 transition";
+        const linkedHarvests = (s.harvestIds || []).map(hid => (appState.harvests || []).find(h => h.id === hid)).filter(Boolean);
+        const linkBadge = linkedHarvests.length
+          ? `<span class="block text-[9px] font-bold text-emerald-600 mt-0.5" title="${linkedHarvests.map(h => `${h.date} · ${h.varietyName || ''}`).join(' | ')}">🔗 ${linkedHarvests.length} cosecha${linkedHarvests.length === 1 ? '' : 's'} vinculada${linkedHarvests.length === 1 ? '' : 's'}</span>`
+          : '';
         tr.innerHTML = `
           <td class="py-2.5 px-3 font-mono text-slate-500">${s.date}</td>
-          <td class="py-2.5 px-3 font-bold text-slate-900">${s.clientName}</td>
+          <td class="py-2.5 px-3 font-bold text-slate-900">${s.clientName}${linkBadge}</td>
           <td class="py-2.5 px-3 text-right font-mono text-slate-700">${Number(s.stemsSent).toLocaleString()}</td>
           <td class="py-2.5 px-3 text-right font-mono font-bold text-amber-600">${Number(s.stemsReturned).toLocaleString()}</td>
           <td class="py-2.5 px-3 text-right font-mono font-bold text-emerald-700">${Number(s.netStems).toLocaleString()}</td>
@@ -2464,6 +2729,9 @@
           <td class="py-2.5 px-3 text-right font-mono font-bold text-slate-800">$${Number(s.pricePerStem).toFixed(3)}</td>
           <td class="py-2.5 px-3 text-right font-mono font-bold text-rose-700">$${Number(s.pricePerMalla).toFixed(2)}</td>
           <td class="py-2.5 px-3 text-center">
+            <button onclick="openModalSettlement('${s.id}')" class="text-blue-600 hover:text-blue-700 p-1" title="Editar liquidación">
+              <i data-lucide="edit" class="w-3.5 h-3.5"></i>
+            </button>
             <button onclick="deleteSettlement('${s.id}')" class="text-slate-300 hover:text-rose-600 p-1" title="Eliminar liquidación">
               <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
             </button>
@@ -2475,22 +2743,37 @@
     }
 
     function deleteSettlement(id) {
+      if (!confirm('¿Seguro que quieres eliminar esta liquidación? Esta acción no se puede deshacer.')) return;
       appState.settlements = (appState.settlements || []).filter(s => s.id !== id);
       saveState();
       showToast("Liquidación eliminada");
     }
 
-    function openModalLabor() {
-      const d = document.getElementById('laborDate');
-      if (d) d.value = new Date().toISOString().split('T')[0];
+    function openModalLabor(editId = null) {
+      document.getElementById('editLaborId').value = editId || '';
+      document.getElementById('laborModalTitle').textContent = editId ? 'Editar Jornal' : 'Registrar Jornal de Finca';
       populateFormDropdowns();
-      onSelectLaborWorker();
+
+      if (editId) {
+        const l = (appState.labors || []).find(x => x.id === editId);
+        if (l) {
+          document.getElementById('laborDate').value = l.date;
+          document.getElementById('laborWorker').value = l.workerName;
+          document.getElementById('laborTask').value = l.taskName;
+          document.getElementById('laborAmount').value = Number(l.amount).toFixed(2);
+        }
+      } else {
+        const d = document.getElementById('laborDate');
+        if (d) d.value = new Date().toISOString().split('T')[0];
+        onSelectLaborWorker();
+      }
       const modal = document.getElementById('modalLabor');
       if (modal) modal.classList.remove('hidden');
     }
 
     function saveLaborEntry(e) {
       e.preventDefault();
+      const editId = document.getElementById('editLaborId').value;
       const date = document.getElementById('laborDate').value;
       const workerName = document.getElementById('laborWorker').value.trim();
       const taskName = document.getElementById('laborTask').value;
@@ -2498,6 +2781,16 @@
       const amount = rawAmt !== '' ? parseFloat(rawAmt) : 0;
 
       if (!appState.labors) appState.labors = [];
+
+      if (editId) {
+        const l = appState.labors.find(x => x.id === editId);
+        if (l) { l.date = date; l.workerName = workerName; l.taskName = taskName; l.amount = amount; }
+        saveState();
+        closeModal('modalLabor');
+        showToast("Jornal editado");
+        return;
+      }
+
       appState.labors.push({
         id: 'l_' + Date.now(),
         date,
@@ -2543,7 +2836,8 @@
             </button>
           </td>
           <td class="py-2.5 px-3 text-center">
-            <button onclick="deleteLabor('${l.id}')" class="text-slate-300 hover:text-rose-600 p-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+            <button onclick="openModalLabor('${l.id}')" class="text-blue-600 hover:text-blue-700 p-1" title="Editar jornal"><i data-lucide="edit" class="w-3.5 h-3.5"></i></button>
+            <button onclick="deleteLabor('${l.id}')" class="text-slate-300 hover:text-rose-600 p-1" title="Eliminar jornal"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
           </td>
         `;
         tbody.appendChild(tr);
@@ -2552,6 +2846,7 @@
     }
 
     function deleteLabor(id) {
+      if (!confirm('¿Seguro que quieres eliminar este jornal? Esta acción no se puede deshacer.')) return;
       appState.labors = (appState.labors || []).filter(l => l.id !== id);
       saveState();
       showToast("Jornal eliminado");
@@ -2775,6 +3070,7 @@
     }
 
     function deleteUnifiedDebt(id) {
+      if (!confirm('¿Seguro que quieres eliminar esta deuda y todos sus pagos registrados? Esta acción no se puede deshacer.')) return;
       appState.debts = (appState.debts || []).filter(d => d.id !== id);
       appState.debtPayments = (appState.debtPayments || []).filter(p => p.debtId !== id);
       saveState();
@@ -2803,7 +3099,7 @@
     function onDebtPaySelectionChanged() {
       const debtId = document.getElementById('debtPaySelect')?.value;
       const debt = (appState.debts || []).find(d => d.id === debtId);
-      const f = calculateFinances();
+      const f = calculateFinances(true);
       if (!debt) return;
 
       const isFinca = debt.account === 'finca';
@@ -2822,7 +3118,7 @@
       const debt = (appState.debts || []).find(d => d.id === debtId);
       if (!debt) return;
 
-      const f = calculateFinances();
+      const f = calculateFinances(true);
       const isFinca = debt.account === 'finca';
       const available = isFinca ? f.fincaFinalBalance : f.personalFinalBalance;
 
@@ -2852,17 +3148,30 @@
     }
 
     // TRASPASOS CON VALIDACIÓN DE SALDO
-    function openModalTransfer() {
-      document.getElementById('transferDate').value = new Date().toISOString().split('T')[0];
-      document.getElementById('transferAmount').value = '';
-      document.getElementById('transferNote').value = '';
+    function openModalTransfer(editId = null) {
+      document.getElementById('editTransferId').value = editId || '';
+      document.getElementById('transferModalTitle').textContent = editId ? 'Editar Traspaso' : 'Traspasar entre Cuentas';
+
+      if (editId) {
+        const t = (appState.transfers || []).find(x => x.id === editId);
+        if (t) {
+          document.getElementById('transferDirection').value = t.from === 'finca' ? 'finca_to_personal' : 'personal_to_finca';
+          document.getElementById('transferDate').value = t.date;
+          document.getElementById('transferAmount').value = Number(t.amount).toFixed(2);
+          document.getElementById('transferNote').value = t.note;
+        }
+      } else {
+        document.getElementById('transferDate').value = new Date().toISOString().split('T')[0];
+        document.getElementById('transferAmount').value = '';
+        document.getElementById('transferNote').value = '';
+      }
       updateTransferMaxNotice();
       document.getElementById('modalTransfer').classList.remove('hidden');
     }
 
     function updateTransferMaxNotice() {
       const dir = document.getElementById('transferDirection').value;
-      const f = calculateFinances();
+      const f = calculateFinances(true);
       const notice = document.getElementById('transferOriginNotice');
       if (dir === 'finca_to_personal') {
         notice.textContent = `Saldo disponible en Negocio: $${f.fincaFinalBalance.toFixed(2)}`;
@@ -2873,13 +3182,29 @@
 
     function executeTransfer(e) {
       e.preventDefault();
+      const editId = document.getElementById('editTransferId').value;
       const dir = document.getElementById('transferDirection').value;
       const amount = parseFloat(document.getElementById('transferAmount').value) || 0;
       const date = document.getElementById('transferDate').value;
       const note = document.getElementById('transferNote').value.trim();
-
-      const f = calculateFinances();
       const fromFinca = dir === 'finca_to_personal';
+
+      if (editId) {
+        const t = (appState.transfers || []).find(x => x.id === editId);
+        if (t) {
+          t.date = date;
+          t.from = fromFinca ? 'finca' : 'personal';
+          t.to = fromFinca ? 'personal' : 'finca';
+          t.amount = amount;
+          t.note = note;
+        }
+        saveState();
+        closeModal('modalTransfer');
+        showToast("Traspaso editado");
+        return;
+      }
+
+      const f = calculateFinances(true);
 
       if (fromFinca && amount > f.fincaFinalBalance) {
         showToast(`Saldo insuficiente en Negocio. Disponible: $${f.fincaFinalBalance.toFixed(2)}`, "❌");
@@ -2903,11 +3228,18 @@
       showToast("Traspaso completado con éxito");
     }
 
+    function deleteTransfer(id) {
+      if (!confirm('¿Seguro que quieres eliminar este traspaso? Esta acción no se puede deshacer.')) return;
+      appState.transfers = (appState.transfers || []).filter(t => t.id !== id);
+      saveState();
+      showToast("Traspaso eliminado");
+    }
+
     function renderTransfersHistory() {
       const tbody = document.getElementById('transfersHistoryTableBody');
       tbody.innerHTML = '';
       if (!appState.transfers || appState.transfers.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400">No se han realizado transferencias.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">No se han realizado transferencias.</td></tr>`;
         return;
       }
 
@@ -2922,9 +3254,14 @@
           <td class="py-2.5 px-2 font-bold text-emerald-600">${toName}</td>
           <td class="py-2.5 px-2 text-slate-600">${t.note}</td>
           <td class="py-2.5 px-2 text-right font-mono font-black text-slate-900">$${Number(t.amount).toFixed(2)}</td>
+          <td class="py-2.5 px-2 text-center">
+            <button onclick="openModalTransfer('${t.id}')" class="text-blue-600 hover:text-blue-700 p-1" title="Editar traspaso"><i data-lucide="edit" class="w-3.5 h-3.5"></i></button>
+            <button onclick="deleteTransfer('${t.id}')" class="text-slate-300 hover:text-rose-600 p-1" title="Eliminar traspaso"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+          </td>
         `;
         tbody.appendChild(row);
       });
+      if (window.lucide) lucide.createIcons();
     }
 
     // FACTURAS SRI
@@ -3060,6 +3397,173 @@
       }
     }
 
+    // REPORTE MENSUAL IMPRIMIBLE
+    function openMonthlyReport() {
+      renderMonthlyReport();
+      document.getElementById('modalMonthlyReport').classList.remove('hidden');
+    }
+
+    function printMonthlyReport() {
+      renderMonthlyReport();
+      document.body.classList.add('printing-monthly-report');
+      const cleanup = () => { document.body.classList.remove('printing-monthly-report'); window.removeEventListener('afterprint', cleanup); };
+      window.addEventListener('afterprint', cleanup);
+      setTimeout(() => window.print(), 50);
+    }
+
+    function renderMonthlyReport() {
+      const target = document.getElementById('printableMonthlyReport');
+      if (!target) return;
+
+      const rYear = document.getElementById('selectRosseYear')?.value || 'all';
+      const rMonth = document.getElementById('selectRosseMonth')?.value || 'all';
+      const monthNames = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+      const periodLabel = rMonth === 'all'
+        ? (rYear === 'all' ? 'Todo el historial' : `Año ${rYear}`)
+        : `${monthNames[parseInt(rMonth, 10)]} ${rYear === 'all' ? '' : rYear}`;
+
+      const filterByDate = (itemDate) => {
+        if (!itemDate) return true;
+        const parts = itemDate.split('-');
+        if (parts.length < 2) return true;
+        const y = parts[0], m = parts[1];
+        if (rYear !== 'all' && y !== rYear) return false;
+        if (rMonth !== 'all' && m !== rMonth) return false;
+        return true;
+      };
+
+      const settlements = (appState.settlements || []).filter(s => filterByDate(s.date));
+      const fincaTxs = (appState.fincaTransactions || []).filter(t => filterByDate(t.date));
+      const labors = (appState.labors || []).filter(l => filterByDate(l.date));
+      const harvests = (appState.harvests || []).filter(h => filterByDate(h.date));
+
+      const settlementIncome = settlements.reduce((s, x) => s + Number(x.totalPaid || 0), 0);
+      const manualIncome = fincaTxs.filter(t => t.type === 'ingreso').reduce((s, x) => s + Number(x.amount || 0), 0);
+      const totalIncome = settlementIncome + manualIncome;
+
+      const manualExpenses = fincaTxs.filter(t => t.type === 'egreso').reduce((s, x) => s + Number(x.amount || 0), 0);
+      const laborExpenses = labors.filter(l => l.paid).reduce((s, x) => s + Number(x.amount || 0), 0);
+      const laborPending = labors.filter(l => !l.paid).reduce((s, x) => s + Number(x.amount || 0), 0);
+      const totalExpenses = manualExpenses + laborExpenses;
+      const balance = totalIncome - totalExpenses;
+
+      const byVariety = {};
+      let totalStems = 0, totalExport = 0, totalNational = 0, totalDiscard = 0;
+      harvests.forEach(h => {
+        const v = h.varietyName || 'Sin variedad';
+        if (!byVariety[v]) byVariety[v] = { stems: 0, exportS: 0, nationalS: 0 };
+        byVariety[v].stems += Number(h.grandTotalStems || 0);
+        byVariety[v].exportS += Number(h.exportTotalStems || 0);
+        byVariety[v].nationalS += Number(h.nationalStems || 0);
+        totalStems += Number(h.grandTotalStems || 0);
+        totalExport += Number(h.exportTotalStems || 0);
+        totalNational += Number(h.nationalStems || 0);
+        totalDiscard += Number(h.discardStems || 0);
+      });
+
+      const debtRows = (appState.debts || []).map(d => {
+        const paid = (appState.debtPayments || []).filter(p => p.debtId === d.id).reduce((s, p) => s + Number(p.amount || 0), 0);
+        const saldo = Math.max(0, Number(d.initialAmount || 0) - paid);
+        return { name: d.name, account: d.account, initial: Number(d.initialAmount || 0), paid, saldo };
+      }).filter(d => d.saldo > 0);
+      const totalDebtSaldo = debtRows.reduce((s, d) => s + d.saldo, 0);
+
+      const fmt = n => `$${Number(n || 0).toFixed(2)}`;
+      const varietyRows = Object.keys(byVariety).length
+        ? Object.entries(byVariety).map(([name, v]) => `
+          <tr class="border-b border-slate-100">
+            <td class="py-1.5 px-2">${name}</td>
+            <td class="py-1.5 px-2 text-right font-mono">${v.exportS.toLocaleString()}</td>
+            <td class="py-1.5 px-2 text-right font-mono">${v.nationalS.toLocaleString()}</td>
+            <td class="py-1.5 px-2 text-right font-mono font-bold">${v.stems.toLocaleString()}</td>
+          </tr>`).join('')
+        : `<tr><td colspan="4" class="py-3 text-center text-slate-400">Sin registros de cosecha en este período.</td></tr>`;
+
+      const debtRowsHtml = debtRows.length
+        ? debtRows.map(d => `
+          <tr class="border-b border-slate-100">
+            <td class="py-1.5 px-2">${d.name} <span class="text-[10px] text-slate-400">(${d.account === 'finca' ? 'Negocio' : 'Personal'})</span></td>
+            <td class="py-1.5 px-2 text-right font-mono">${fmt(d.initial)}</td>
+            <td class="py-1.5 px-2 text-right font-mono">${fmt(d.paid)}</td>
+            <td class="py-1.5 px-2 text-right font-mono font-bold text-rose-600">${fmt(d.saldo)}</td>
+          </tr>`).join('')
+        : `<tr><td colspan="4" class="py-3 text-center text-slate-400">No hay deudas pendientes. 🎉</td></tr>`;
+
+      target.innerHTML = `
+        <div class="flex items-center justify-between pb-4 border-b-2 border-slate-800">
+          <div>
+            <h2 class="text-lg font-black text-slate-900">${appState.settings.storeName || 'ROSSE CABS'}</h2>
+            <p class="text-xs text-slate-500">Reporte de Finanzas y Producción — ${periodLabel}</p>
+          </div>
+          <div class="text-right text-[10px] text-slate-400">
+            <p>Generado: ${new Date().toLocaleDateString()}</p>
+            <p>Propietario: ${appState.settings.ownerName || ''}</p>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="font-black text-slate-800 text-sm mb-2 mt-4">💰 Resumen Financiero del Negocio</h3>
+          <div class="grid grid-cols-3 gap-2 text-center">
+            <div class="bg-emerald-50 rounded-xl p-3 border border-emerald-100">
+              <p class="text-[10px] text-emerald-700 font-bold uppercase">Ingresos</p>
+              <p class="text-base font-black text-emerald-700">${fmt(totalIncome)}</p>
+            </div>
+            <div class="bg-rose-50 rounded-xl p-3 border border-rose-100">
+              <p class="text-[10px] text-rose-700 font-bold uppercase">Egresos</p>
+              <p class="text-base font-black text-rose-700">${fmt(totalExpenses)}</p>
+            </div>
+            <div class="bg-slate-100 rounded-xl p-3 border border-slate-200">
+              <p class="text-[10px] text-slate-600 font-bold uppercase">Balance</p>
+              <p class="text-base font-black ${balance >= 0 ? 'text-slate-900' : 'text-rose-600'}">${fmt(balance)}</p>
+            </div>
+          </div>
+          <div class="text-[11px] text-slate-500 mt-2 space-y-0.5">
+            <p>• Recorte / Liquidaciones a exportadoras: <span class="font-bold text-slate-700">${fmt(settlementIncome)}</span></p>
+            <p>• Otros ingresos registrados: <span class="font-bold text-slate-700">${fmt(manualIncome)}</span></p>
+            <p>• Jornales pagados: <span class="font-bold text-slate-700">${fmt(laborExpenses)}</span>${laborPending > 0 ? ` — <span class="text-amber-600 font-bold">${fmt(laborPending)} pendientes de pago</span>` : ''}</p>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="font-black text-slate-800 text-sm mb-2 mt-5">🌹 Cosecha del Período</h3>
+          <div class="grid grid-cols-3 gap-2 text-center mb-2">
+            <div class="bg-slate-50 rounded-xl p-2 border border-slate-200">
+              <p class="text-[9px] text-slate-500 font-bold uppercase">Exportación</p>
+              <p class="text-sm font-black text-slate-800">${totalExport.toLocaleString()}</p>
+            </div>
+            <div class="bg-slate-50 rounded-xl p-2 border border-slate-200">
+              <p class="text-[9px] text-slate-500 font-bold uppercase">Nacional</p>
+              <p class="text-sm font-black text-slate-800">${totalNational.toLocaleString()}</p>
+            </div>
+            <div class="bg-slate-50 rounded-xl p-2 border border-slate-200">
+              <p class="text-[9px] text-slate-500 font-bold uppercase">Total Tallos</p>
+              <p class="text-sm font-black text-slate-800">${totalStems.toLocaleString()}</p>
+            </div>
+          </div>
+          <table class="w-full text-left text-xs">
+            <thead><tr class="border-b border-slate-300 text-slate-400 font-bold uppercase text-[10px]">
+              <th class="py-1.5 px-2">Variedad</th><th class="py-1.5 px-2 text-right">Export.</th><th class="py-1.5 px-2 text-right">Nacional</th><th class="py-1.5 px-2 text-right">Total</th>
+            </tr></thead>
+            <tbody>${varietyRows}</tbody>
+          </table>
+          ${totalDiscard > 0 ? `<p class="text-[10px] text-slate-400 mt-1">Tallos descartados en el período: ${totalDiscard.toLocaleString()}</p>` : ''}
+        </div>
+
+        <div>
+          <h3 class="font-black text-slate-800 text-sm mb-2 mt-5">📋 Deudas Pendientes (a la fecha)</h3>
+          <table class="w-full text-left text-xs">
+            <thead><tr class="border-b border-slate-300 text-slate-400 font-bold uppercase text-[10px]">
+              <th class="py-1.5 px-2">Deuda</th><th class="py-1.5 px-2 text-right">Monto Inicial</th><th class="py-1.5 px-2 text-right">Abonado</th><th class="py-1.5 px-2 text-right">Saldo</th>
+            </tr></thead>
+            <tbody>${debtRowsHtml}</tbody>
+          </table>
+          ${debtRows.length ? `<p class="text-right text-xs font-black text-rose-600 mt-1.5 pr-2">Saldo total pendiente: ${fmt(totalDebtSaldo)}</p>` : ''}
+        </div>
+
+        <p class="text-[9px] text-slate-400 text-center pt-3 border-t border-slate-100">Reporte de uso interno para control propio o entrega al contador. No sustituye la declaración de impuestos ni comprobantes autorizados por el SRI.</p>
+      `;
+    }
+
     // RESPALDO WHATSAPP
     function shareBackupDataWhatsApp() {
       const dataString = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
@@ -3072,12 +3576,62 @@
       a.click();
       a.remove();
 
-      const f = calculateFinances();
+      const f = calculateFinances(true);
       const totalDebts = calculateTotalRemainingDebt();
       const summary = `*RESPALDO ROSSE CABS*\nFecha: ${new Date().toLocaleDateString()}\nPropietario: ${appState.settings.ownerName}\nCaja Negocio: $${f.fincaFinalBalance.toFixed(2)}\nCaja Personal: $${f.personalFinalBalance.toFixed(2)}\nIngresos Extras: $${f.consolidatedExtraIncome.toFixed(2)}\nDeudas Pendientes: $${totalDebts.toFixed(2)}\nTallos Cosechados: ${f.totalStemsHarvested.toLocaleString()}\nStock Flor Nacional: ${f.availableNationalStock.toLocaleString()} tallos\nUbicación: Tupigachi - Ecuador 🇪🇨\n(El archivo .json fue descargado en tus Descargas para respaldo seguro)`;
 
       window.open(`https://wa.me/593963923399?text=${encodeURIComponent(summary)}`, '_blank');
+      appState.settings.lastBackupAt = new Date().toISOString();
+      saveState();
       showToast("Archivo JSON descargado y WhatsApp abierto", "📲");
+    }
+
+    // RECORDATORIO DE RESPALDO
+    function updateBackupReminder() {
+      const box = document.getElementById('backupReminderBox');
+      const badge = document.getElementById('backupReminderBadgeHeader');
+      const lastBackupAt = appState.settings?.lastBackupAt;
+
+      let days = null;
+      if (lastBackupAt) {
+        const diffMs = Date.now() - new Date(lastBackupAt).getTime();
+        days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      }
+
+      let level = 'ok'; // ok | warn | danger | never
+      if (days === null) level = 'never';
+      else if (days >= 15) level = 'danger';
+      else if (days >= 7) level = 'warn';
+
+      const styles = {
+        ok:     { box: 'bg-emerald-50 border-emerald-200 text-emerald-700', badge: 'bg-emerald-500/20 border-emerald-400/40 text-emerald-200', icon: '✅' },
+        warn:   { box: 'bg-amber-50 border-amber-300 text-amber-700', badge: 'bg-amber-500/20 border-amber-400/40 text-amber-200', icon: '⚠️' },
+        danger: { box: 'bg-rose-50 border-rose-300 text-rose-700', badge: 'bg-rose-500/20 border-rose-400/40 text-rose-200', icon: '🚨' },
+        never:  { box: 'bg-rose-50 border-rose-300 text-rose-700', badge: 'bg-rose-500/20 border-rose-400/40 text-rose-200', icon: '🚨' }
+      };
+      const s = styles[level];
+
+      let boxText, badgeText;
+      if (level === 'never') {
+        boxText = 'Nunca has hecho un respaldo. Presiona "WhatsApp (.json)" ahora mismo.';
+        badgeText = 'Sin respaldo';
+      } else if (days === 0) {
+        boxText = 'Tu último respaldo fue hoy. ¡Todo al día!';
+        badgeText = 'Hoy';
+      } else {
+        boxText = `Tu último respaldo fue hace ${days} día${days === 1 ? '' : 's'}.` + (level !== 'ok' ? ' Te recomendamos respaldar pronto.' : '');
+        badgeText = `Respaldo: hace ${days}d`;
+      }
+
+      if (box) {
+        box.className = `text-[11px] font-bold px-3 py-2 rounded-xl border flex items-center gap-1.5 ${s.box}`;
+        box.innerHTML = `<span>${s.icon}</span><span>${boxText}</span>`;
+      }
+      if (badge) {
+        badge.className = `text-[9px] sm:text-[10px] font-black px-2 py-1 rounded-lg flex-shrink-0 border ${s.badge}`;
+        badge.textContent = `${s.icon} ${badgeText}`;
+        badge.classList.remove('hidden');
+      }
     }
 
     function openModalRestoreBackup() {
@@ -3201,7 +3755,7 @@
     function executeTotalReset() {
       const input = document.getElementById('inputResetPassword').value.trim();
       const valid = appState.settings.userPassword || 'admin';
-      if (input !== valid && input !== MASTER_RESCUE_KEY && input !== "I´J") {
+      if (input !== valid && input !== MASTER_RESCUE_KEY) {
         showToast("Contraseña incorrecta", "❌");
         return;
       }
@@ -3245,6 +3799,8 @@
         activeMobBtn.classList.remove('text-slate-400');
         activeMobBtn.classList.add('text-rose-400');
       }
+
+      if (tabId === 'tabCategories') renderCatalogLists();
 
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
